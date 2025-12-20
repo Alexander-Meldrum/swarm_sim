@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package swarm_proto;
+
+service swarm_proto_service {
+  rpc Step (StepRequest) returns (StepResponse);
+  rpc Reset (ResetRequest) returns (ResetResponse);
+}
+
+/* --- Per-drone data --- */
+message DroneAction {
+  // 3 actions
+  float ax = 1;
+  float ay = 2;
+  float az = 3;
+}
+
+message DroneObservation {
+  // 3 observations
+  float ox = 1;
+  float oy = 2;
+  float oz = 3;
+
+  // Collision information
+  uint32 collision_count = 4;
+}
+
+/* --- Step API --- */
+message StepRequest {
+  uint64 step = 1;
+  // One action per drone
+  repeated DroneAction actions = 2;
+}
+
+message StepResponse {
+  uint64 step = 1;
+  // One observation per drone (same ordering)
+  repeated DroneObservation observations = 2;
+  // Global RL signals
+  float reward = 3;
+  bool done = 4;
+}
+
+/* --- Reset API --- */
+message ResetRequest {
+  uint64 seed = 1;
+}
+
+message ResetResponse {
+  uint64 step = 1;
+  repeated DroneObservation observations = 2;
+}
