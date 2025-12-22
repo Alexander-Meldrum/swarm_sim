@@ -907,6 +907,11 @@ class ResetRequest final :
 
   enum : int {
     kSeedFieldNumber = 1,
+    kMaxStepsFieldNumber = 3,
+    kNumDronesFieldNumber = 2,
+    kDtFieldNumber = 4,
+    kRandomizeInitialPositionsFieldNumber = 5,
+    kArenaSizeFieldNumber = 6,
   };
   // uint64 seed = 1;
   void clear_seed();
@@ -915,6 +920,51 @@ class ResetRequest final :
   private:
   uint64_t _internal_seed() const;
   void _internal_set_seed(uint64_t value);
+  public:
+
+  // uint64 max_steps = 3;
+  void clear_max_steps();
+  uint64_t max_steps() const;
+  void set_max_steps(uint64_t value);
+  private:
+  uint64_t _internal_max_steps() const;
+  void _internal_set_max_steps(uint64_t value);
+  public:
+
+  // uint32 num_drones = 2;
+  void clear_num_drones();
+  uint32_t num_drones() const;
+  void set_num_drones(uint32_t value);
+  private:
+  uint32_t _internal_num_drones() const;
+  void _internal_set_num_drones(uint32_t value);
+  public:
+
+  // float dt = 4;
+  void clear_dt();
+  float dt() const;
+  void set_dt(float value);
+  private:
+  float _internal_dt() const;
+  void _internal_set_dt(float value);
+  public:
+
+  // bool randomize_initial_positions = 5;
+  void clear_randomize_initial_positions();
+  bool randomize_initial_positions() const;
+  void set_randomize_initial_positions(bool value);
+  private:
+  bool _internal_randomize_initial_positions() const;
+  void _internal_set_randomize_initial_positions(bool value);
+  public:
+
+  // float arena_size = 6;
+  void clear_arena_size();
+  float arena_size() const;
+  void set_arena_size(float value);
+  private:
+  float _internal_arena_size() const;
+  void _internal_set_arena_size(float value);
   public:
 
   // @@protoc_insertion_point(class_scope:swarm_proto.ResetRequest)
@@ -926,6 +976,11 @@ class ResetRequest final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     uint64_t seed_;
+    uint64_t max_steps_;
+    uint32_t num_drones_;
+    float dt_;
+    bool randomize_initial_positions_;
+    float arena_size_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1054,10 +1109,13 @@ class ResetResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kObservationsFieldNumber = 2,
+    kObservationsFieldNumber = 5,
     kStepFieldNumber = 1,
+    kMaxStepsFieldNumber = 3,
+    kNumDronesFieldNumber = 2,
+    kDtFieldNumber = 4,
   };
-  // repeated .swarm_proto.DroneObservation observations = 2;
+  // repeated .swarm_proto.DroneObservation observations = 5;
   int observations_size() const;
   private:
   int _internal_observations_size() const;
@@ -1084,6 +1142,33 @@ class ResetResponse final :
   void _internal_set_step(uint64_t value);
   public:
 
+  // uint64 max_steps = 3;
+  void clear_max_steps();
+  uint64_t max_steps() const;
+  void set_max_steps(uint64_t value);
+  private:
+  uint64_t _internal_max_steps() const;
+  void _internal_set_max_steps(uint64_t value);
+  public:
+
+  // uint32 num_drones = 2;
+  void clear_num_drones();
+  uint32_t num_drones() const;
+  void set_num_drones(uint32_t value);
+  private:
+  uint32_t _internal_num_drones() const;
+  void _internal_set_num_drones(uint32_t value);
+  public:
+
+  // float dt = 4;
+  void clear_dt();
+  float dt() const;
+  void set_dt(float value);
+  private:
+  float _internal_dt() const;
+  void _internal_set_dt(float value);
+  public:
+
   // @@protoc_insertion_point(class_scope:swarm_proto.ResetResponse)
  private:
   class _Internal;
@@ -1094,6 +1179,9 @@ class ResetResponse final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::swarm_proto::DroneObservation > observations_;
     uint64_t step_;
+    uint64_t max_steps_;
+    uint32_t num_drones_;
+    float dt_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1446,6 +1534,106 @@ inline void ResetRequest::set_seed(uint64_t value) {
   // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.seed)
 }
 
+// uint32 num_drones = 2;
+inline void ResetRequest::clear_num_drones() {
+  _impl_.num_drones_ = 0u;
+}
+inline uint32_t ResetRequest::_internal_num_drones() const {
+  return _impl_.num_drones_;
+}
+inline uint32_t ResetRequest::num_drones() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.num_drones)
+  return _internal_num_drones();
+}
+inline void ResetRequest::_internal_set_num_drones(uint32_t value) {
+  
+  _impl_.num_drones_ = value;
+}
+inline void ResetRequest::set_num_drones(uint32_t value) {
+  _internal_set_num_drones(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.num_drones)
+}
+
+// uint64 max_steps = 3;
+inline void ResetRequest::clear_max_steps() {
+  _impl_.max_steps_ = uint64_t{0u};
+}
+inline uint64_t ResetRequest::_internal_max_steps() const {
+  return _impl_.max_steps_;
+}
+inline uint64_t ResetRequest::max_steps() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.max_steps)
+  return _internal_max_steps();
+}
+inline void ResetRequest::_internal_set_max_steps(uint64_t value) {
+  
+  _impl_.max_steps_ = value;
+}
+inline void ResetRequest::set_max_steps(uint64_t value) {
+  _internal_set_max_steps(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.max_steps)
+}
+
+// float dt = 4;
+inline void ResetRequest::clear_dt() {
+  _impl_.dt_ = 0;
+}
+inline float ResetRequest::_internal_dt() const {
+  return _impl_.dt_;
+}
+inline float ResetRequest::dt() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.dt)
+  return _internal_dt();
+}
+inline void ResetRequest::_internal_set_dt(float value) {
+  
+  _impl_.dt_ = value;
+}
+inline void ResetRequest::set_dt(float value) {
+  _internal_set_dt(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.dt)
+}
+
+// bool randomize_initial_positions = 5;
+inline void ResetRequest::clear_randomize_initial_positions() {
+  _impl_.randomize_initial_positions_ = false;
+}
+inline bool ResetRequest::_internal_randomize_initial_positions() const {
+  return _impl_.randomize_initial_positions_;
+}
+inline bool ResetRequest::randomize_initial_positions() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.randomize_initial_positions)
+  return _internal_randomize_initial_positions();
+}
+inline void ResetRequest::_internal_set_randomize_initial_positions(bool value) {
+  
+  _impl_.randomize_initial_positions_ = value;
+}
+inline void ResetRequest::set_randomize_initial_positions(bool value) {
+  _internal_set_randomize_initial_positions(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.randomize_initial_positions)
+}
+
+// float arena_size = 6;
+inline void ResetRequest::clear_arena_size() {
+  _impl_.arena_size_ = 0;
+}
+inline float ResetRequest::_internal_arena_size() const {
+  return _impl_.arena_size_;
+}
+inline float ResetRequest::arena_size() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.arena_size)
+  return _internal_arena_size();
+}
+inline void ResetRequest::_internal_set_arena_size(float value) {
+  
+  _impl_.arena_size_ = value;
+}
+inline void ResetRequest::set_arena_size(float value) {
+  _internal_set_arena_size(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.arena_size)
+}
+
 // -------------------------------------------------------------------
 
 // ResetResponse
@@ -1470,7 +1658,67 @@ inline void ResetResponse::set_step(uint64_t value) {
   // @@protoc_insertion_point(field_set:swarm_proto.ResetResponse.step)
 }
 
-// repeated .swarm_proto.DroneObservation observations = 2;
+// uint32 num_drones = 2;
+inline void ResetResponse::clear_num_drones() {
+  _impl_.num_drones_ = 0u;
+}
+inline uint32_t ResetResponse::_internal_num_drones() const {
+  return _impl_.num_drones_;
+}
+inline uint32_t ResetResponse::num_drones() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetResponse.num_drones)
+  return _internal_num_drones();
+}
+inline void ResetResponse::_internal_set_num_drones(uint32_t value) {
+  
+  _impl_.num_drones_ = value;
+}
+inline void ResetResponse::set_num_drones(uint32_t value) {
+  _internal_set_num_drones(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetResponse.num_drones)
+}
+
+// uint64 max_steps = 3;
+inline void ResetResponse::clear_max_steps() {
+  _impl_.max_steps_ = uint64_t{0u};
+}
+inline uint64_t ResetResponse::_internal_max_steps() const {
+  return _impl_.max_steps_;
+}
+inline uint64_t ResetResponse::max_steps() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetResponse.max_steps)
+  return _internal_max_steps();
+}
+inline void ResetResponse::_internal_set_max_steps(uint64_t value) {
+  
+  _impl_.max_steps_ = value;
+}
+inline void ResetResponse::set_max_steps(uint64_t value) {
+  _internal_set_max_steps(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetResponse.max_steps)
+}
+
+// float dt = 4;
+inline void ResetResponse::clear_dt() {
+  _impl_.dt_ = 0;
+}
+inline float ResetResponse::_internal_dt() const {
+  return _impl_.dt_;
+}
+inline float ResetResponse::dt() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetResponse.dt)
+  return _internal_dt();
+}
+inline void ResetResponse::_internal_set_dt(float value) {
+  
+  _impl_.dt_ = value;
+}
+inline void ResetResponse::set_dt(float value) {
+  _internal_set_dt(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetResponse.dt)
+}
+
+// repeated .swarm_proto.DroneObservation observations = 5;
 inline int ResetResponse::_internal_observations_size() const {
   return _impl_.observations_.size();
 }

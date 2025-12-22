@@ -18,6 +18,8 @@ using swarm_proto::DroneAction;
 using swarm_proto::DroneObservation;
 
 int main() {
+    std::cout << "Launching swarm (controller_cpp)" << std::endl;
+
     // Connect to Rust simulator
     auto channel = grpc::CreateChannel(
         "localhost:50051",
@@ -47,7 +49,9 @@ int main() {
 
     while (!done) {
         StepRequest request;
-
+        StepResponse response;
+        ClientContext context;
+        
         // Build actions (one per drone)
         for (int i = 0; i < N; ++i) {
             DroneAction* a = request.add_actions();
@@ -57,9 +61,8 @@ int main() {
         }
         // Populate step counter to be sent to simulator
         request.set_step(step);
-
-        StepResponse response;
-        ClientContext context;
+        request.set_num_drones(5)
+        
 
         // BLOCKING RPC call (synchronous)
         Status status = stub->Step(&context, request, &response);
@@ -70,6 +73,13 @@ int main() {
             return 1;
         }
 
+        if (response.done()) {
+        // TODO
+        std::cout << "World Simulator Done" << std::endl;
+        // Stop stepping immediately
+        // Log episode return
+        // Call reset()
+        }
         // Consume observations
         const auto& obs = response.observations();
         for (int i = 0; i < obs.size(); ++i) {

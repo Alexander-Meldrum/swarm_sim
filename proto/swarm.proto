@@ -44,9 +44,17 @@ message StepResponse {
 /* --- Reset API --- */
 message ResetRequest {
   uint64 seed = 1;
+  uint32 num_drones = 2;
+  uint64 max_steps = 3;
+  float dt = 4;
+  bool randomize_initial_positions = 5;
+  float arena_size = 6;
 }
 
 message ResetResponse {
   uint64 step = 1;
-  repeated DroneObservation observations = 2;
+  uint32 num_drones = 2;
+  uint64 max_steps = 3;
+  float dt = 4;
+  repeated DroneObservation observations = 5;
 }

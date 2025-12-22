@@ -85,6 +85,11 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORIT
 PROTOBUF_CONSTEXPR ResetRequest::ResetRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.seed_)*/uint64_t{0u}
+  , /*decltype(_impl_.max_steps_)*/uint64_t{0u}
+  , /*decltype(_impl_.num_drones_)*/0u
+  , /*decltype(_impl_.dt_)*/0
+  , /*decltype(_impl_.randomize_initial_positions_)*/false
+  , /*decltype(_impl_.arena_size_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ResetRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ResetRequestDefaultTypeInternal()
@@ -99,6 +104,9 @@ PROTOBUF_CONSTEXPR ResetResponse::ResetResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.observations_)*/{}
   , /*decltype(_impl_.step_)*/uint64_t{0u}
+  , /*decltype(_impl_.max_steps_)*/uint64_t{0u}
+  , /*decltype(_impl_.num_drones_)*/0u
+  , /*decltype(_impl_.dt_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ResetResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ResetResponseDefaultTypeInternal()
@@ -159,6 +167,11 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.seed_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.num_drones_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.max_steps_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.dt_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.randomize_initial_positions_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.arena_size_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -166,6 +179,9 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   ~0u,  // no _weak_field_map_
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.step_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.num_drones_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.max_steps_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.dt_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.observations_),
 };
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -174,7 +190,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 19, -1, -1, sizeof(::swarm_proto::StepRequest)},
   { 27, -1, -1, sizeof(::swarm_proto::StepResponse)},
   { 37, -1, -1, sizeof(::swarm_proto::ResetRequest)},
-  { 44, -1, -1, sizeof(::swarm_proto::ResetResponse)},
+  { 49, -1, -1, sizeof(::swarm_proto::ResetResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -195,18 +211,22 @@ const char descriptor_table_protodef_swarm_2eproto[] PROTOBUF_SECTION_VARIABLE(p
   " \003(\0132\030.swarm_proto.DroneAction\"o\n\014StepRe"
   "sponse\022\014\n\004step\030\001 \001(\004\0223\n\014observations\030\002 \003"
   "(\0132\035.swarm_proto.DroneObservation\022\016\n\006rew"
-  "ard\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\034\n\014ResetRequest\022"
-  "\014\n\004seed\030\001 \001(\004\"R\n\rResetResponse\022\014\n\004step\030\001"
-  " \001(\004\0223\n\014observations\030\002 \003(\0132\035.swarm_proto"
-  ".DroneObservation2\222\001\n\023swarm_proto_servic"
-  "e\022;\n\004Step\022\030.swarm_proto.StepRequest\032\031.sw"
-  "arm_proto.StepResponse\022>\n\005Reset\022\031.swarm_"
-  "proto.ResetRequest\032\032.swarm_proto.ResetRe"
-  "sponseb\006proto3"
+  "ard\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\210\001\n\014ResetRequest"
+  "\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tma"
+  "x_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022#\n\033randomize_i"
+  "nitial_positions\030\005 \001(\010\022\022\n\narena_size\030\006 \001"
+  "(\002\"\205\001\n\rResetResponse\022\014\n\004step\030\001 \001(\004\022\022\n\nnu"
+  "m_drones\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030"
+  "\004 \001(\002\0223\n\014observations\030\005 \003(\0132\035.swarm_prot"
+  "o.DroneObservation2\222\001\n\023swarm_proto_servi"
+  "ce\022;\n\004Step\022\030.swarm_proto.StepRequest\032\031.s"
+  "warm_proto.StepResponse\022>\n\005Reset\022\031.swarm"
+  "_proto.ResetRequest\032\032.swarm_proto.ResetR"
+  "esponseb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_swarm_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_swarm_2eproto = {
-    false, false, 614, descriptor_table_protodef_swarm_2eproto,
+    false, false, 775, descriptor_table_protodef_swarm_2eproto,
     "swarm.proto",
     &descriptor_table_swarm_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
@@ -1297,10 +1317,17 @@ ResetRequest::ResetRequest(const ResetRequest& from)
   ResetRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_.seed_){}
+    , decltype(_impl_.max_steps_){}
+    , decltype(_impl_.num_drones_){}
+    , decltype(_impl_.dt_){}
+    , decltype(_impl_.randomize_initial_positions_){}
+    , decltype(_impl_.arena_size_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.seed_ = from._impl_.seed_;
+  ::memcpy(&_impl_.seed_, &from._impl_.seed_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.arena_size_) -
+    reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.arena_size_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.ResetRequest)
 }
 
@@ -1310,6 +1337,11 @@ inline void ResetRequest::SharedCtor(
   (void)is_message_owned;
   new (&_impl_) Impl_{
       decltype(_impl_.seed_){uint64_t{0u}}
+    , decltype(_impl_.max_steps_){uint64_t{0u}}
+    , decltype(_impl_.num_drones_){0u}
+    , decltype(_impl_.dt_){0}
+    , decltype(_impl_.randomize_initial_positions_){false}
+    , decltype(_impl_.arena_size_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1337,7 +1369,9 @@ void ResetRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.seed_ = uint64_t{0u};
+  ::memset(&_impl_.seed_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.arena_size_) -
+      reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.arena_size_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1352,6 +1386,46 @@ const char* ResetRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
           _impl_.seed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 num_drones = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.num_drones_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 max_steps = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float dt = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
+          _impl_.dt_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool randomize_initial_positions = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.randomize_initial_positions_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float arena_size = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
+          _impl_.arena_size_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
         } else
           goto handle_unusual;
         continue;
@@ -1390,6 +1464,44 @@ uint8_t* ResetRequest::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_seed(), target);
   }
 
+  // uint32 num_drones = 2;
+  if (this->_internal_num_drones() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones(), target);
+  }
+
+  // uint64 max_steps = 3;
+  if (this->_internal_max_steps() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_max_steps(), target);
+  }
+
+  // float dt = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = this->_internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_dt(), target);
+  }
+
+  // bool randomize_initial_positions = 5;
+  if (this->_internal_randomize_initial_positions() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_randomize_initial_positions(), target);
+  }
+
+  // float arena_size = 6;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_arena_size = this->_internal_arena_size();
+  uint32_t raw_arena_size;
+  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
+  if (raw_arena_size != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_arena_size(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
@@ -1409,6 +1521,39 @@ size_t ResetRequest::ByteSizeLong() const {
   // uint64 seed = 1;
   if (this->_internal_seed() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_seed());
+  }
+
+  // uint64 max_steps = 3;
+  if (this->_internal_max_steps() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_max_steps());
+  }
+
+  // uint32 num_drones = 2;
+  if (this->_internal_num_drones() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_num_drones());
+  }
+
+  // float dt = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = this->_internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    total_size += 1 + 4;
+  }
+
+  // bool randomize_initial_positions = 5;
+  if (this->_internal_randomize_initial_positions() != 0) {
+    total_size += 1 + 1;
+  }
+
+  // float arena_size = 6;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_arena_size = this->_internal_arena_size();
+  uint32_t raw_arena_size;
+  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
+  if (raw_arena_size != 0) {
+    total_size += 1 + 4;
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1432,6 +1577,29 @@ void ResetRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (from._internal_seed() != 0) {
     _this->_internal_set_seed(from._internal_seed());
   }
+  if (from._internal_max_steps() != 0) {
+    _this->_internal_set_max_steps(from._internal_max_steps());
+  }
+  if (from._internal_num_drones() != 0) {
+    _this->_internal_set_num_drones(from._internal_num_drones());
+  }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = from._internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    _this->_internal_set_dt(from._internal_dt());
+  }
+  if (from._internal_randomize_initial_positions() != 0) {
+    _this->_internal_set_randomize_initial_positions(from._internal_randomize_initial_positions());
+  }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_arena_size = from._internal_arena_size();
+  uint32_t raw_arena_size;
+  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
+  if (raw_arena_size != 0) {
+    _this->_internal_set_arena_size(from._internal_arena_size());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1449,7 +1617,12 @@ bool ResetRequest::IsInitialized() const {
 void ResetRequest::InternalSwap(ResetRequest* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_.seed_, other->_impl_.seed_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.arena_size_)
+      + sizeof(ResetRequest::_impl_.arena_size_)
+      - PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.seed_)>(
+          reinterpret_cast<char*>(&_impl_.seed_),
+          reinterpret_cast<char*>(&other->_impl_.seed_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResetRequest::GetMetadata() const {
@@ -1476,10 +1649,15 @@ ResetResponse::ResetResponse(const ResetResponse& from)
   new (&_impl_) Impl_{
       decltype(_impl_.observations_){from._impl_.observations_}
     , decltype(_impl_.step_){}
+    , decltype(_impl_.max_steps_){}
+    , decltype(_impl_.num_drones_){}
+    , decltype(_impl_.dt_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.step_ = from._impl_.step_;
+  ::memcpy(&_impl_.step_, &from._impl_.step_,
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.dt_) -
+    reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.dt_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.ResetResponse)
 }
 
@@ -1490,6 +1668,9 @@ inline void ResetResponse::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.observations_){arena}
     , decltype(_impl_.step_){uint64_t{0u}}
+    , decltype(_impl_.max_steps_){uint64_t{0u}}
+    , decltype(_impl_.num_drones_){0u}
+    , decltype(_impl_.dt_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1519,7 +1700,9 @@ void ResetResponse::Clear() {
   (void) cached_has_bits;
 
   _impl_.observations_.Clear();
-  _impl_.step_ = uint64_t{0u};
+  ::memset(&_impl_.step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&_impl_.dt_) -
+      reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.dt_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1537,16 +1720,40 @@ const char* ResetResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext*
         } else
           goto handle_unusual;
         continue;
-      // repeated .swarm_proto.DroneObservation observations = 2;
+      // uint32 num_drones = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
+          _impl_.num_drones_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint64 max_steps = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // float dt = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
+          _impl_.dt_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // repeated .swarm_proto.DroneObservation observations = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
           ptr -= 1;
           do {
             ptr += 1;
             ptr = ctx->ParseMessage(_internal_add_observations(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
         } else
           goto handle_unusual;
         continue;
@@ -1585,12 +1792,34 @@ uint8_t* ResetResponse::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
   }
 
-  // repeated .swarm_proto.DroneObservation observations = 2;
+  // uint32 num_drones = 2;
+  if (this->_internal_num_drones() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones(), target);
+  }
+
+  // uint64 max_steps = 3;
+  if (this->_internal_max_steps() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_max_steps(), target);
+  }
+
+  // float dt = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = this->_internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_dt(), target);
+  }
+
+  // repeated .swarm_proto.DroneObservation observations = 5;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_observations_size()); i < n; i++) {
     const auto& repfield = this->_internal_observations(i);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+        InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1609,7 +1838,7 @@ size_t ResetResponse::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .swarm_proto.DroneObservation observations = 2;
+  // repeated .swarm_proto.DroneObservation observations = 5;
   total_size += 1UL * this->_internal_observations_size();
   for (const auto& msg : this->_impl_.observations_) {
     total_size +=
@@ -1619,6 +1848,25 @@ size_t ResetResponse::ByteSizeLong() const {
   // uint64 step = 1;
   if (this->_internal_step() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_step());
+  }
+
+  // uint64 max_steps = 3;
+  if (this->_internal_max_steps() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_max_steps());
+  }
+
+  // uint32 num_drones = 2;
+  if (this->_internal_num_drones() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_num_drones());
+  }
+
+  // float dt = 4;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = this->_internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    total_size += 1 + 4;
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1643,6 +1891,19 @@ void ResetResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   if (from._internal_step() != 0) {
     _this->_internal_set_step(from._internal_step());
   }
+  if (from._internal_max_steps() != 0) {
+    _this->_internal_set_max_steps(from._internal_max_steps());
+  }
+  if (from._internal_num_drones() != 0) {
+    _this->_internal_set_num_drones(from._internal_num_drones());
+  }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_dt = from._internal_dt();
+  uint32_t raw_dt;
+  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
+  if (raw_dt != 0) {
+    _this->_internal_set_dt(from._internal_dt());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1661,7 +1922,12 @@ void ResetResponse::InternalSwap(ResetResponse* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   _impl_.observations_.InternalSwap(&other->_impl_.observations_);
-  swap(_impl_.step_, other->_impl_.step_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ResetResponse, _impl_.dt_)
+      + sizeof(ResetResponse::_impl_.dt_)
+      - PROTOBUF_FIELD_OFFSET(ResetResponse, _impl_.step_)>(
+          reinterpret_cast<char*>(&_impl_.step_),
+          reinterpret_cast<char*>(&other->_impl_.step_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResetResponse::GetMetadata() const {

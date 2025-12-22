@@ -13,7 +13,8 @@ use crate::grpc::swarm_proto::swarm_proto_service_server::{
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let world = World::new(64, 0.02);
+    // TODO Remove magic numbers 
+    let world = World::new(64, 10000, 0.02);
     let server = SimServer {
         world: Mutex::new(world),
     };
