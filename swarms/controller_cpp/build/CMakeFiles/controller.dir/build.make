@@ -86,10 +86,24 @@ CMakeFiles/controller.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/controller.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/main.cpp -o CMakeFiles/controller.dir/src/main.cpp.s
 
+CMakeFiles/controller.dir/src/controller.cpp.o: CMakeFiles/controller.dir/flags.make
+CMakeFiles/controller.dir/src/controller.cpp.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/controller.cpp
+CMakeFiles/controller.dir/src/controller.cpp.o: CMakeFiles/controller.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/controller.dir/src/controller.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/controller.dir/src/controller.cpp.o -MF CMakeFiles/controller.dir/src/controller.cpp.o.d -o CMakeFiles/controller.dir/src/controller.cpp.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/controller.cpp
+
+CMakeFiles/controller.dir/src/controller.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/controller.dir/src/controller.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/controller.cpp > CMakeFiles/controller.dir/src/controller.cpp.i
+
+CMakeFiles/controller.dir/src/controller.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/controller.dir/src/controller.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/controller.cpp -o CMakeFiles/controller.dir/src/controller.cpp.s
+
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o: CMakeFiles/controller.dir/flags.make
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.pb.cc
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o: CMakeFiles/controller.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o -MF CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o.d -o CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.pb.cc
 
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.i: cmake_force
@@ -103,7 +117,7 @@ CMakeFiles/controller.dir/src/proto/swarm.pb.cc.s: cmake_force
 CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o: CMakeFiles/controller.dir/flags.make
 CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.grpc.pb.cc
 CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o: CMakeFiles/controller.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o -MF CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o.d -o CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.grpc.pb.cc
 
 CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.i: cmake_force
@@ -117,6 +131,7 @@ CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.s: cmake_force
 # Object files for target controller
 controller_OBJECTS = \
 "CMakeFiles/controller.dir/src/main.cpp.o" \
+"CMakeFiles/controller.dir/src/controller.cpp.o" \
 "CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o" \
 "CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o"
 
@@ -124,6 +139,7 @@ controller_OBJECTS = \
 controller_EXTERNAL_OBJECTS =
 
 controller: CMakeFiles/controller.dir/src/main.cpp.o
+controller: CMakeFiles/controller.dir/src/controller.cpp.o
 controller: CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o
 controller: CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o
 controller: CMakeFiles/controller.dir/build.make
@@ -184,7 +200,7 @@ controller: /usr/lib/x86_64-linux-gnu/libabsl_time_zone.so.20220623.0.0
 controller: /usr/lib/x86_64-linux-gnu/libssl.so
 controller: /usr/lib/x86_64-linux-gnu/libcrypto.so
 controller: CMakeFiles/controller.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable controller"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable controller"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/controller.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

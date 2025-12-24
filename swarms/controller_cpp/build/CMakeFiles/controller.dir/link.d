@@ -3,6 +3,7 @@ controller: \
   /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o \
   CMakeFiles/controller.dir/src/main.cpp.o \
+  CMakeFiles/controller.dir/src/controller.cpp.o \
   CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o \
   CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o \
   /usr/lib/x86_64-linux-gnu/libgrpc++.so.1.51.1 \
@@ -148,6 +149,8 @@ controller: \
 /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o:
 
 CMakeFiles/controller.dir/src/main.cpp.o:
+
+CMakeFiles/controller.dir/src/controller.cpp.o:
 
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o:
 

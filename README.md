@@ -14,9 +14,9 @@ Deterministic swarm simulator for testing & training swarm controllers
 ### Simulation Server [Rust]
 
 protobuf-compiler  (sudo apt install protobuf-compiler)  
-cd sim_server
-cargo build --release
-cargo run --release
+cd sim_server  
+cargo build --release  
+cargo run --release  
 
 ### Swarm Controller Example [C++]
 
@@ -24,12 +24,12 @@ cd swarms/controller_cpp
 mkdir build && cd build  
 cmake ..  
 make  
-./swarm
+./swarm  
 
 #### How to update proto bindings
 
-(sudo apt install protobuf-compiler libgrpc++-dev)
-sudo apt install protobuf-compiler-grpc
+(sudo apt install protobuf-compiler libgrpc++-dev)  
+sudo apt install protobuf-compiler-grpc  
 
 protoc \
   --proto_path=proto \

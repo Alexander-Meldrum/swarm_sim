@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/controller.dir/link.d"
+  "CMakeFiles/controller.dir/src/controller.cpp.o"
+  "CMakeFiles/controller.dir/src/controller.cpp.o.d"
   "CMakeFiles/controller.dir/src/main.cpp.o"
   "CMakeFiles/controller.dir/src/main.cpp.o.d"
   "CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o"
