@@ -20,8 +20,9 @@ cargo run --release
 
 ### Swarm Controller Example [C++]
 
-cd swarms/controller_cpp  
+cd swarms/swarm_cpp  
 mkdir build && cd build  
+mkdir proto
 cmake ..  
 make  
 ./swarm  
@@ -31,10 +32,11 @@ make
 (sudo apt install protobuf-compiler libgrpc++-dev)  
 sudo apt install protobuf-compiler-grpc  
 
+
 protoc \
   --proto_path=proto \
-  --cpp_out=swarms/controller_cpp/src/proto \
-  --grpc_out=swarms/controller_cpp/src/proto \
+  --cpp_out=swarms/swarm_cpp/build/proto \
+  --grpc_out=swarms/swarm_cpp/build/proto \
   --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \
   proto/swarm.proto
 

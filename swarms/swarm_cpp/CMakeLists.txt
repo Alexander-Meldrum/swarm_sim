@@ -12,8 +12,8 @@ find_package(gRPC REQUIRED)
 add_executable(swarm
     src/main.cpp
     src/swarm.cpp
-    src/proto/swarm.pb.cc
-    src/proto/swarm.grpc.pb.cc
+    build/proto/swarm.pb.cc
+    build/proto/swarm.grpc.pb.cc
 )
 
 target_link_libraries(swarm
@@ -25,4 +25,5 @@ target_include_directories(swarm
     PRIVATE
         ${PROJECT_SOURCE_DIR}/include
         ${PROJECT_SOURCE_DIR}/build
+        ${PROJECT_SOURCE_DIR}/build/proto
 )
