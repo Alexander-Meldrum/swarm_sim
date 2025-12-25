@@ -4,7 +4,7 @@
 #include <grpcpp/grpcpp.h>
 #include "proto/swarm.pb.h"
 #include "proto/swarm.grpc.pb.h"
-#include "swarm/controller.h"
+#include "swarm/swarm.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -39,10 +39,16 @@ ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, fl
     ResetResponse response;
     grpc::ClientContext context;
     
+    std::cout <<"[controller] Reset, step: " << step_ << std::endl;
+    std::cout <<"[controller] Reset, num_drones: " << num_drones << std::endl;
+    // std::cout.flush();
+
     // Data that we request to be set in simulator
     request.set_num_drones(num_drones);
     request.set_max_steps(max_steps);
     request.set_dt(dt);
+
+    std::cout <<"[controller] request.num_drones() " << request.num_drones() << std::endl;
 
     // BLOCKING RPC call (synchronous)
     auto status = stub_->Reset(&context, request, &response);
@@ -58,7 +64,7 @@ ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, fl
     obs_.reserve(num_drones_ * num_observation_features_);
     SwarmController::consume_observations_from_proto(response.observations());
 
-    std::cout << "Simulator reset to step: " << step_ << std::endl;
+    std::cout <<"[controller] Simulator reset to step: " << step_ << std::endl;
     return response;
 }
 
@@ -89,7 +95,7 @@ StepResponse SwarmController::step() {
 
     if (response.done()) {
         // TODO
-        std::cout << "World Simulator Done" << std::endl;
+        std::cout <<"[controller] World Simulator Done" << std::endl;
         // Stop stepping immediately
         // Log episode return
         return response;

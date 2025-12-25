@@ -4,7 +4,7 @@
 #include <grpcpp/grpcpp.h>
 #include "proto/swarm.pb.h"
 #include "proto/swarm.grpc.pb.h"
-#include <swarm/controller.h>
+#include <swarm/swarm.h>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -20,7 +20,7 @@ using swarm_proto::DroneObservation;
 
 
 int main() {
-    std::cout << "Launching swarm (controller_cpp)" << std::endl;
+    std::cout <<"[controller] Launching swarm (controller_cpp)" << std::endl;
 
     // Connect to simulator
     auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
@@ -31,13 +31,18 @@ int main() {
     uint32_t num_drones = 5;   // number of drones requested
     uint64_t max_steps = 10;   // max simumlation steps requested
     float dt = 0.02;      // Simulator step delta time requested
+
+    std::cout <<"[controller] Resetting Controller\n" << std::endl;
+
     controller.reset(num_drones, max_steps, dt);
+
+    std::cout <<"[controller] Simulator Reset Finished\n" << std::endl;
 
     while (true) {
         auto resp = controller.step();
 
         if (resp.done()) {
-            std::cout << "Episode finished\n";
+            std::cout <<"[controller] Episode finished\n" << std::endl;
             break;
         }
     }

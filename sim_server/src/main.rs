@@ -20,7 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     let addr = "[::1]:50051".parse()?;
-    println!("Sim server running and listening for StepRequests on localhost:50051");
+    println!("[simulator] Sim server running and listening for StepRequests on localhost:50051");
 
     tonic::transport::Server::builder()
         .add_service(SwarmProtoServiceServer::new(server))

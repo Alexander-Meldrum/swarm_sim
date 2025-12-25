@@ -6,6 +6,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o.d"
   "CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o"
   "CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o.d"
+  "CMakeFiles/swarm.dir/src/swarm.cpp.o"
+  "CMakeFiles/swarm.dir/src/swarm.cpp.o.d"
   "swarm"
   "swarm.pdb"
 )

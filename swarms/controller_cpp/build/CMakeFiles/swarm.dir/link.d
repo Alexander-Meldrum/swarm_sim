@@ -3,6 +3,7 @@ swarm: \
   /usr/lib/gcc/x86_64-linux-gnu/13/../../../x86_64-linux-gnu/crti.o \
   /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o \
   CMakeFiles/swarm.dir/src/main.cpp.o \
+  CMakeFiles/swarm.dir/src/swarm.cpp.o \
   CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o \
   CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o \
   /usr/lib/x86_64-linux-gnu/libgrpc++.so.1.51.1 \
@@ -148,6 +149,8 @@ swarm: \
 /usr/lib/gcc/x86_64-linux-gnu/13/crtbeginS.o:
 
 CMakeFiles/swarm.dir/src/main.cpp.o:
+
+CMakeFiles/swarm.dir/src/swarm.cpp.o:
 
 CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o:
 

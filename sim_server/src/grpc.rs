@@ -45,9 +45,9 @@ impl SwarmProtoService for SimServer {
         let actions: Vec<Vec3> = req.actions.into_iter()
             .map(|a| Vec3{x: a.ax, y: a.ay, z: a.az}).collect();
 
-        println!("Controller Step: {}", req.step);
-        println!("Simulator Step: {}", world.step);
-        println!("Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+        println!("[simulator] Controller Step: {}", req.step);
+        println!("[simulator] Simulator Step: {}", world.step);
+        println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
 
         
         physics::step(&mut world, &actions);
@@ -64,16 +64,20 @@ impl SwarmProtoService for SimServer {
         &self,
         request: Request<ResetRequest>,
     ) -> Result<Response<ResetResponse>, Status> {
-        println!("Resetting Simulator World...");
+        println!("[simulator] Resetting Simulator World...");
+
         let mut world = self.world.lock().await;
 
         // Extract protobuf message
         let request = request.into_inner();
 
+        println!("[simulator] num_drones: {}", request.num_drones);
+        println!("[simulator] max_steps:  {}", request.max_steps);
+
         // num_drones
         let num_drones = request.num_drones as usize;
         if num_drones == 0 {
-            return Err(Status::invalid_argument("num_drones must be > 0"));
+            return Err(Status::invalid_argument("[simulator] num_drones must be > 0"));
         }
 
         // max_steps
@@ -89,11 +93,11 @@ impl SwarmProtoService for SimServer {
             ox: 0.0, oy: 0.0, oz: 0.0, collision_count: 0
         }).collect();
 
-        println!("Simulator World Setup Complete");
-        println!("************");
-        println!("num_drones: {}", world.num_drones);
-        println!("max_steps:  {}", world.max_steps);
-        println!("************");
+        println!("[simulator] Simulator World Setup Complete");
+        println!("[simulator] ************");
+        println!("[simulator] num_drones: {}", world.num_drones);
+        println!("[simulator] max_steps:  {}", world.max_steps);
+        println!("[simulator] ************");
 
         Ok(Response::new(ResetResponse {
             step: 0,

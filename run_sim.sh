@@ -7,7 +7,7 @@ SIM_BIN="$SIM_DIR/target/release/sim_server"
 
 CTRL_DIR="swarms/controller_cpp"
 CTRL_BUILD="$CTRL_DIR/build"
-CTRL_BIN="$CTRL_BUILD/swarm"
+CTRL_BIN="$CTRL_BUILD/controller"
 
 HOST="::1"
 PORT="50051"
@@ -51,6 +51,7 @@ fi
 
 # ---------------- Run controller ----------------
 echo "🎮 Running swarm controller ..."
-"$CTRL_BIN"
+# "$CTRL_BIN"
+stdbuf -oL "$CTRL_BIN"
 
 echo "✅ Controller finished"

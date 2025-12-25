@@ -117,48 +117,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named controller
+# Target rules for targets named swarm
 
 # Build rule for target.
-controller: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 controller
-.PHONY : controller
+swarm: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 swarm
+.PHONY : swarm
 
 # fast build rule for target.
-controller/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/build
-.PHONY : controller/fast
-
-src/controller.o: src/controller.cpp.o
-.PHONY : src/controller.o
-
-# target to build an object file
-src/controller.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/controller.cpp.o
-.PHONY : src/controller.cpp.o
-
-src/controller.i: src/controller.cpp.i
-.PHONY : src/controller.i
-
-# target to preprocess a source file
-src/controller.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/controller.cpp.i
-.PHONY : src/controller.cpp.i
-
-src/controller.s: src/controller.cpp.s
-.PHONY : src/controller.s
-
-# target to generate assembly for a file
-src/controller.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/controller.cpp.s
-.PHONY : src/controller.cpp.s
+swarm/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/build
+.PHONY : swarm/fast
 
 src/main.o: src/main.cpp.o
 .PHONY : src/main.o
 
 # target to build an object file
 src/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/main.cpp.o
 .PHONY : src/main.cpp.o
 
 src/main.i: src/main.cpp.i
@@ -166,7 +142,7 @@ src/main.i: src/main.cpp.i
 
 # target to preprocess a source file
 src/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/main.cpp.i
 .PHONY : src/main.cpp.i
 
 src/main.s: src/main.cpp.s
@@ -174,7 +150,7 @@ src/main.s: src/main.cpp.s
 
 # target to generate assembly for a file
 src/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
 src/proto/swarm.grpc.pb.o: src/proto/swarm.grpc.pb.cc.o
@@ -182,7 +158,7 @@ src/proto/swarm.grpc.pb.o: src/proto/swarm.grpc.pb.cc.o
 
 # target to build an object file
 src/proto/swarm.grpc.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o
 .PHONY : src/proto/swarm.grpc.pb.cc.o
 
 src/proto/swarm.grpc.pb.i: src/proto/swarm.grpc.pb.cc.i
@@ -190,7 +166,7 @@ src/proto/swarm.grpc.pb.i: src/proto/swarm.grpc.pb.cc.i
 
 # target to preprocess a source file
 src/proto/swarm.grpc.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.i
 .PHONY : src/proto/swarm.grpc.pb.cc.i
 
 src/proto/swarm.grpc.pb.s: src/proto/swarm.grpc.pb.cc.s
@@ -198,7 +174,7 @@ src/proto/swarm.grpc.pb.s: src/proto/swarm.grpc.pb.cc.s
 
 # target to generate assembly for a file
 src/proto/swarm.grpc.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.s
 .PHONY : src/proto/swarm.grpc.pb.cc.s
 
 src/proto/swarm.pb.o: src/proto/swarm.pb.cc.o
@@ -206,7 +182,7 @@ src/proto/swarm.pb.o: src/proto/swarm.pb.cc.o
 
 # target to build an object file
 src/proto/swarm.pb.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o
 .PHONY : src/proto/swarm.pb.cc.o
 
 src/proto/swarm.pb.i: src/proto/swarm.pb.cc.i
@@ -214,7 +190,7 @@ src/proto/swarm.pb.i: src/proto/swarm.pb.cc.i
 
 # target to preprocess a source file
 src/proto/swarm.pb.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.pb.cc.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.i
 .PHONY : src/proto/swarm.pb.cc.i
 
 src/proto/swarm.pb.s: src/proto/swarm.pb.cc.s
@@ -222,8 +198,32 @@ src/proto/swarm.pb.s: src/proto/swarm.pb.cc.s
 
 # target to generate assembly for a file
 src/proto/swarm.pb.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/controller.dir/build.make CMakeFiles/controller.dir/src/proto/swarm.pb.cc.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.s
 .PHONY : src/proto/swarm.pb.cc.s
+
+src/swarm.o: src/swarm.cpp.o
+.PHONY : src/swarm.o
+
+# target to build an object file
+src/swarm.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/swarm.cpp.o
+.PHONY : src/swarm.cpp.o
+
+src/swarm.i: src/swarm.cpp.i
+.PHONY : src/swarm.i
+
+# target to preprocess a source file
+src/swarm.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/swarm.cpp.i
+.PHONY : src/swarm.cpp.i
+
+src/swarm.s: src/swarm.cpp.s
+.PHONY : src/swarm.s
+
+# target to generate assembly for a file
+src/swarm.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/swarm.dir/build.make CMakeFiles/swarm.dir/src/swarm.cpp.s
+.PHONY : src/swarm.cpp.s
 
 # Help Target
 help:
@@ -233,10 +233,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... controller"
-	@echo "... src/controller.o"
-	@echo "... src/controller.i"
-	@echo "... src/controller.s"
+	@echo "... swarm"
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
@@ -246,6 +243,9 @@ help:
 	@echo "... src/proto/swarm.pb.o"
 	@echo "... src/proto/swarm.pb.i"
 	@echo "... src/proto/swarm.pb.s"
+	@echo "... src/swarm.o"
+	@echo "... src/swarm.i"
+	@echo "... src/swarm.s"
 .PHONY : help
 
 

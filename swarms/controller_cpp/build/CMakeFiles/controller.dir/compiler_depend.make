@@ -2051,6 +2051,7 @@ controller: /lib/x86_64-linux-gnu/libc.so.6 \
   /usr/lib/x86_64-linux-gnu/libssl.so \
   /usr/lib/x86_64-linux-gnu/libupb.so.29.0.0 \
   /usr/lib/x86_64-linux-gnu/libz.so \
+  CMakeFiles/controller.dir/src/controller.cpp.o \
   CMakeFiles/controller.dir/src/main.cpp.o \
   CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o \
   CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o
@@ -2059,6 +2060,8 @@ controller: /lib/x86_64-linux-gnu/libc.so.6 \
 CMakeFiles/controller.dir/src/proto/swarm.pb.cc.o:
 
 CMakeFiles/controller.dir/src/proto/swarm.grpc.pb.cc.o:
+
+CMakeFiles/controller.dir/src/controller.cpp.o:
 
 /usr/lib/x86_64-linux-gnu/libz.so:
 

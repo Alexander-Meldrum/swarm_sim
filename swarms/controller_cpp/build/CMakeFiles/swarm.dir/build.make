@@ -86,10 +86,24 @@ CMakeFiles/swarm.dir/src/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/swarm.dir/src/main.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/main.cpp -o CMakeFiles/swarm.dir/src/main.cpp.s
 
+CMakeFiles/swarm.dir/src/swarm.cpp.o: CMakeFiles/swarm.dir/flags.make
+CMakeFiles/swarm.dir/src/swarm.cpp.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/swarm.cpp
+CMakeFiles/swarm.dir/src/swarm.cpp.o: CMakeFiles/swarm.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/swarm.dir/src/swarm.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/swarm.dir/src/swarm.cpp.o -MF CMakeFiles/swarm.dir/src/swarm.cpp.o.d -o CMakeFiles/swarm.dir/src/swarm.cpp.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/swarm.cpp
+
+CMakeFiles/swarm.dir/src/swarm.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/swarm.dir/src/swarm.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/swarm.cpp > CMakeFiles/swarm.dir/src/swarm.cpp.i
+
+CMakeFiles/swarm.dir/src/swarm.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/swarm.dir/src/swarm.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/swarm.cpp -o CMakeFiles/swarm.dir/src/swarm.cpp.s
+
 CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o: CMakeFiles/swarm.dir/flags.make
 CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.pb.cc
 CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o: CMakeFiles/swarm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o -MF CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o.d -o CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.pb.cc
 
 CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.i: cmake_force
@@ -103,7 +117,7 @@ CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.s: cmake_force
 CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o: CMakeFiles/swarm.dir/flags.make
 CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o: /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.grpc.pb.cc
 CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o: CMakeFiles/swarm.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o -MF CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o.d -o CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o -c /home/s0001033/Repo/swarm_sim/swarms/controller_cpp/src/proto/swarm.grpc.pb.cc
 
 CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.i: cmake_force
@@ -117,6 +131,7 @@ CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.s: cmake_force
 # Object files for target swarm
 swarm_OBJECTS = \
 "CMakeFiles/swarm.dir/src/main.cpp.o" \
+"CMakeFiles/swarm.dir/src/swarm.cpp.o" \
 "CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o" \
 "CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o"
 
@@ -124,6 +139,7 @@ swarm_OBJECTS = \
 swarm_EXTERNAL_OBJECTS =
 
 swarm: CMakeFiles/swarm.dir/src/main.cpp.o
+swarm: CMakeFiles/swarm.dir/src/swarm.cpp.o
 swarm: CMakeFiles/swarm.dir/src/proto/swarm.pb.cc.o
 swarm: CMakeFiles/swarm.dir/src/proto/swarm.grpc.pb.cc.o
 swarm: CMakeFiles/swarm.dir/build.make
@@ -184,7 +200,7 @@ swarm: /usr/lib/x86_64-linux-gnu/libabsl_time_zone.so.20220623.0.0
 swarm: /usr/lib/x86_64-linux-gnu/libssl.so
 swarm: /usr/lib/x86_64-linux-gnu/libcrypto.so
 swarm: CMakeFiles/swarm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable swarm"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable swarm"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/swarm.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

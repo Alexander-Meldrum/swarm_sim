@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/include -I/home/s0001033/Repo/swarm_sim/swarms/controller_cpp/build
 
 CXX_FLAGS = -std=c++23 -pthread
 
