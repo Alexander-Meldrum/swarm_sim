@@ -20,7 +20,7 @@ using swarm_proto::DroneObservation;
 
 
 int main() {
-    std::cout <<"[controller] Launching swarm (controller_cpp)" << std::endl;
+    std::cout <<"[swarm] Launching Swarm Controller (swarm_cpp)" << std::endl;
 
     // Connect to simulator
     auto channel = grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials());
@@ -28,21 +28,17 @@ int main() {
 
     swarm::SwarmController controller(std::move(stub));
 
-    uint32_t num_drones = 5;   // number of drones requested
-    uint64_t max_steps = 10;   // max simumlation steps requested
-    float dt = 0.02;      // Simulator step delta time requested
-
-    std::cout <<"[controller] Resetting Controller\n" << std::endl;
+    uint32_t num_drones = 5;    // number of drones request
+    uint64_t max_steps = 1000;   // max simumlation steps request
+    float dt = 0.02;            // Simulator step delta time request
 
     controller.reset(num_drones, max_steps, dt);
-
-    std::cout <<"[controller] Simulator Reset Finished\n" << std::endl;
 
     while (true) {
         auto resp = controller.step();
 
         if (resp.done()) {
-            std::cout <<"[controller] Episode finished\n" << std::endl;
+            std::cout <<"[swarm] Episode finished, sim time: " << controller.step_count() * controller.dt() <<" sec\n" << std::endl;
             break;
         }
     }

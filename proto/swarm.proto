@@ -37,7 +37,7 @@ message StepResponse {
   // One observation per drone (same ordering)
   repeated DroneObservation observations = 2;
   // Global RL signals
-  float reward = 3;
+  float global_reward = 3;
   bool done = 4;
 }
 

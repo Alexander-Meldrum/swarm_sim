@@ -70,7 +70,7 @@ PROTOBUF_CONSTEXPR StepResponse::StepResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.observations_)*/{}
   , /*decltype(_impl_.step_)*/uint64_t{0u}
-  , /*decltype(_impl_.reward_)*/0
+  , /*decltype(_impl_.global_reward_)*/0
   , /*decltype(_impl_.done_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct StepResponseDefaultTypeInternal {
@@ -158,7 +158,7 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   ~0u,  // no _inlined_string_donated_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.step_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.observations_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.reward_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.global_reward_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.done_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _internal_metadata_),
@@ -208,25 +208,25 @@ const char descriptor_table_protodef_swarm_2eproto[] PROTOBUF_SECTION_VARIABLE(p
   "\020DroneObservation\022\n\n\002ox\030\001 \001(\002\022\n\n\002oy\030\002 \001("
   "\002\022\n\n\002oz\030\003 \001(\002\022\027\n\017collision_count\030\004 \001(\r\"F"
   "\n\013StepRequest\022\014\n\004step\030\001 \001(\004\022)\n\007actions\030\002"
-  " \003(\0132\030.swarm_proto.DroneAction\"o\n\014StepRe"
+  " \003(\0132\030.swarm_proto.DroneAction\"v\n\014StepRe"
   "sponse\022\014\n\004step\030\001 \001(\004\0223\n\014observations\030\002 \003"
-  "(\0132\035.swarm_proto.DroneObservation\022\016\n\006rew"
-  "ard\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\210\001\n\014ResetRequest"
-  "\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tma"
-  "x_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022#\n\033randomize_i"
-  "nitial_positions\030\005 \001(\010\022\022\n\narena_size\030\006 \001"
-  "(\002\"\205\001\n\rResetResponse\022\014\n\004step\030\001 \001(\004\022\022\n\nnu"
-  "m_drones\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030"
-  "\004 \001(\002\0223\n\014observations\030\005 \003(\0132\035.swarm_prot"
-  "o.DroneObservation2\222\001\n\023swarm_proto_servi"
-  "ce\022;\n\004Step\022\030.swarm_proto.StepRequest\032\031.s"
-  "warm_proto.StepResponse\022>\n\005Reset\022\031.swarm"
-  "_proto.ResetRequest\032\032.swarm_proto.ResetR"
-  "esponseb\006proto3"
+  "(\0132\035.swarm_proto.DroneObservation\022\025\n\rglo"
+  "bal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\210\001\n\014Reset"
+  "Request\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001("
+  "\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022#\n\033rand"
+  "omize_initial_positions\030\005 \001(\010\022\022\n\narena_s"
+  "ize\030\006 \001(\002\"\205\001\n\rResetResponse\022\014\n\004step\030\001 \001("
+  "\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004"
+  "\022\n\n\002dt\030\004 \001(\002\0223\n\014observations\030\005 \003(\0132\035.swa"
+  "rm_proto.DroneObservation2\222\001\n\023swarm_prot"
+  "o_service\022;\n\004Step\022\030.swarm_proto.StepRequ"
+  "est\032\031.swarm_proto.StepResponse\022>\n\005Reset\022"
+  "\031.swarm_proto.ResetRequest\032\032.swarm_proto"
+  ".ResetResponseb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_swarm_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_swarm_2eproto = {
-    false, false, 775, descriptor_table_protodef_swarm_2eproto,
+    false, false, 782, descriptor_table_protodef_swarm_2eproto,
     "swarm.proto",
     &descriptor_table_swarm_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
@@ -1037,7 +1037,7 @@ StepResponse::StepResponse(const StepResponse& from)
   new (&_impl_) Impl_{
       decltype(_impl_.observations_){from._impl_.observations_}
     , decltype(_impl_.step_){}
-    , decltype(_impl_.reward_){}
+    , decltype(_impl_.global_reward_){}
     , decltype(_impl_.done_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
@@ -1055,7 +1055,7 @@ inline void StepResponse::SharedCtor(
   new (&_impl_) Impl_{
       decltype(_impl_.observations_){arena}
     , decltype(_impl_.step_){uint64_t{0u}}
-    , decltype(_impl_.reward_){0}
+    , decltype(_impl_.global_reward_){0}
     , decltype(_impl_.done_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
@@ -1119,10 +1119,10 @@ const char* StepResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
         } else
           goto handle_unusual;
         continue;
-      // float reward = 3;
+      // float global_reward = 3;
       case 3:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
-          _impl_.reward_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          _impl_.global_reward_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -1178,14 +1178,14 @@ uint8_t* StepResponse::_InternalSerialize(
         InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
   }
 
-  // float reward = 3;
+  // float global_reward = 3;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_reward = this->_internal_reward();
-  uint32_t raw_reward;
-  memcpy(&raw_reward, &tmp_reward, sizeof(tmp_reward));
-  if (raw_reward != 0) {
+  float tmp_global_reward = this->_internal_global_reward();
+  uint32_t raw_global_reward;
+  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
+  if (raw_global_reward != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_reward(), target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_global_reward(), target);
   }
 
   // bool done = 4;
@@ -1222,12 +1222,12 @@ size_t StepResponse::ByteSizeLong() const {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_step());
   }
 
-  // float reward = 3;
+  // float global_reward = 3;
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_reward = this->_internal_reward();
-  uint32_t raw_reward;
-  memcpy(&raw_reward, &tmp_reward, sizeof(tmp_reward));
-  if (raw_reward != 0) {
+  float tmp_global_reward = this->_internal_global_reward();
+  uint32_t raw_global_reward;
+  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
+  if (raw_global_reward != 0) {
     total_size += 1 + 4;
   }
 
@@ -1259,11 +1259,11 @@ void StepResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
     _this->_internal_set_step(from._internal_step());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_reward = from._internal_reward();
-  uint32_t raw_reward;
-  memcpy(&raw_reward, &tmp_reward, sizeof(tmp_reward));
-  if (raw_reward != 0) {
-    _this->_internal_set_reward(from._internal_reward());
+  float tmp_global_reward = from._internal_global_reward();
+  uint32_t raw_global_reward;
+  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
+  if (raw_global_reward != 0) {
+    _this->_internal_set_global_reward(from._internal_global_reward());
   }
   if (from._internal_done() != 0) {
     _this->_internal_set_done(from._internal_done());

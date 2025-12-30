@@ -38,33 +38,36 @@ ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, fl
     ResetRequest request;
     ResetResponse response;
     grpc::ClientContext context;
-    
-    std::cout <<"[controller] Reset, step: " << step_ << std::endl;
-    std::cout <<"[controller] Reset, num_drones: " << num_drones << std::endl;
-    // std::cout.flush();
+
+    std::cout <<"[swarm] Resetting Swarm Controller & Simulator..." << std::endl;
 
     // Data that we request to be set in simulator
     request.set_num_drones(num_drones);
     request.set_max_steps(max_steps);
     request.set_dt(dt);
 
-    std::cout <<"[controller] request.num_drones() " << request.num_drones() << std::endl;
-
     // BLOCKING RPC call (synchronous)
     auto status = stub_->Reset(&context, request, &response);
     if (!status.ok()) {
         throw std::runtime_error(status.error_message());
     }
+    std::cout <<"[swarm] Simulator Reset Finished" << std::endl;
+
     // Populate data that authoritative simulator responds with
     num_drones_ = response.num_drones();
     step_ = response.step();
     dt_ = response.dt();
 
-    // Observations saved until next step
+    std::cout <<"[swarm] Simulator Confirms Reset:" << std::endl;
+    std::cout <<"step:       " << step_ << std::endl;
+    std::cout <<"num_drones: " << num_drones << std::endl;
+    std::cout <<"max_steps:  " << max_steps << std::endl;
+    std::cout <<"dt:         " << dt << std::endl;
+
+    // Observations, reserve memory and save first step's obs for next step
     obs_.reserve(num_drones_ * num_observation_features_);
     SwarmController::consume_observations_from_proto(response.observations());
 
-    std::cout <<"[controller] Simulator reset to step: " << step_ << std::endl;
     return response;
 }
 
@@ -85,7 +88,7 @@ StepResponse SwarmController::step() {
         a->set_az(0.0f);
     }
 
-    // BLOCKING RPC call (synchronous)
+    // Blocking RPC call to step the simulator (synchronous)
     auto status = stub_->Step(&context, request, &response);
     if (!status.ok()) {
         throw std::runtime_error(status.error_message());
@@ -95,19 +98,19 @@ StepResponse SwarmController::step() {
 
     if (response.done()) {
         // TODO
-        std::cout <<"[controller] World Simulator Done" << std::endl;
+        std::cout <<"[swarm] World Simulator Done" << std::endl;
         // Stop stepping immediately
         // Log episode return
         return response;
     }
 
-    // Consume observations, save for next step
+    // Consume & flatten observations, save for next step
     SwarmController::consume_observations_from_proto(response.observations());
 
-    float reward = response.reward();
-    std::cout   << "Step:    " << step_
-                << "reward:  " << reward
-                << std::endl;
+    float reward = response.global_reward();
+    // std::cout   << "Step:    " << step_
+    //             << "reward:  " << reward
+    //             << std::endl;
 
 
     return response;

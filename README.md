@@ -43,3 +43,5 @@ protoc \
 ### Visualization
 
 TODO
+
+python tools/plot_swarm.py logs/episode_000001.bin

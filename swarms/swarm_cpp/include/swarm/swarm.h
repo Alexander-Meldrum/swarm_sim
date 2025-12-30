@@ -26,13 +26,12 @@ public:
     explicit SwarmController(std::unique_ptr<swarm_proto_service::Stub> stub)
         : stub_(std::move(stub)) {}
 
-
     ResetResponse reset(uint32_t num_drones, uint64_t max_steps, float dt);
     StepResponse step();
 
-    
-
-    const std::vector<float>& observations_() const {return obs_;}
+    const std::vector<float>& observations() const {return obs_;}
+    uint64_t step_count() const {return step_;}
+    float dt() const {return dt_;}
     
 
 private:

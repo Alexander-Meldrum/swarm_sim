@@ -718,7 +718,7 @@ class StepResponse final :
   enum : int {
     kObservationsFieldNumber = 2,
     kStepFieldNumber = 1,
-    kRewardFieldNumber = 3,
+    kGlobalRewardFieldNumber = 3,
     kDoneFieldNumber = 4,
   };
   // repeated .swarm_proto.DroneObservation observations = 2;
@@ -748,13 +748,13 @@ class StepResponse final :
   void _internal_set_step(uint64_t value);
   public:
 
-  // float reward = 3;
-  void clear_reward();
-  float reward() const;
-  void set_reward(float value);
+  // float global_reward = 3;
+  void clear_global_reward();
+  float global_reward() const;
+  void set_global_reward(float value);
   private:
-  float _internal_reward() const;
-  void _internal_set_reward(float value);
+  float _internal_global_reward() const;
+  void _internal_set_global_reward(float value);
   public:
 
   // bool done = 4;
@@ -776,7 +776,7 @@ class StepResponse final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::swarm_proto::DroneObservation > observations_;
     uint64_t step_;
-    float reward_;
+    float global_reward_;
     bool done_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -1470,24 +1470,24 @@ StepResponse::observations() const {
   return _impl_.observations_;
 }
 
-// float reward = 3;
-inline void StepResponse::clear_reward() {
-  _impl_.reward_ = 0;
+// float global_reward = 3;
+inline void StepResponse::clear_global_reward() {
+  _impl_.global_reward_ = 0;
 }
-inline float StepResponse::_internal_reward() const {
-  return _impl_.reward_;
+inline float StepResponse::_internal_global_reward() const {
+  return _impl_.global_reward_;
 }
-inline float StepResponse::reward() const {
-  // @@protoc_insertion_point(field_get:swarm_proto.StepResponse.reward)
-  return _internal_reward();
+inline float StepResponse::global_reward() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.StepResponse.global_reward)
+  return _internal_global_reward();
 }
-inline void StepResponse::_internal_set_reward(float value) {
+inline void StepResponse::_internal_set_global_reward(float value) {
   
-  _impl_.reward_ = value;
+  _impl_.global_reward_ = value;
 }
-inline void StepResponse::set_reward(float value) {
-  _internal_set_reward(value);
-  // @@protoc_insertion_point(field_set:swarm_proto.StepResponse.reward)
+inline void StepResponse::set_global_reward(float value) {
+  _internal_set_global_reward(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.StepResponse.global_reward)
 }
 
 // bool done = 4;
