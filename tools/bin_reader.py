@@ -1,13 +1,23 @@
-# bin_reader.py
 import struct
 import numpy as np
 
-from schema import (
-    STEP_HEADER_FMT,
-    STEP_HEADER_SIZE,
-    DRONE_FMT_BASE,
-    DRONE_SIZE,
-)
+# Binary schema for swarm log
+# *******************************************************
+# ---- step header ----
+# step: u64
+# num_drones: u32
+# global_reward: f64
+STEP_HEADER_FMT = "<Q I d"
+STEP_HEADER_SIZE = struct.calcsize(STEP_HEADER_FMT)
+
+# ---- per-drone data ----
+# px, py, pz, vx, vy, vz (all f32)
+# Note: Add "<" in dependant scripts afterwards to enable multiplying this value by num_drones
+DRONE_FMT_BASE = "f"
+DRONE_BASE_SIZE = struct.calcsize(DRONE_FMT_BASE)
+# *******************************************************
+
+DRONE_STATE_FIELDS_NUM = 6
 
 
 class SwarmLog:
@@ -36,13 +46,13 @@ def read_swarm_log(path: str) -> SwarmLog:
             )
 
             # ---- read all drone data in one shot ----
-            drone_fmt = "<" + "f" * (6 * num_drones)
-            drone_bytes = f.read(6 * num_drones * 4)
+            drone_fmt = "<" + DRONE_FMT_BASE * (DRONE_STATE_FIELDS_NUM * num_drones)
+            drone_bytes = f.read(DRONE_STATE_FIELDS_NUM * num_drones * DRONE_BASE_SIZE)
 
-            data = struct.unpack(drone_fmt, drone_bytes)
+            drone_states = struct.unpack(drone_fmt, drone_bytes)
 
-            arr = np.asarray(data, dtype=np.float32).reshape(
-                num_drones, 6
+            arr = np.asarray(drone_states, dtype=np.float32).reshape(
+                num_drones, DRONE_STATE_FIELDS_NUM
             )
 
             steps.append(step)
@@ -52,7 +62,7 @@ def read_swarm_log(path: str) -> SwarmLog:
 
     return SwarmLog(
         steps=np.asarray(steps, dtype=np.uint64),
-        rewards=np.asarray(rewards, dtype=np.float64),
+        rewards=np.asarray(rewards, dtype=np.float32),
         pos=np.stack(positions),
         vel=np.stack(velocities),
     )

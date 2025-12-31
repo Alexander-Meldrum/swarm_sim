@@ -13,9 +13,10 @@ with open("logs/episode_000001.csv", "w", newline="") as out:
     ])
 
     for t in range(len(log.steps)):
-        for i in range(log.pos.shape[1]):
+        for i in range(log.pos.shape[1]):  # [T, N, 3]  Picked N, the amount of drones
             writer.writerow([
-                log.steps[t], i,
+                log.steps[t],
+                i,                         # Drone id
                 *log.pos[t, i],
                 *log.vel[t, i],
                 log.rewards[t],

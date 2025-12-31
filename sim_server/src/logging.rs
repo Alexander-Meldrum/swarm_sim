@@ -10,19 +10,19 @@ pub fn open_episode_log(episode: u64) -> BufWriter<File> {
     BufWriter::new(File::create(path).unwrap())
 }
 
-// When updating logging, any plotting tools or bin_to_csv.py might need edits.
+// When updating logging, tools/bin_to_csv.py might need edits.
 pub fn log_world(
     world: &mut World,
 ) -> std::io::Result<()> {
 
-    let num = world.num_drones;
+    // let num = world.num_drones;
     let log = world.log.as_mut().expect("log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&num.to_le_bytes())?;
+    log.write_all(&world.num_drones.to_le_bytes())?;
     log.write_all(&world.global_reward.to_le_bytes())?;
 
-    for i in 0..num as usize {
+    for i in 0..world.num_drones as usize {
         let p = &world.position[i];
         let v = &world.velocity[i];
 
