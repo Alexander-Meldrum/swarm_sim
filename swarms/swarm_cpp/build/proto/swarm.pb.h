@@ -910,8 +910,9 @@ class ResetRequest final :
     kMaxStepsFieldNumber = 3,
     kNumDronesFieldNumber = 2,
     kDtFieldNumber = 4,
-    kRandomizeInitialPositionsFieldNumber = 5,
+    kRandomizeInitPosFieldNumber = 5,
     kArenaSizeFieldNumber = 6,
+    kMinDistFieldNumber = 7,
   };
   // uint64 seed = 1;
   void clear_seed();
@@ -949,13 +950,13 @@ class ResetRequest final :
   void _internal_set_dt(float value);
   public:
 
-  // bool randomize_initial_positions = 5;
-  void clear_randomize_initial_positions();
-  bool randomize_initial_positions() const;
-  void set_randomize_initial_positions(bool value);
+  // bool randomize_init_pos = 5;
+  void clear_randomize_init_pos();
+  bool randomize_init_pos() const;
+  void set_randomize_init_pos(bool value);
   private:
-  bool _internal_randomize_initial_positions() const;
-  void _internal_set_randomize_initial_positions(bool value);
+  bool _internal_randomize_init_pos() const;
+  void _internal_set_randomize_init_pos(bool value);
   public:
 
   // float arena_size = 6;
@@ -965,6 +966,15 @@ class ResetRequest final :
   private:
   float _internal_arena_size() const;
   void _internal_set_arena_size(float value);
+  public:
+
+  // float min_dist = 7;
+  void clear_min_dist();
+  float min_dist() const;
+  void set_min_dist(float value);
+  private:
+  float _internal_min_dist() const;
+  void _internal_set_min_dist(float value);
   public:
 
   // @@protoc_insertion_point(class_scope:swarm_proto.ResetRequest)
@@ -979,8 +989,9 @@ class ResetRequest final :
     uint64_t max_steps_;
     uint32_t num_drones_;
     float dt_;
-    bool randomize_initial_positions_;
+    bool randomize_init_pos_;
     float arena_size_;
+    float min_dist_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1594,24 +1605,24 @@ inline void ResetRequest::set_dt(float value) {
   // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.dt)
 }
 
-// bool randomize_initial_positions = 5;
-inline void ResetRequest::clear_randomize_initial_positions() {
-  _impl_.randomize_initial_positions_ = false;
+// bool randomize_init_pos = 5;
+inline void ResetRequest::clear_randomize_init_pos() {
+  _impl_.randomize_init_pos_ = false;
 }
-inline bool ResetRequest::_internal_randomize_initial_positions() const {
-  return _impl_.randomize_initial_positions_;
+inline bool ResetRequest::_internal_randomize_init_pos() const {
+  return _impl_.randomize_init_pos_;
 }
-inline bool ResetRequest::randomize_initial_positions() const {
-  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.randomize_initial_positions)
-  return _internal_randomize_initial_positions();
+inline bool ResetRequest::randomize_init_pos() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.randomize_init_pos)
+  return _internal_randomize_init_pos();
 }
-inline void ResetRequest::_internal_set_randomize_initial_positions(bool value) {
+inline void ResetRequest::_internal_set_randomize_init_pos(bool value) {
   
-  _impl_.randomize_initial_positions_ = value;
+  _impl_.randomize_init_pos_ = value;
 }
-inline void ResetRequest::set_randomize_initial_positions(bool value) {
-  _internal_set_randomize_initial_positions(value);
-  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.randomize_initial_positions)
+inline void ResetRequest::set_randomize_init_pos(bool value) {
+  _internal_set_randomize_init_pos(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.randomize_init_pos)
 }
 
 // float arena_size = 6;
@@ -1632,6 +1643,26 @@ inline void ResetRequest::_internal_set_arena_size(float value) {
 inline void ResetRequest::set_arena_size(float value) {
   _internal_set_arena_size(value);
   // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.arena_size)
+}
+
+// float min_dist = 7;
+inline void ResetRequest::clear_min_dist() {
+  _impl_.min_dist_ = 0;
+}
+inline float ResetRequest::_internal_min_dist() const {
+  return _impl_.min_dist_;
+}
+inline float ResetRequest::min_dist() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.ResetRequest.min_dist)
+  return _internal_min_dist();
+}
+inline void ResetRequest::_internal_set_min_dist(float value) {
+  
+  _impl_.min_dist_ = value;
+}
+inline void ResetRequest::set_min_dist(float value) {
+  _internal_set_min_dist(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.ResetRequest.min_dist)
 }
 
 // -------------------------------------------------------------------

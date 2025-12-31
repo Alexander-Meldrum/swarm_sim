@@ -47,8 +47,9 @@ message ResetRequest {
   uint32 num_drones = 2;
   uint64 max_steps = 3;
   float dt = 4;
-  bool randomize_initial_positions = 5;
+  bool randomize_init_pos = 5;
   float arena_size = 6;
+  float min_dist=7;
 }
 
 message ResetResponse {

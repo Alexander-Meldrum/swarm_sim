@@ -31,8 +31,11 @@ int main() {
     uint32_t num_drones = 5;    // number of drones request
     uint64_t max_steps = 1000;   // max simumlation steps request
     float dt = 0.02;            // Simulator step delta time request
+    bool randomize_init_pos = true;
+    float arena_size = 10;      // radius [m]
+    float min_dist = 1;         // min distance from other drones upon random init positions
 
-    controller.reset(num_drones, max_steps, dt);
+    controller.reset(num_drones, max_steps, dt, randomize_init_pos, arena_size, min_dist);
 
     while (true) {
         auto resp = controller.step();

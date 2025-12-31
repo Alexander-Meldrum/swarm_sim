@@ -88,8 +88,9 @@ PROTOBUF_CONSTEXPR ResetRequest::ResetRequest(
   , /*decltype(_impl_.max_steps_)*/uint64_t{0u}
   , /*decltype(_impl_.num_drones_)*/0u
   , /*decltype(_impl_.dt_)*/0
-  , /*decltype(_impl_.randomize_initial_positions_)*/false
+  , /*decltype(_impl_.randomize_init_pos_)*/false
   , /*decltype(_impl_.arena_size_)*/0
+  , /*decltype(_impl_.min_dist_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ResetRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ResetRequestDefaultTypeInternal()
@@ -170,8 +171,9 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.num_drones_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.max_steps_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.dt_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.randomize_initial_positions_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.randomize_init_pos_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.arena_size_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.min_dist_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -190,7 +192,7 @@ static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protode
   { 19, -1, -1, sizeof(::swarm_proto::StepRequest)},
   { 27, -1, -1, sizeof(::swarm_proto::StepResponse)},
   { 37, -1, -1, sizeof(::swarm_proto::ResetRequest)},
-  { 49, -1, -1, sizeof(::swarm_proto::ResetResponse)},
+  { 50, -1, -1, sizeof(::swarm_proto::ResetResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -211,22 +213,22 @@ const char descriptor_table_protodef_swarm_2eproto[] PROTOBUF_SECTION_VARIABLE(p
   " \003(\0132\030.swarm_proto.DroneAction\"v\n\014StepRe"
   "sponse\022\014\n\004step\030\001 \001(\004\0223\n\014observations\030\002 \003"
   "(\0132\035.swarm_proto.DroneObservation\022\025\n\rglo"
-  "bal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\210\001\n\014Reset"
+  "bal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\221\001\n\014Reset"
   "Request\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001("
-  "\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022#\n\033rand"
-  "omize_initial_positions\030\005 \001(\010\022\022\n\narena_s"
-  "ize\030\006 \001(\002\"\205\001\n\rResetResponse\022\014\n\004step\030\001 \001("
-  "\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004"
-  "\022\n\n\002dt\030\004 \001(\002\0223\n\014observations\030\005 \003(\0132\035.swa"
-  "rm_proto.DroneObservation2\222\001\n\023swarm_prot"
-  "o_service\022;\n\004Step\022\030.swarm_proto.StepRequ"
-  "est\032\031.swarm_proto.StepResponse\022>\n\005Reset\022"
-  "\031.swarm_proto.ResetRequest\032\032.swarm_proto"
-  ".ResetResponseb\006proto3"
+  "\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022\032\n\022rand"
+  "omize_init_pos\030\005 \001(\010\022\022\n\narena_size\030\006 \001(\002"
+  "\022\020\n\010min_dist\030\007 \001(\002\"\205\001\n\rResetResponse\022\014\n\004"
+  "step\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tmax_st"
+  "eps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\0223\n\014observations\030\005 "
+  "\003(\0132\035.swarm_proto.DroneObservation2\222\001\n\023s"
+  "warm_proto_service\022;\n\004Step\022\030.swarm_proto"
+  ".StepRequest\032\031.swarm_proto.StepResponse\022"
+  ">\n\005Reset\022\031.swarm_proto.ResetRequest\032\032.sw"
+  "arm_proto.ResetResponseb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_swarm_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_swarm_2eproto = {
-    false, false, 782, descriptor_table_protodef_swarm_2eproto,
+    false, false, 791, descriptor_table_protodef_swarm_2eproto,
     "swarm.proto",
     &descriptor_table_swarm_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
@@ -1320,14 +1322,15 @@ ResetRequest::ResetRequest(const ResetRequest& from)
     , decltype(_impl_.max_steps_){}
     , decltype(_impl_.num_drones_){}
     , decltype(_impl_.dt_){}
-    , decltype(_impl_.randomize_initial_positions_){}
+    , decltype(_impl_.randomize_init_pos_){}
     , decltype(_impl_.arena_size_){}
+    , decltype(_impl_.min_dist_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.seed_, &from._impl_.seed_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.arena_size_) -
-    reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.arena_size_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.min_dist_) -
+    reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.min_dist_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.ResetRequest)
 }
 
@@ -1340,8 +1343,9 @@ inline void ResetRequest::SharedCtor(
     , decltype(_impl_.max_steps_){uint64_t{0u}}
     , decltype(_impl_.num_drones_){0u}
     , decltype(_impl_.dt_){0}
-    , decltype(_impl_.randomize_initial_positions_){false}
+    , decltype(_impl_.randomize_init_pos_){false}
     , decltype(_impl_.arena_size_){0}
+    , decltype(_impl_.min_dist_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -1370,8 +1374,8 @@ void ResetRequest::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.seed_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.arena_size_) -
-      reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.arena_size_));
+      reinterpret_cast<char*>(&_impl_.min_dist_) -
+      reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.min_dist_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1413,10 +1417,10 @@ const char* ResetRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
         } else
           goto handle_unusual;
         continue;
-      // bool randomize_initial_positions = 5;
+      // bool randomize_init_pos = 5;
       case 5:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          _impl_.randomize_initial_positions_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          _impl_.randomize_init_pos_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -1425,6 +1429,14 @@ const char* ResetRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
       case 6:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
           _impl_.arena_size_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else
+          goto handle_unusual;
+        continue;
+      // float min_dist = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
+          _impl_.min_dist_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
         } else
           goto handle_unusual;
@@ -1486,10 +1498,10 @@ uint8_t* ResetRequest::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_dt(), target);
   }
 
-  // bool randomize_initial_positions = 5;
-  if (this->_internal_randomize_initial_positions() != 0) {
+  // bool randomize_init_pos = 5;
+  if (this->_internal_randomize_init_pos() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_randomize_initial_positions(), target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_randomize_init_pos(), target);
   }
 
   // float arena_size = 6;
@@ -1500,6 +1512,16 @@ uint8_t* ResetRequest::_InternalSerialize(
   if (raw_arena_size != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_arena_size(), target);
+  }
+
+  // float min_dist = 7;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_min_dist = this->_internal_min_dist();
+  uint32_t raw_min_dist;
+  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
+  if (raw_min_dist != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_min_dist(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1542,8 +1564,8 @@ size_t ResetRequest::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // bool randomize_initial_positions = 5;
-  if (this->_internal_randomize_initial_positions() != 0) {
+  // bool randomize_init_pos = 5;
+  if (this->_internal_randomize_init_pos() != 0) {
     total_size += 1 + 1;
   }
 
@@ -1553,6 +1575,15 @@ size_t ResetRequest::ByteSizeLong() const {
   uint32_t raw_arena_size;
   memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
   if (raw_arena_size != 0) {
+    total_size += 1 + 4;
+  }
+
+  // float min_dist = 7;
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_min_dist = this->_internal_min_dist();
+  uint32_t raw_min_dist;
+  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
+  if (raw_min_dist != 0) {
     total_size += 1 + 4;
   }
 
@@ -1590,8 +1621,8 @@ void ResetRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   if (raw_dt != 0) {
     _this->_internal_set_dt(from._internal_dt());
   }
-  if (from._internal_randomize_initial_positions() != 0) {
-    _this->_internal_set_randomize_initial_positions(from._internal_randomize_initial_positions());
+  if (from._internal_randomize_init_pos() != 0) {
+    _this->_internal_set_randomize_init_pos(from._internal_randomize_init_pos());
   }
   static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
   float tmp_arena_size = from._internal_arena_size();
@@ -1599,6 +1630,13 @@ void ResetRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
   if (raw_arena_size != 0) {
     _this->_internal_set_arena_size(from._internal_arena_size());
+  }
+  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
+  float tmp_min_dist = from._internal_min_dist();
+  uint32_t raw_min_dist;
+  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
+  if (raw_min_dist != 0) {
+    _this->_internal_set_min_dist(from._internal_min_dist());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1618,8 +1656,8 @@ void ResetRequest::InternalSwap(ResetRequest* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.arena_size_)
-      + sizeof(ResetRequest::_impl_.arena_size_)
+      PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.min_dist_)
+      + sizeof(ResetRequest::_impl_.min_dist_)
       - PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.seed_)>(
           reinterpret_cast<char*>(&_impl_.seed_),
           reinterpret_cast<char*>(&other->_impl_.seed_));

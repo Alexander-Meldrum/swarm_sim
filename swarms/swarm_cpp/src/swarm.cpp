@@ -34,7 +34,7 @@ void SwarmController::consume_observations_from_proto(const google::protobuf::Re
     }
 }
 
-ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, float dt) {
+ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, float dt, bool randomize_init_pos, float arena_size, float min_dist) {
     ResetRequest request;
     ResetResponse response;
     grpc::ClientContext context;
@@ -45,6 +45,9 @@ ResetResponse SwarmController::reset(uint32_t num_drones, uint64_t max_steps, fl
     request.set_num_drones(num_drones);
     request.set_max_steps(max_steps);
     request.set_dt(dt);
+    request.set_randomize_init_pos(randomize_init_pos);
+    request.set_arena_size(arena_size);
+    request.set_min_dist(min_dist);
 
     // BLOCKING RPC call (synchronous)
     auto status = stub_->Reset(&context, request, &response);

@@ -8,6 +8,7 @@ build = "build.rs"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tonic = { version = "0.11", features = ["transport"] }
 prost = "0.12"
+rand = "0.9.2"
 
 [build-dependencies]
 tonic-build = "0.11"

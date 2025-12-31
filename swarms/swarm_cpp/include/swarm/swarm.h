@@ -26,7 +26,7 @@ public:
     explicit SwarmController(std::unique_ptr<swarm_proto_service::Stub> stub)
         : stub_(std::move(stub)) {}
 
-    ResetResponse reset(uint32_t num_drones, uint64_t max_steps, float dt);
+    ResetResponse reset(uint32_t num_drones, uint64_t max_steps, float dt, bool randomize_init_pos, float arena_size, float min_dist);
     StepResponse step();
 
     const std::vector<float>& observations() const {return obs_;}

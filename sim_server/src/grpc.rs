@@ -14,10 +14,9 @@ use swarm_proto::swarm_proto_service_server::{
 use swarm_proto::{DroneObservation, StepRequest, StepResponse, ResetRequest, ResetResponse};
 
 pub struct SimServer {
-    // world is a tokio async Mutex, to not block gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
+    // world is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
     pub world: Mutex<World>, 
 }
-
 
 #[tonic::async_trait]
 impl SwarmProtoService for SimServer {
@@ -80,9 +79,6 @@ impl SwarmProtoService for SimServer {
 
         // Use async "await" at async network / sync simulator boundary
         let mut world = self.world.lock().await;
-
-        // let mut world = self.world.lock().unwrap();
-        // let mut rewards = self.rewards.lock().await;
         
         // Extract protobuf message
         let request = request.into_inner();
@@ -91,17 +87,17 @@ impl SwarmProtoService for SimServer {
         world.episode += 1;
         world.log = Some(open_episode_log(world.episode));
 
-        // println!("[simulator] num_drones: {}", request.num_drones);
-        // println!("[simulator] max_steps:  {}", request.max_steps);
-        // println!("[simulator] dt:         {}", request.dt);
-
-        // Read requested num_drones, max_steps, dt
+        // Read requested num_drones, max_steps, dt, seed, randomize_init_pos, arena_size, min_dist
         let num_drones = request.num_drones as usize;
         if num_drones == 0 {
             return Err(Status::invalid_argument("[simulator] num_drones must be > 0"));
         }
         let max_steps= request.max_steps;
         let dt= request.dt;
+        let seed = request.seed;
+        let randomize_init_pos = request.randomize_init_pos;
+        let arena_size = request.arena_size;
+        let min_dist = request.min_dist;
 
         // move out log safely from Option<>
         let log = world.log.take(); 
@@ -109,9 +105,18 @@ impl SwarmProtoService for SimServer {
         // Reset world state, replace the World inside the mutex
         *world = World::new(num_drones, max_steps, dt, world.episode, log);
 
+        world.init_drones(Some(seed), randomize_init_pos, arena_size, min_dist);
+        
+
+        // TODO improve obs
         let obs = (0..world.position.len()).map(|_| DroneObservation {
             ox: 0.0, oy: 0.0, oz: 0.0, collision_count: 0
         }).collect();
+
+        // Log World, braces ensure the log lock is released quickly.
+        {
+            log_world(&mut world).unwrap();
+        }
 
         println!("[simulator] Simulator World Setup Complete");
         println!("[simulator] **********************");
