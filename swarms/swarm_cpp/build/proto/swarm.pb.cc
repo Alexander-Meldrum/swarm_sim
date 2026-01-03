@@ -41,7 +41,9 @@ PROTOBUF_CONSTEXPR DroneObservation::DroneObservation(
     /*decltype(_impl_.ox_)*/0
   , /*decltype(_impl_.oy_)*/0
   , /*decltype(_impl_.oz_)*/0
-  , /*decltype(_impl_.collision_count_)*/0u
+  , /*decltype(_impl_.collisions_desired_)*/0u
+  , /*decltype(_impl_.collisions_undesired_)*/0u
+  , /*decltype(_impl_.alive_)*/false
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct DroneObservationDefaultTypeInternal {
   PROTOBUF_CONSTEXPR DroneObservationDefaultTypeInternal()
@@ -142,7 +144,9 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
   PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.ox_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.oy_),
   PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.oz_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.collision_count_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.collisions_desired_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.collisions_undesired_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.alive_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, _internal_metadata_),
   ~0u,  // no _extensions_
@@ -189,10 +193,10 @@ const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(pr
 static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, -1, -1, sizeof(::swarm_proto::DroneAction)},
   { 9, -1, -1, sizeof(::swarm_proto::DroneObservation)},
-  { 19, -1, -1, sizeof(::swarm_proto::StepRequest)},
-  { 27, -1, -1, sizeof(::swarm_proto::StepResponse)},
-  { 37, -1, -1, sizeof(::swarm_proto::ResetRequest)},
-  { 50, -1, -1, sizeof(::swarm_proto::ResetResponse)},
+  { 21, -1, -1, sizeof(::swarm_proto::StepRequest)},
+  { 29, -1, -1, sizeof(::swarm_proto::StepResponse)},
+  { 39, -1, -1, sizeof(::swarm_proto::ResetRequest)},
+  { 52, -1, -1, sizeof(::swarm_proto::ResetResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -206,29 +210,30 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_swarm_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\013swarm.proto\022\013swarm_proto\"1\n\013DroneActio"
-  "n\022\n\n\002ax\030\001 \001(\002\022\n\n\002ay\030\002 \001(\002\022\n\n\002az\030\003 \001(\002\"O\n"
+  "n\022\n\n\002ax\030\001 \001(\002\022\n\n\002ay\030\002 \001(\002\022\n\n\002az\030\003 \001(\002\"\177\n"
   "\020DroneObservation\022\n\n\002ox\030\001 \001(\002\022\n\n\002oy\030\002 \001("
-  "\002\022\n\n\002oz\030\003 \001(\002\022\027\n\017collision_count\030\004 \001(\r\"F"
-  "\n\013StepRequest\022\014\n\004step\030\001 \001(\004\022)\n\007actions\030\002"
-  " \003(\0132\030.swarm_proto.DroneAction\"v\n\014StepRe"
-  "sponse\022\014\n\004step\030\001 \001(\004\0223\n\014observations\030\002 \003"
-  "(\0132\035.swarm_proto.DroneObservation\022\025\n\rglo"
-  "bal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\221\001\n\014Reset"
-  "Request\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001("
-  "\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\022\032\n\022rand"
-  "omize_init_pos\030\005 \001(\010\022\022\n\narena_size\030\006 \001(\002"
-  "\022\020\n\010min_dist\030\007 \001(\002\"\205\001\n\rResetResponse\022\014\n\004"
-  "step\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021\n\tmax_st"
-  "eps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\0223\n\014observations\030\005 "
-  "\003(\0132\035.swarm_proto.DroneObservation2\222\001\n\023s"
-  "warm_proto_service\022;\n\004Step\022\030.swarm_proto"
-  ".StepRequest\032\031.swarm_proto.StepResponse\022"
-  ">\n\005Reset\022\031.swarm_proto.ResetRequest\032\032.sw"
-  "arm_proto.ResetResponseb\006proto3"
+  "\002\022\n\n\002oz\030\003 \001(\002\022\032\n\022collisions_desired\030\004 \001("
+  "\r\022\034\n\024collisions_undesired\030\005 \001(\r\022\r\n\005alive"
+  "\030\006 \001(\010\"F\n\013StepRequest\022\014\n\004step\030\001 \001(\004\022)\n\007a"
+  "ctions\030\002 \003(\0132\030.swarm_proto.DroneAction\"v"
+  "\n\014StepResponse\022\014\n\004step\030\001 \001(\004\0223\n\014observat"
+  "ions\030\002 \003(\0132\035.swarm_proto.DroneObservatio"
+  "n\022\025\n\rglobal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\221"
+  "\001\n\014ResetRequest\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_dro"
+  "nes\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002"
+  "\022\032\n\022randomize_init_pos\030\005 \001(\010\022\022\n\narena_si"
+  "ze\030\006 \001(\002\022\020\n\010min_dist\030\007 \001(\002\"\205\001\n\rResetResp"
+  "onse\022\014\n\004step\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021"
+  "\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\0223\n\014observa"
+  "tions\030\005 \003(\0132\035.swarm_proto.DroneObservati"
+  "on2\222\001\n\023swarm_proto_service\022;\n\004Step\022\030.swa"
+  "rm_proto.StepRequest\032\031.swarm_proto.StepR"
+  "esponse\022>\n\005Reset\022\031.swarm_proto.ResetRequ"
+  "est\032\032.swarm_proto.ResetResponseb\006proto3"
   ;
 static ::_pbi::once_flag descriptor_table_swarm_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_swarm_2eproto = {
-    false, false, 791, descriptor_table_protodef_swarm_2eproto,
+    false, false, 839, descriptor_table_protodef_swarm_2eproto,
     "swarm.proto",
     &descriptor_table_swarm_2eproto_once, nullptr, 0, 6,
     schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
@@ -533,13 +538,15 @@ DroneObservation::DroneObservation(const DroneObservation& from)
       decltype(_impl_.ox_){}
     , decltype(_impl_.oy_){}
     , decltype(_impl_.oz_){}
-    , decltype(_impl_.collision_count_){}
+    , decltype(_impl_.collisions_desired_){}
+    , decltype(_impl_.collisions_undesired_){}
+    , decltype(_impl_.alive_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   ::memcpy(&_impl_.ox_, &from._impl_.ox_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.collision_count_) -
-    reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.collision_count_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.alive_) -
+    reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.alive_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.DroneObservation)
 }
 
@@ -551,7 +558,9 @@ inline void DroneObservation::SharedCtor(
       decltype(_impl_.ox_){0}
     , decltype(_impl_.oy_){0}
     , decltype(_impl_.oz_){0}
-    , decltype(_impl_.collision_count_){0u}
+    , decltype(_impl_.collisions_desired_){0u}
+    , decltype(_impl_.collisions_undesired_){0u}
+    , decltype(_impl_.alive_){false}
     , /*decltype(_impl_._cached_size_)*/{}
   };
 }
@@ -580,8 +589,8 @@ void DroneObservation::Clear() {
   (void) cached_has_bits;
 
   ::memset(&_impl_.ox_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.collision_count_) -
-      reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.collision_count_));
+      reinterpret_cast<char*>(&_impl_.alive_) -
+      reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.alive_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -615,10 +624,26 @@ const char* DroneObservation::_InternalParse(const char* ptr, ::_pbi::ParseConte
         } else
           goto handle_unusual;
         continue;
-      // uint32 collision_count = 4;
+      // uint32 collisions_desired = 4;
       case 4:
         if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _impl_.collision_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          _impl_.collisions_desired_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // uint32 collisions_undesired = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
+          _impl_.collisions_undesired_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else
+          goto handle_unusual;
+        continue;
+      // bool alive = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
+          _impl_.alive_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
         } else
           goto handle_unusual;
@@ -682,10 +707,22 @@ uint8_t* DroneObservation::_InternalSerialize(
     target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_oz(), target);
   }
 
-  // uint32 collision_count = 4;
-  if (this->_internal_collision_count() != 0) {
+  // uint32 collisions_desired = 4;
+  if (this->_internal_collisions_desired() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(4, this->_internal_collision_count(), target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(4, this->_internal_collisions_desired(), target);
+  }
+
+  // uint32 collisions_undesired = 5;
+  if (this->_internal_collisions_undesired() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(5, this->_internal_collisions_undesired(), target);
+  }
+
+  // bool alive = 6;
+  if (this->_internal_alive() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteBoolToArray(6, this->_internal_alive(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -731,9 +768,19 @@ size_t DroneObservation::ByteSizeLong() const {
     total_size += 1 + 4;
   }
 
-  // uint32 collision_count = 4;
-  if (this->_internal_collision_count() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_collision_count());
+  // uint32 collisions_desired = 4;
+  if (this->_internal_collisions_desired() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_collisions_desired());
+  }
+
+  // uint32 collisions_undesired = 5;
+  if (this->_internal_collisions_undesired() != 0) {
+    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_collisions_undesired());
+  }
+
+  // bool alive = 6;
+  if (this->_internal_alive() != 0) {
+    total_size += 1 + 1;
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -775,8 +822,14 @@ void DroneObservation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const
   if (raw_oz != 0) {
     _this->_internal_set_oz(from._internal_oz());
   }
-  if (from._internal_collision_count() != 0) {
-    _this->_internal_set_collision_count(from._internal_collision_count());
+  if (from._internal_collisions_desired() != 0) {
+    _this->_internal_set_collisions_desired(from._internal_collisions_desired());
+  }
+  if (from._internal_collisions_undesired() != 0) {
+    _this->_internal_set_collisions_undesired(from._internal_collisions_undesired());
+  }
+  if (from._internal_alive() != 0) {
+    _this->_internal_set_alive(from._internal_alive());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -796,8 +849,8 @@ void DroneObservation::InternalSwap(DroneObservation* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(DroneObservation, _impl_.collision_count_)
-      + sizeof(DroneObservation::_impl_.collision_count_)
+      PROTOBUF_FIELD_OFFSET(DroneObservation, _impl_.alive_)
+      + sizeof(DroneObservation::_impl_.alive_)
       - PROTOBUF_FIELD_OFFSET(DroneObservation, _impl_.ox_)>(
           reinterpret_cast<char*>(&_impl_.ox_),
           reinterpret_cast<char*>(&other->_impl_.ox_));

@@ -21,8 +21,12 @@ message DroneObservation {
   float oy = 2;
   float oz = 3;
 
-  // Collision information
-  uint32 collision_count = 4;
+  // Collision information, desired: hit target foe, undesired: hit friend or ground.
+  uint32 collisions_desired = 4;
+  uint32 collisions_undesired = 5;
+
+  // Alive flag
+  bool alive = 6;
 }
 
 /* --- Step API --- */

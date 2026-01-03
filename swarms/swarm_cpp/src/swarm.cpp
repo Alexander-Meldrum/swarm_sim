@@ -27,7 +27,8 @@ void SwarmController::consume_observations_from_proto(const google::protobuf::Re
         obs_.push_back(o.ox());
         obs_.push_back(o.oy());
         obs_.push_back(o.oz());
-        obs_.push_back(o.collision_count());
+        obs_.push_back(o.collisions_desired());
+        // obs_.push_back(o.collisions_undesired());
         // obs_.push_back(o.vx());
         // obs_.push_back(o.vy());
         // obs_.push_back(o.vz());
@@ -86,7 +87,7 @@ StepResponse SwarmController::step() {
     // Build actions (one per drone)
     for (uint32_t i = 0; i < num_drones_; ++i) {
         DroneAction* a = request.add_actions();
-        a->set_ax(0.1f);
+        a->set_ax(1.0f);
         a->set_ay(0.0f);
         a->set_az(0.0f);
     }

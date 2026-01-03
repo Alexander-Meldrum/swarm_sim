@@ -370,7 +370,9 @@ class DroneObservation final :
     kOxFieldNumber = 1,
     kOyFieldNumber = 2,
     kOzFieldNumber = 3,
-    kCollisionCountFieldNumber = 4,
+    kCollisionsDesiredFieldNumber = 4,
+    kCollisionsUndesiredFieldNumber = 5,
+    kAliveFieldNumber = 6,
   };
   // float ox = 1;
   void clear_ox();
@@ -399,13 +401,31 @@ class DroneObservation final :
   void _internal_set_oz(float value);
   public:
 
-  // uint32 collision_count = 4;
-  void clear_collision_count();
-  uint32_t collision_count() const;
-  void set_collision_count(uint32_t value);
+  // uint32 collisions_desired = 4;
+  void clear_collisions_desired();
+  uint32_t collisions_desired() const;
+  void set_collisions_desired(uint32_t value);
   private:
-  uint32_t _internal_collision_count() const;
-  void _internal_set_collision_count(uint32_t value);
+  uint32_t _internal_collisions_desired() const;
+  void _internal_set_collisions_desired(uint32_t value);
+  public:
+
+  // uint32 collisions_undesired = 5;
+  void clear_collisions_undesired();
+  uint32_t collisions_undesired() const;
+  void set_collisions_undesired(uint32_t value);
+  private:
+  uint32_t _internal_collisions_undesired() const;
+  void _internal_set_collisions_undesired(uint32_t value);
+  public:
+
+  // bool alive = 6;
+  void clear_alive();
+  bool alive() const;
+  void set_alive(bool value);
+  private:
+  bool _internal_alive() const;
+  void _internal_set_alive(bool value);
   public:
 
   // @@protoc_insertion_point(class_scope:swarm_proto.DroneObservation)
@@ -419,7 +439,9 @@ class DroneObservation final :
     float ox_;
     float oy_;
     float oz_;
-    uint32_t collision_count_;
+    uint32_t collisions_desired_;
+    uint32_t collisions_undesired_;
+    bool alive_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1333,24 +1355,64 @@ inline void DroneObservation::set_oz(float value) {
   // @@protoc_insertion_point(field_set:swarm_proto.DroneObservation.oz)
 }
 
-// uint32 collision_count = 4;
-inline void DroneObservation::clear_collision_count() {
-  _impl_.collision_count_ = 0u;
+// uint32 collisions_desired = 4;
+inline void DroneObservation::clear_collisions_desired() {
+  _impl_.collisions_desired_ = 0u;
 }
-inline uint32_t DroneObservation::_internal_collision_count() const {
-  return _impl_.collision_count_;
+inline uint32_t DroneObservation::_internal_collisions_desired() const {
+  return _impl_.collisions_desired_;
 }
-inline uint32_t DroneObservation::collision_count() const {
-  // @@protoc_insertion_point(field_get:swarm_proto.DroneObservation.collision_count)
-  return _internal_collision_count();
+inline uint32_t DroneObservation::collisions_desired() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.DroneObservation.collisions_desired)
+  return _internal_collisions_desired();
 }
-inline void DroneObservation::_internal_set_collision_count(uint32_t value) {
+inline void DroneObservation::_internal_set_collisions_desired(uint32_t value) {
   
-  _impl_.collision_count_ = value;
+  _impl_.collisions_desired_ = value;
 }
-inline void DroneObservation::set_collision_count(uint32_t value) {
-  _internal_set_collision_count(value);
-  // @@protoc_insertion_point(field_set:swarm_proto.DroneObservation.collision_count)
+inline void DroneObservation::set_collisions_desired(uint32_t value) {
+  _internal_set_collisions_desired(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.DroneObservation.collisions_desired)
+}
+
+// uint32 collisions_undesired = 5;
+inline void DroneObservation::clear_collisions_undesired() {
+  _impl_.collisions_undesired_ = 0u;
+}
+inline uint32_t DroneObservation::_internal_collisions_undesired() const {
+  return _impl_.collisions_undesired_;
+}
+inline uint32_t DroneObservation::collisions_undesired() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.DroneObservation.collisions_undesired)
+  return _internal_collisions_undesired();
+}
+inline void DroneObservation::_internal_set_collisions_undesired(uint32_t value) {
+  
+  _impl_.collisions_undesired_ = value;
+}
+inline void DroneObservation::set_collisions_undesired(uint32_t value) {
+  _internal_set_collisions_undesired(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.DroneObservation.collisions_undesired)
+}
+
+// bool alive = 6;
+inline void DroneObservation::clear_alive() {
+  _impl_.alive_ = false;
+}
+inline bool DroneObservation::_internal_alive() const {
+  return _impl_.alive_;
+}
+inline bool DroneObservation::alive() const {
+  // @@protoc_insertion_point(field_get:swarm_proto.DroneObservation.alive)
+  return _internal_alive();
+}
+inline void DroneObservation::_internal_set_alive(bool value) {
+  
+  _impl_.alive_ = value;
+}
+inline void DroneObservation::set_alive(bool value) {
+  _internal_set_alive(value);
+  // @@protoc_insertion_point(field_set:swarm_proto.DroneObservation.alive)
 }
 
 // -------------------------------------------------------------------

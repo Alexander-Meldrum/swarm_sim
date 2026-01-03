@@ -15,6 +15,7 @@ Thumbs.db
 # Rust
 ############################
 /target/
+/profiles/
 target
 debug
 **/*.rs.bk

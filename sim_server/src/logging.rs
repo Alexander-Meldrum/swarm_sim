@@ -20,7 +20,7 @@ pub fn log_world(
 
     log.write_all(&world.step.to_le_bytes())?;
     log.write_all(&world.num_drones.to_le_bytes())?;
-    log.write_all(&world.global_reward.to_le_bytes())?;
+    log.write_all(&world.rewards.global_reward.to_le_bytes())?;
 
     for i in 0..world.num_drones as usize {
         let p = &world.position[i];

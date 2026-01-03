@@ -1,7 +1,7 @@
 use crate::world::{World, Vec3};
 
 pub fn step(world: &mut World, actions: &[Vec3]) {
-    for i in 0..world.position.len() {
+    for i in 0..world.num_drones {
         if !world.alive[i] { continue; }
         world.acceleration[i] = actions[i];
         world.velocity[i].x += world.acceleration[i].x * world.dt;

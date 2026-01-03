@@ -14,10 +14,18 @@ impl Rewards {
 }
 
 pub fn calc_rewards(world: &World) -> Rewards {
-        // TODO, calculate proper global_reward
+        // TODO, setup better rewards, distince between defending/attacking team, calculate proper global_reward
         let mut rewards = Rewards::new(world.num_drones);
-        rewards.individual_rewards.fill(0.1);
+
+        for event in &world.hit_events {
+            rewards.individual_rewards[event.drone_id] += 10.0;
+        }
         rewards.global_reward = world.num_drones as f32;
+
         rewards
+
+
+        
+
     }
 

@@ -12,12 +12,6 @@ CTRL_BIN="$CTRL_BUILD/swarm"
 HOST="::1"
 PORT="50051"
 
-# ---------------- Build Rust simulator ----------------
-echo "🔨 Building Rust Simulator (release)..."
-cd "$SIM_DIR"
-cargo build --release
-cd - >/dev/null
-
 # ---------------- Build C++ swarm controller ----------------
 PROTO_SRC="proto"
 OUT_DIR="swarms/swarm_cpp/build/proto"
@@ -50,10 +44,28 @@ cmake ..
 cmake --build . -- -j$(nproc)
 cd - >/dev/null
 
-# ---------------- Start simulator ----------------
+
+# ---------------- Build Rust simulator ----------------
+echo "🔨 Building Rust Simulator (release)..."
+cd "$SIM_DIR"
+cargo build --release
+cd - >/dev/null
+
+# # ---------------- Start simulator ----------------
 echo "🚀 Starting Simulator..."
 "$SIM_BIN" &
 SIM_PID=$!
+
+# ---------------- Build & Start Rust simulator in debug/profiling mode ----------------
+# RUST_BACKTRACE=full "$SIM_BIN" &
+# # perf record -g "$SIM_BIN" &
+# echo "🔨 Building & Running Rust Simulator (debug/profiling/release)..."
+# cd "$SIM_DIR"
+# RUSTFLAGS="-C debuginfo=1" cargo flamegraph --release --bin sim_server --no-perf
+# SIM_PID=$!
+# cd - >/dev/null
+
+# --------------------------------------------------------------------------------
 
 # Ensure simulator is killed on exit
 trap "echo '🛑 Stopping simulator'; kill $SIM_PID 2>/dev/null || true" EXIT

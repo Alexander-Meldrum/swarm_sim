@@ -29,7 +29,7 @@ int main() {
     swarm::SwarmController controller(std::move(stub));
 
     uint32_t num_drones = 10;    // number of drones request
-    uint64_t max_steps = 1000;   // max simumlation steps request
+    uint64_t max_steps = 50;   // max simumlation steps request
     float dt = 0.02;            // Simulator step delta time request
     bool randomize_init_pos = true;
     float arena_size = 100;      // radius [m]
