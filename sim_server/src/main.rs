@@ -21,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let max_steps_default = 10000;
     let arena_size_default = 10.0;
     let dt_default = 0.02;
-    let world = World::new(num_drones_default, max_steps_default, arena_size_default, dt_default, episode, None);
+    let world = World::new(num_drones_default, max_steps_default, arena_size_default, dt_default, episode, None, None);
 
     let server = SimServer {
         world: Mutex::new(world),

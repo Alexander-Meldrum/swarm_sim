@@ -7,7 +7,7 @@ use std::fs::{self, File};
 use crate::world::{Vec3, World, rebuild_grid, detect_collisions, detect_target_hits};
 use crate::physics;
 use crate::learning::{Rewards, calc_rewards};
-use crate::logging::{open_episode_log, log_world};
+use crate::logging::{open_new_log, log_world, log_events};
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
@@ -37,7 +37,8 @@ impl SwarmProtoService for SimServer {
 
         // Prepare Log for the Episode
         world.episode += 1;
-        world.log = Some(open_episode_log(world.episode));
+        world.state_log = Some(open_new_log("states", world.episode));
+        world.event_log = Some(open_new_log("events", world.episode));
 
         // Read requested num_drones, max_steps, dt, seed, randomize_init_pos, arena_size, min_dist
         let num_drones = request.num_drones as usize;
@@ -52,13 +53,15 @@ impl SwarmProtoService for SimServer {
         let min_dist = request.min_dist;
 
         // move out log safely from Option<>
-        let log = world.log.take(); 
+        let state_log = world.state_log.take();
+        let event_log = world.event_log.take(); 
+
+        
+        // Reset world state, replace the World inside the mutex
+        *world = World::new(num_drones, max_steps, arena_size, dt, world.episode, state_log, event_log);
 
         // TODO
         // let enable_profiling = true;
-        // Reset world state, replace the World inside the mutex
-        *world = World::new(num_drones, max_steps, arena_size, dt, world.episode, log);
-
         // Start profiling after creating new world
         world.profiler = Some(ProfilerGuard::new(1000).expect("failed to start profiler")); // Hz
 
@@ -78,10 +81,12 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] Simulator World Setup Complete");
         println!("[simulator] **********************");
         println!("[simulator] num_drones: {}", world.num_drones);
+        println!("[simulator] cell_size:  {}", world.cell_size);
         println!("[simulator] max_steps:  {}", world.max_steps);
         println!("[simulator] step:       {}", world.step);
         println!("[simulator] dt:         {}", world.dt);
         println!("[simulator] done:       {}", world.done);
+        
         println!("[simulator] **********************");
 
         Ok(Response::new(ResetResponse {
@@ -122,14 +127,14 @@ impl SwarmProtoService for SimServer {
         
         // ----- 2. Calculate World & Rewards ------
         // Clear per-step events
-        world.hit_events.clear();
+        world.events.clear();
 
         physics::step(&mut world, &actions);
 
         // Build spatial index
         rebuild_grid(&mut world);
 
-        // Broad + narrow phase collisions
+        // Detect collisions & target hits
         detect_collisions(&mut world);
         detect_target_hits(&mut world);
 
@@ -140,33 +145,21 @@ impl SwarmProtoService for SimServer {
         // Log World, braces ensure the log lock is released quickly.
         {
             log_world(&mut world).unwrap();
+            log_events(&mut world).unwrap();
         }
 
-        println!("[simulator] Step: {}, Time: {}", world.step, (world.step as f32) * world.dt);
-        println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+        // println!("[simulator] Step: {}, Time: {}", world.step, (world.step as f32) * world.dt);
+        // println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
         // Check if simulation done
         if world.step >= world.max_steps {
             world.done = true;
             // Flush log writing
-            world.log.as_mut().expect("log file not initialized before flush").flush()?;
+            world.state_log.as_mut().expect("log file not initialized before flush").flush()?;
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
 
             // Finish profiling
             if let Some(guard) = world.profiler.take() {
-                // let report = guard.report().build().unwrap();
-                // let filename = format!("flamegraph-episode-{}.svg", world.step);
-                // let path = std::env::current_dir()
-                //     .unwrap()
-                //     .join(&filename);
-
-                // let file = File::create(&path).unwrap();
-                // report.flamegraph(file).unwrap();
-
-                // println!("🔥 Flamegraph written to: {}", path.display());
-
-
-
                 let report = guard.report().build().unwrap();
                 let mut dir = std::env::current_dir().unwrap();
                 dir.push("profiles");
@@ -175,9 +168,7 @@ impl SwarmProtoService for SimServer {
                 let path = dir.join(filename);
                 let file = File::create(&path).unwrap();
                 report.flamegraph(file).unwrap();
-                println!("🔥 Flamegraph written to: {}", path.display());
-
-                
+                println!("🔥 Flamegraph written to: {}", path.display());                
             } 
 
         }

@@ -19,7 +19,8 @@ pub struct World {
     pub dt: f32,
     pub num_drones: usize,
     pub episode: u64,
-    pub log: Option<BufWriter<File>>,
+    pub state_log: Option<BufWriter<File>>,
+    pub event_log: Option<BufWriter<File>>,
 
     // Drone Characteristics
     pub team: Vec<u8>,
@@ -39,7 +40,7 @@ pub struct World {
     pub targets: Vec<Target>,
 
     // Events
-    pub hit_events: Vec<HitEvent>,
+    pub events: Vec<Event>,
 
     // Spatial Grid
     pub arena_min: Vec3,
@@ -60,39 +61,45 @@ pub struct Target {
     pub alive: bool,
 }
 
-/// Discrete event emitted when a meaningful hit occurs
-pub struct HitEvent {
-    pub drone_id: usize,
-    pub target_id: usize,
-    pub step: u64,
+#[repr(u8)]  // for binary logging compatibility.
+#[derive(Debug, Clone, Copy)]
+pub enum EventKind {
+    TargetHit = 1,
+    DroneCollision = 2,
+    // WallHit = 3,
 }
-
-
+/// Discrete event emitted when a meaningful hit occurs
+#[derive(Debug, Clone)]
+pub struct Event {
+    pub kind: EventKind,
+    pub step: u64,
+    pub drone_a: u32,
+    pub drone_b: u32,   // for drone-drone, u32::MAX if none
+    pub target_id: u32, // for target hits, u32::MAX if none
+}
 
 impl World {
     /// Init a new world
-    pub fn new(num_drones: usize, max_steps: u64, arena_size: f32, dt: f32, episode: u64, log:Option<BufWriter<File>>) -> Self {
-        
-        // Do not enable profiling from new
-        // let profiler = if enable_profiling {
-        //     Some(
-        //         ProfilerGuard::new(250)
-        //             .expect("failed to start profiler"),
-        //     )
-        // } else {
-        //     None
-        // };
-        
+    pub fn new(num_drones: usize, max_steps: u64, arena_size: f32, dt: f32, episode: u64, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>) -> Self {
+       
         // TODO implement a reset fn to avoid reallocation each episode.
         let drone_radius = 0.2;   // TODO
-        // Hit events are per-step; reserve aggressively to avoid realloc
-        let hit_events = Vec::with_capacity(num_drones / 4);
+        // events are per-step; reserve aggressively to avoid realloc
+        let events = Vec::with_capacity(num_drones / 4);
         let max_targets = 2;    // TODO
 
         // lowest & highest corner of the arena
         let arena_min = Vec3 { x: -arena_size, y: -arena_size, z: -arena_size };
         let arena_max = Vec3 { x:  arena_size, y:  arena_size, z: arena_size };
-        let cell_size = 1.0;      // TODO
+
+        // Try to keep cell_size close to "interaction_radius". cell_size affects performance a lot
+        // Too small → grid overhead dominates, Too large → neighbor checks dominate
+        // let cell_size = 50.0;      // TODO
+        // Guestimate good value for cell_size
+        let desired_average_drones_per_cell = 2;
+        let num_cells = num_drones as f32 / desired_average_drones_per_cell as f32;
+        let cells_per_axis = num_cells.cbrt().ceil();
+        let cell_size = arena_size*2.0 / cells_per_axis;
 
         // Compute grid dimensions, axis-aligned bounding box
         let nx = ((arena_max.x - arena_min.x) / cell_size).ceil() as usize;
@@ -107,7 +114,8 @@ impl World {
             dt: dt,
             num_drones: num_drones,
             episode: episode,
-            log: log,
+            state_log: state_log,
+            event_log: event_log,
             // Pre-allocate per-drone state (SoA layout)
             position: vec![Vec3::zero(); num_drones],
             velocity: vec![Vec3::zero(); num_drones],
@@ -118,7 +126,7 @@ impl World {
             collisions_desired: vec![0; num_drones],
             collisions_undesired: vec![0; num_drones],
             targets: Vec::with_capacity(max_targets),
-            hit_events,
+            events,
             arena_min,
             arena_max,
             cell_size,
@@ -143,9 +151,6 @@ impl World {
         if randomize_init_pos {
             println!("[simulator] Randomizing init positions with seed: {}", seed.expect("No Seed Provided"));
         }
-
-        println!("[simulator] arena_min.x: {}", self.arena_min.x);
-        println!("[simulator] arena_max.x: {}", self.arena_max.x);
 
         // Random init positions
         for i in 0..self.num_drones {
@@ -190,9 +195,8 @@ const NEIGHBORS: [(isize, isize, isize); 27] = [
 #[inline]
 // fn grid_index(world: &mut World, p: Vec3) -> Option<usize> {
 fn grid_index(arena_min: &Vec3, cell_size: &f32, grid_dim: &(usize, usize, usize), p: &Vec3) -> Option<usize> {
-
-    
     // Convert continuous position into discrete grid coordinates
+    // TODO precalculate inverse cell_size
     let ix = ((p.x - arena_min.x) / cell_size) as isize;
     let iy = ((p.y - arena_min.y) / cell_size) as isize;
     let iz = ((p.z - arena_min.z) / cell_size) as isize;
@@ -291,7 +295,8 @@ pub fn detect_collisions(world: &mut World) {
                                 // Physical collision confirmed
                                 world.alive[i] = false;
                                 world.alive[j] = false;
-                                
+                                // Bindary logging uses u32 instead of usize for portability. 
+                                world.events.push(Event::drone_collision(world.step, i.try_into().unwrap(),j.try_into().unwrap()));
 
                                 // TODO improve team goal logic, now both teams want to hit eachother
                                 // Count all physical collisions
@@ -380,11 +385,7 @@ pub fn detect_target_hits(world: &mut World) {
 
                 if dist2 < target.radius * target.radius {
                     // Hit confirmation event
-                    world.hit_events.push(HitEvent {
-                        drone_id,
-                        target_id,
-                        step: world.step,
-                    });
+                    world.events.push(Event::target_hit(world.step, drone_id.try_into().unwrap(), target_id.try_into().unwrap()));
 
                     // Apply hit consequences
                     target.alive = false;
@@ -400,4 +401,39 @@ pub fn detect_target_hits(world: &mut World) {
             }
         }
     }
+}
+
+pub const NONE_U32: u32 = u32::MAX;
+
+impl Event {
+    pub fn target_hit(step: u64, drone_id: u32, target_id: u32) -> Self {
+        Self {
+            kind: EventKind::TargetHit,
+            step,
+            drone_a: drone_id,
+            drone_b: NONE_U32,
+            target_id: target_id,
+        }
+    }
+
+    pub fn drone_collision(step: u64, a: u32, b: u32) -> Self {
+        Self {
+            kind: EventKind::DroneCollision,
+            step,
+            drone_a: a,
+            drone_b: b,
+            target_id: NONE_U32,
+        }
+    }
+
+    // TODO implement wall/ground hit
+    // pub fn wall_hit(step: u64, drone_id: u32) -> Self {
+    //     Self {
+    //         kind: EventKind::WallHit,
+    //         step,
+    //         drone_a: drone_id,
+    //         drone_b: NONE_U32,
+    //         target_id: NONE_U32,
+    //     }
+    // }
 }

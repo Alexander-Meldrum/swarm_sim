@@ -6,6 +6,7 @@
 #include <grpcpp/grpcpp.h>
 #include <swarm.pb.h> // in build folder
 #include <swarm.grpc.pb.h> // in build folder
+#include <random>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -43,6 +44,10 @@ private:
     // Flat observation vector
     std::vector<float> obs_;
     uint8_t num_observation_features_ = 3;
+
+    // Random with fixed seed
+    std::mt19937 rng{12345};
+    std::uniform_real_distribution<float> dist{-1.0f, 1.0f};
 
     // Called internally by reset() and step()
     void consume_observations_from_proto(const google::protobuf::RepeatedPtrField<swarm_proto::DroneObservation>& observations);

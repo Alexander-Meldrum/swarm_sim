@@ -2,11 +2,10 @@ use std::fs::{File, create_dir_all};
 use std::io::{BufWriter, Write};
 use crate::world::{World};
 
-
-pub fn open_episode_log(episode: u64) -> BufWriter<File> {
+pub fn open_new_log(type_of_log: &str, episode: u64) -> BufWriter<File> {
     create_dir_all("logs").unwrap();
-    let path = format!("logs/episode_{:06}.bin", episode);
-    println!("[Simulator] Episode log file: {}", path);
+    let path = format!("logs/{:05}_{}.bin", episode, type_of_log);
+    println!("[Simulator] Log file ({}): {}", type_of_log, path);
     BufWriter::new(File::create(path).unwrap())
 }
 
@@ -15,8 +14,7 @@ pub fn log_world(
     world: &mut World,
 ) -> std::io::Result<()> {
 
-    // let num = world.num_drones;
-    let log = world.log.as_mut().expect("log not initialized");
+    let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
     log.write_all(&world.num_drones.to_le_bytes())?;
@@ -35,6 +33,30 @@ pub fn log_world(
         log.write_all(&v.z.to_le_bytes())?;
     }
 
+    log.flush()?; // flush once at the end for efficiency
+    
     Ok(())
 }
 
+pub fn log_events(world: &mut World) -> std::io::Result<()> {
+    // Check if events occured before proceeding
+    if world.events.is_empty() {
+        return Ok(());
+    }
+    let log = world.event_log.as_mut().expect("event log not initialized");
+
+    // log: &mut BufWriter<File>, events: &Vec<Event>
+    for e in &world.events {
+        // Step
+        log.write_all(&e.step.to_le_bytes())?;
+        // Event kind
+        log.write_all(&[e.kind as u8])?;
+        // Drone / target fields
+        log.write_all(&e.drone_a.to_le_bytes())?;
+        log.write_all(&e.drone_b.to_le_bytes())?;
+        log.write_all(&e.target_id.to_le_bytes())?;
+    }
+    log.flush()?; // flush once at the end for efficiency
+
+    Ok(())
+}

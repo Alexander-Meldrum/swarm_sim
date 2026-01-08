@@ -5,6 +5,7 @@
 #include "proto/swarm.pb.h"
 #include "proto/swarm.grpc.pb.h"
 #include "swarm/swarm.h"
+#include <random>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -87,9 +88,9 @@ StepResponse SwarmController::step() {
     // Build actions (one per drone)
     for (uint32_t i = 0; i < num_drones_; ++i) {
         DroneAction* a = request.add_actions();
-        a->set_ax(1.0f);
-        a->set_ay(0.0f);
-        a->set_az(0.0f);
+        a->set_ax(10*dist(rng));
+        a->set_ay(10*dist(rng));
+        a->set_az(10*dist(rng));
     }
 
     // Blocking RPC call to step the simulator (synchronous)

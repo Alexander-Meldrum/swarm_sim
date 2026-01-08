@@ -13,37 +13,54 @@ HOST="::1"
 PORT="50051"
 
 # ---------------- Build C++ swarm controller ----------------
-PROTO_SRC="proto"
-OUT_DIR="swarms/swarm_cpp/build/proto"
+# PROTO_SRC="proto"
+# OUT_DIR="swarms/swarm_cpp/build/proto"
 
-# Ensure output directory exists
-mkdir -p "$OUT_DIR"
+# # Ensure output directory exists
+# mkdir -p "$OUT_DIR"
 
-# Ensure grpc_cpp_plugin exists
-GRPC_PLUGIN="$(command -v grpc_cpp_plugin)"
-if [[ -z "$GRPC_PLUGIN" ]]; then
-    echo "❌ grpc_cpp_plugin not found in PATH"
-    exit 1
-fi
+# # Ensure grpc_cpp_plugin exists
+# GRPC_PLUGIN="$(command -v grpc_cpp_plugin)"
+# if [[ -z "$GRPC_PLUGIN" ]]; then
+#     echo "❌ grpc_cpp_plugin not found in PATH"
+#     exit 1
+# fi
 
-# Generate C++ gRPC + protobuf files
-protoc \
-  --proto_path="$PROTO_SRC" \
-  --cpp_out="$OUT_DIR" \
-  --grpc_out="$OUT_DIR" \
-  --plugin=protoc-gen-grpc="$GRPC_PLUGIN" \
-  "$PROTO_SRC/swarm.proto"
+# # Generate C++ gRPC + protobuf files
+# protoc \
+#   --proto_path="$PROTO_SRC" \
+#   --cpp_out="$OUT_DIR" \
+#   --grpc_out="$OUT_DIR" \
+#   --plugin=protoc-gen-grpc="$GRPC_PLUGIN" \
+#   "$PROTO_SRC/swarm.proto"
 
-echo "✅ Protobuf files generated in $OUT_DIR"
+# echo "✅ Protobuf files generated in $OUT_DIR"
 
-echo "🔨 Building C++ Swarm Controller..."
-mkdir -p "$CTRL_BUILD"
+# echo "🔨 Building C++ Swarm Controller..."
+# mkdir -p "$CTRL_BUILD"
 
-cd "$CTRL_BUILD"
-cmake ..
-cmake --build . -- -j$(nproc)
+# cd "$CTRL_BUILD"
+# cmake ..
+# cmake --build . -- -j$(nproc)
+# cd - >/dev/null
+
+# ---------------- Activate Python Venv ----------------
+source .venv/bin/activate
+# ---------------- Generate Python gRPC bindings ----------------
+echo "🐍 Generating Python gRPC bindings..."
+
+PY_CTRL_DIR="swarms/swarm_py"
+PROTO_DIR="proto"
+
+cd "$PY_CTRL_DIR"
+
+python -m grpc_tools.protoc \
+  -I "../../$PROTO_DIR" \
+  --python_out=. \
+  --grpc_python_out=. \
+  "../../$PROTO_DIR/swarm.proto"
+
 cd - >/dev/null
-
 
 # ---------------- Build Rust simulator ----------------
 echo "🔨 Building Rust Simulator (release)..."
@@ -51,19 +68,23 @@ cd "$SIM_DIR"
 cargo build --release
 cd - >/dev/null
 
-# # ---------------- Start simulator ----------------
+# ---------------- Start simulator ----------------
 echo "🚀 Starting Simulator..."
 "$SIM_BIN" &
 SIM_PID=$!
 
-# ---------------- Build & Start Rust simulator in debug/profiling mode ----------------
-# RUST_BACKTRACE=full "$SIM_BIN" &
-# # perf record -g "$SIM_BIN" &
-# echo "🔨 Building & Running Rust Simulator (debug/profiling/release)..."
-# cd "$SIM_DIR"
-# RUSTFLAGS="-C debuginfo=1" cargo flamegraph --release --bin sim_server --no-perf
-# SIM_PID=$!
-# cd - >/dev/null
+
+# ---------------- Run swarm controller (Python) ----------------
+echo "🐍 Running Python swarm controller..."
+
+cd swarms/swarm_py
+
+# Optional but recommended: activate venv
+# source .venv/bin/activate
+
+python train.py
+
+cd - >/dev/null
 
 # --------------------------------------------------------------------------------
 

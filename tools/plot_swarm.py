@@ -2,25 +2,27 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-from bin_reader import read_swarm_log
+from bin_reader import read_swarm_state_log
 
 
 # ---- load binary log ----
-log = read_swarm_log("logs/episode_000001.bin")
+state_log = read_swarm_state_log("logs/00001_states.bin")
 
-pos = log.pos          # (T, N, 3)
-steps = log.steps
-rewards = log.rewards
-
+pos = state_log.pos          # (T, N, 3)
+steps = state_log.steps
+rewards = state_log.rewards
 T, N, _ = pos.shape
 
 
 # ---- figure & axes ----
+# Find largest abs pos value
+max_abs = np.max(np.abs(pos))
 fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
 # world bounds (adjust)
-L = 120
+L = 20
+
 ax.set_xlim(-L, L)
 ax.set_ylim(-L, L)
 ax.set_zlim(-L, L)
