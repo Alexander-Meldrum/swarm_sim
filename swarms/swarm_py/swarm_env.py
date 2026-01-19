@@ -1,6 +1,4 @@
 """
-swarm_env.py
-
 This file defines a SwarmEnv class that acts like a Gym-style environment.
 It communicates with the Rust simulator over gRPC.
 
@@ -34,7 +32,7 @@ class SwarmEnv:
         self.channel = grpc.insecure_channel(address)
 
         # Create a client stub from the proto service
-        self.stub = swarm_pb2_grpc.SwarmProtoServiceStub(self.channel)
+        self.stub = swarm_pb2_grpc.swarm_proto_serviceStub(self.channel)
 
         # Torch device (cpu / cuda)
         self.device = device
@@ -51,12 +49,12 @@ class SwarmEnv:
         # [ax, ay, az]
         self.action_dim = 3
 
-    def reset(self, team0_drones: int, team1_drones: int, max_steps: int):
+    def reset(self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int):
         """
         Start a new episode in the simulator.
 
         Args:
-            team0_drones: number of RL-controlled drones
+            num_drones_team_0: number of RL-controlled drones
             team1_drones: number of rule-based drones
             max_steps: maximum simulation steps for episode
 
@@ -65,14 +63,28 @@ class SwarmEnv:
         """
 
         # Store configuration locally
-        self.num_team0 = team0_drones
-        self.num_team1 = team1_drones
+        self.num_drones_team_0 = num_drones_team_0
+        self.num_drones_team_1 = num_drones_team_1
 
         # Build ResetRequest protobuf
+        #   uint64 seed = 1;
+        #   uint32 num_drones_team_0 = 2;  // Number of learning (RL) drones
+        #   uint32 num_drones_team_1 = 3;  // Number of rule-based / opponent drones
+        #   uint64 max_steps = 4;
+        #   float dt = 5;
+        #   bool randomize_init_pos = 6;
+        #   float arena_size = 7;
+        #   float min_dist=8;
+
         request = swarm_pb2.ResetRequest(
-            team0_drones=team0_drones,
-            team1_drones=team1_drones,
+            seed = 0,
+            num_drones_team_0=num_drones_team_0,
+            num_drones_team_1=num_drones_team_1,
             max_steps=max_steps,
+            dt = 0.02,
+            randomize_init_pos=True,
+            arena_size=float(10.0),  # TODO check
+            min_dist = 2.0,
         )
 
         # Blocking RPC call (synchronous semantics)

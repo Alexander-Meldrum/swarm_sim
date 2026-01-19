@@ -70,23 +70,8 @@ cd - >/dev/null
 
 # ---------------- Start simulator ----------------
 echo "🚀 Starting Simulator..."
-"$SIM_BIN" &
+"$SIM_BIN" --config sim_serve/configs/sim.yaml &
 SIM_PID=$!
-
-
-# ---------------- Run swarm controller (Python) ----------------
-echo "🐍 Running Python swarm controller..."
-
-cd swarms/swarm_py
-
-# Optional but recommended: activate venv
-# source .venv/bin/activate
-
-python train.py
-
-cd - >/dev/null
-
-# --------------------------------------------------------------------------------
 
 # Ensure simulator is killed on exit
 trap "echo '🛑 Stopping simulator'; kill $SIM_PID 2>/dev/null || true" EXIT
@@ -108,9 +93,18 @@ if [ "$ready" != true ]; then
     exit 1
 fi
 
-# ---------------- Run Swarm controller ----------------
-echo "🎮 Running Swarm Controller ..."
-# "$CTRL_BIN"
-stdbuf -oL "$CTRL_BIN"
+# ---------------- Run swarm controller (Python) ----------------
+echo "🐍 Running Python swarm controller..."
 
-echo "✅ Swarm Controller Finished"
+cd swarms/swarm_py
+# Optional but recommended: activate venv
+# source .venv/bin/activate
+python train.py
+cd - >/dev/null
+
+# ---------------- Run Swarm controller (Cpp) ----------------
+# echo "🎮 Running Swarm Controller ..."
+# # "$CTRL_BIN"
+# stdbuf -oL "$CTRL_BIN"
+
+# echo "✅ Swarm Controller Finished"

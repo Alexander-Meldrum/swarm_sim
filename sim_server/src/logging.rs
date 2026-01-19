@@ -17,10 +17,10 @@ pub fn log_world(
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&world.num_drones.to_le_bytes())?;
+    log.write_all(&world.num_drones_team_0.to_le_bytes())?;
     log.write_all(&world.rewards.global_reward.to_le_bytes())?;
 
-    for i in 0..world.num_drones as usize {
+    for i in 0..world.num_drones_team_0 as usize {
         let p = &world.position[i];
         let v = &world.velocity[i];
 

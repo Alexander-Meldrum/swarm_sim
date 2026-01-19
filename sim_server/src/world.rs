@@ -1,9 +1,12 @@
 use std::fs::File;
 use std::io::{BufWriter};
+use std::sync::Arc;
 use rand::rngs::SmallRng;
 use rand::{SeedableRng, Rng};
 use pprof::ProfilerGuard;
 use crate::learning::{Rewards};
+use crate::config::SimConfig;
+
 
 #[derive(Copy, Clone)]
 pub struct Vec3 { pub x: f32, pub y: f32, pub z: f32 }
@@ -17,6 +20,8 @@ pub struct World {
     pub step: u64,
     pub max_steps: u64,
     pub dt: f32,
+    pub num_drones_team_0: usize,
+    pub num_drones_team_1: usize,
     pub num_drones: usize,
     pub episode: u64,
     pub state_log: Option<BufWriter<File>>,
@@ -80,26 +85,53 @@ pub struct Event {
 
 impl World {
     /// Init a new world
-    pub fn new(num_drones: usize, max_steps: u64, arena_size: f32, dt: f32, episode: u64, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>) -> Self {
-       
-        // TODO implement a reset fn to avoid reallocation each episode.
-        let drone_radius = 0.2;   // TODO
+    pub fn new(config: Arc<SimConfig>, num_drones_team_0: usize, num_drones_team_1: usize, max_steps: u64, episode: u64, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>) -> Self {
+        // TODO? implement a reset fn to avoid reallocation each episode.
+
+        let num_drones = num_drones_team_0 + num_drones_team_1;
+        // Get values from config
+            // pub arena: ArenaConfig,
+            // pub physics: PhysicsConfig,
+            // pub collisions: CollisionConfig,
+            // pub controllers: ControllersConfig,
+            // pub logging: LoggingConfig,
+            // pub debug: DebugConfig,
+
+        // let arena_size = config.arena.arena_size;
+        let arena_min = Vec3 { x: config.arena.min[0], y: config.arena.min[1], z: config.arena.min[2] };
+        let arena_max = Vec3 { x: config.arena.max[0], y: config.arena.max[1], z: config.arena.max[2] };
+        let drone_radius = config.collisions.radius;
+        let dt = config.physics.dt;
+
+
+
+
+
         // events are per-step; reserve aggressively to avoid realloc
         let events = Vec::with_capacity(num_drones / 4);
         let max_targets = 2;    // TODO
 
         // lowest & highest corner of the arena
-        let arena_min = Vec3 { x: -arena_size, y: -arena_size, z: -arena_size };
-        let arena_max = Vec3 { x:  arena_size, y:  arena_size, z: arena_size };
+        // let arena_min = Vec3 { x: -arena_size, y: -arena_size, z: -arena_size };
+        // let arena_max = Vec3 { x:  arena_size, y:  arena_size, z: arena_size };
+        
 
         // Try to keep cell_size close to "interaction_radius". cell_size affects performance a lot
         // Too small → grid overhead dominates, Too large → neighbor checks dominate
         // let cell_size = 50.0;      // TODO
         // Guestimate good value for cell_size
-        let desired_average_drones_per_cell = 2;
-        let num_cells = num_drones as f32 / desired_average_drones_per_cell as f32;
-        let cells_per_axis = num_cells.cbrt().ceil();
-        let cell_size = arena_size*2.0 / cells_per_axis;
+        let arena_extent = Vec3 {
+            x: arena_max.x - arena_min.x,
+            y: arena_max.y - arena_min.y,
+            z: arena_max.z - arena_min.z,
+        };
+        let desired_average_drones_per_cell = 2.0;
+        let num_cells = num_drones as f32 / desired_average_drones_per_cell;
+        let cells_per_axis = num_cells.cbrt().ceil();  // Approximation when non-uniform arena
+        let max_extent = arena_extent.x
+            .max(arena_extent.y)
+            .max(arena_extent.z);
+        let cell_size = max_extent / cells_per_axis;
 
         // Compute grid dimensions, axis-aligned bounding box
         let nx = ((arena_max.x - arena_min.x) / cell_size).ceil() as usize;
@@ -112,6 +144,8 @@ impl World {
             step: 0,
             max_steps: max_steps,
             dt: dt,
+            num_drones_team_0: num_drones_team_0,
+            num_drones_team_1: num_drones_team_1,
             num_drones: num_drones,
             episode: episode,
             state_log: state_log,
@@ -139,19 +173,14 @@ impl World {
     }
 
     /// Init drone states
-    pub fn init_drones(&mut self, seed: Option<u64>, randomize_init_pos: bool, min_dist: f32) {
+    pub fn init_drones(&mut self, seed: Option<u64>, config: Arc<SimConfig>) {
 
-        let mut rng = SmallRng::seed_from_u64(seed.expect("No Seed Provided"));
-        // examples
-        // let x: f32 = rng.gen();                 // [0, 1)
-        // let y: f32 = rng.random_range(-1.0..1.0);  // range
-        // let i: usize = rng.random_range(0..10);    // integer
-
-        
-        if randomize_init_pos {
+        let mut rng = SmallRng::seed_from_u64(seed.expect("No Seed Provided"));       
+        if config.arena.randomize_init_pos {
             println!("[simulator] Randomizing init positions with seed: {}", seed.expect("No Seed Provided"));
         }
 
+        // TODO: handle teams differently?
         // Random init positions
         for i in 0..self.num_drones {
             let pos = loop {
@@ -165,7 +194,7 @@ impl World {
                     (p.x - candidate.x).powi(2)
                   + (p.y - candidate.y).powi(2)
                   + (p.z - candidate.z).powi(2)
-                  >= min_dist.powi(2)
+                  >= config.arena.min_dist.powi(2)
                 }) {
                     break candidate;
                 }

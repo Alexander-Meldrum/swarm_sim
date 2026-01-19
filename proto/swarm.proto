@@ -31,9 +31,11 @@ message DroneObservation {
 
 /* --- Step API --- */
 message StepRequest {
-  uint64 step = 1;
+  // team_id, 0 for external, 1 for rule-based or second external controller
+  uint32 team_id = 1;
+  uint64 step = 2;
   // One action per drone
-  repeated DroneAction actions = 2;
+  repeated DroneAction actions = 3;
 }
 
 message StepResponse {
@@ -46,20 +48,26 @@ message StepResponse {
 }
 
 /* --- Reset API --- */
+enum TeamControl {
+  EXTERNAL = 0;
+  RULE_BASED = 1;
+}
+
 message ResetRequest {
   uint64 seed = 1;
-  uint32 num_drones = 2;
-  uint64 max_steps = 3;
-  float dt = 4;
-  bool randomize_init_pos = 5;
-  float arena_size = 6;
-  float min_dist=7;
+  uint32 num_drones_team_0 = 2;  // Number of drones in default team
+  uint32 num_drones_team_1 = 3;  // Number of rule-based / opponent drones
+  TeamControl team_0_control = 4;
+  TeamControl team_1_control = 5;
+  uint64 max_steps = 6;
+  bool randomize_init_pos = 8;
 }
 
 message ResetResponse {
   uint64 step = 1;
-  uint32 num_drones = 2;
-  uint64 max_steps = 3;
-  float dt = 4;
-  repeated DroneObservation observations = 5;
+  uint32 num_drones_team_0 = 2;
+  uint32 num_drones_team_1 = 3;
+  uint64 max_steps = 4;
+  float dt = 5;
+  repeated DroneObservation observations = 6;
 }

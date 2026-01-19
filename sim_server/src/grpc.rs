@@ -1,11 +1,12 @@
 use tokio::sync::Mutex;
 use tonic::{Request, Response, Status};
+use std::sync::Arc;
 use std::io::{Write};
 use pprof::ProfilerGuard;
 use std::fs::{self, File};
-// use std::path::PathBuf;
 use crate::world::{Vec3, World, rebuild_grid, detect_collisions, detect_target_hits};
 use crate::physics;
+use crate::config::SimConfig;
 use crate::learning::{Rewards, calc_rewards};
 use crate::logging::{open_new_log, log_world, log_events};
 pub mod swarm_proto {
@@ -17,8 +18,10 @@ use swarm_proto::swarm_proto_service_server::{
 use swarm_proto::{DroneObservation, StepRequest, StepResponse, ResetRequest, ResetResponse};
 
 pub struct SimServer {
+    /// Immutable configuration (arena, physics, rules)
+    pub config: Arc<SimConfig>,
     // world is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
-    pub world: Mutex<World>,
+    pub world: Mutex<Option<World>>,
 }
 
 #[tonic::async_trait]
@@ -30,7 +33,23 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] Resetting Simulator World...");
 
         // Use async "await" at async network / sync simulator boundary
-        let mut world = self.world.lock().await;
+        // let mut world = self.world.lock().await;
+        // let world = world.as_mut().expect("World must exist here");
+
+
+        let mut world_guard = self.world.lock().await;
+
+        let world = match world_guard.as_mut() {
+            Some(world) => world,
+            None => {
+                // world not initialized yet
+                return Err(Status::failed_precondition("World not initialized"));
+            }
+        };
+
+
+
+        let config = self.config.clone();
 
         // Extract protobuf message
         let request = request.into_inner();
@@ -40,17 +59,14 @@ impl SwarmProtoService for SimServer {
         world.state_log = Some(open_new_log("states", world.episode));
         world.event_log = Some(open_new_log("events", world.episode));
 
-        // Read requested num_drones, max_steps, dt, seed, randomize_init_pos, arena_size, min_dist
-        let num_drones = request.num_drones as usize;
-        if num_drones == 0 {
-            return Err(Status::invalid_argument("[simulator] num_drones must be > 0"));
+        // Read requested num_drones_team_0, num_drones_team_1, max_steps, dt, seed, randomize_init_pos, arena_size, min_dist
+        let num_drones_team_0 = request.num_drones_team_0 as usize;
+        let num_drones_team_1 = request.num_drones_team_1 as usize;
+        if num_drones_team_0 == 0 {
+            return Err(Status::invalid_argument("[simulator] num_drones_team_0 must be > 0"));
         }
         let max_steps= request.max_steps;
-        let dt= request.dt;
         let seed = request.seed;
-        let randomize_init_pos = request.randomize_init_pos;
-        let arena_size = request.arena_size;
-        let min_dist = request.min_dist;
 
         // move out log safely from Option<>
         let state_log = world.state_log.take();
@@ -58,14 +74,15 @@ impl SwarmProtoService for SimServer {
 
         
         // Reset world state, replace the World inside the mutex
-        *world = World::new(num_drones, max_steps, arena_size, dt, world.episode, state_log, event_log);
+        // *guard = Some(World::new(config));
+        *world_guard = Some(World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log));
 
         // TODO
         // let enable_profiling = true;
         // Start profiling after creating new world
-        world.profiler = Some(ProfilerGuard::new(1000).expect("failed to start profiler")); // Hz
+        world.profiler = Some(ProfilerGuard::new(1000).expect("failed to start profiler")); // Unit: Hz
 
-        world.init_drones(Some(seed), randomize_init_pos, min_dist);
+        world.init_drones(Some(seed), config.clone());
         
 
         // TODO improve obs, flatten?
@@ -75,12 +92,14 @@ impl SwarmProtoService for SimServer {
 
         // Log World, braces ensure the log lock is released quickly.
         {
-            log_world(&mut world).unwrap();
+            // log_world(&mut world).unwrap();
+            log_world(world).unwrap();
         }
 
         println!("[simulator] Simulator World Setup Complete");
         println!("[simulator] **********************");
-        println!("[simulator] num_drones: {}", world.num_drones);
+        println!("[simulator] num_drones_team_0: {}", world.num_drones_team_0);
+        println!("[simulator] num_drones_team_1: {}", world.num_drones_team_1);
         println!("[simulator] cell_size:  {}", world.cell_size);
         println!("[simulator] max_steps:  {}", world.max_steps);
         println!("[simulator] step:       {}", world.step);
@@ -91,9 +110,10 @@ impl SwarmProtoService for SimServer {
 
         Ok(Response::new(ResetResponse {
             step: 0,
-            num_drones: world.num_drones as u32,
+            num_drones_team_0: world.num_drones_team_0 as u32,
+            num_drones_team_1: world.num_drones_team_1 as u32,
             max_steps: world.max_steps,
-            dt: dt,
+            dt: world.dt,
             observations: obs,
         }))
     }
@@ -102,7 +122,20 @@ impl SwarmProtoService for SimServer {
         &self,
         request: Request<StepRequest>,
     ) -> Result<Response<StepResponse>, Status> {
-        let mut world = self.world.lock().await;
+        // let mut world = self.world.lock().await;
+        // let world = world.as_mut().expect("World must exist here");
+        // let world = world.as_mut().expect("World must exist here");
+        // let world = guard.as_mut().expect("World must exist here");
+
+        let mut world_guard = self.world.lock().await;
+
+        let world = match world_guard.as_mut() {
+            Some(world) => world,
+            None => {
+                // world not initialized yet
+                return Err(Status::failed_precondition("World not initialized"));
+            }
+        };
 
         // ----- 1. Handle Inputs ------ 
         // Reject stepping after done

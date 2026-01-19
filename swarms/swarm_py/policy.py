@@ -1,6 +1,4 @@
 """
-policy.py
-
 Defines a simple neural network policy mapping
 drone observations → continuous actions.
 

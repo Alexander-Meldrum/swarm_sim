@@ -1,6 +1,4 @@
 """
-train.py
-
 Minimal RL training loop demonstrating:
 - environment reset
 - stepping simulator
@@ -18,6 +16,7 @@ from policy import SwarmPolicy
 
 
 def main():
+    print("[swarm_py] starting swarm controller")
     # Choose device
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -32,8 +31,8 @@ def main():
     for episode in range(100):
         # Reset simulator world
         obs = env.reset(
-            team0_drones=8,
-            team1_drones=8,
+            num_drones_team_0=8,
+            num_drones_team_1=8,
             max_steps=500
         )
 

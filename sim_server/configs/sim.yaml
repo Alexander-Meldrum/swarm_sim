@@ -1,0 +1,68 @@
+# ===============================
+# Swarm Simulator Configuration
+# ===============================
+
+# -------------------------------
+# Arena / World Geometry
+# -------------------------------
+arena:
+  # # arena size (m)
+  # arena_size: 50
+  # Minimum corner of the arena (x, y, z)
+  min: [-50.0, -50.0, 0.0]
+  # Maximum corner of the arena (x, y, z)
+  max: [50.0, 50.0, 20.0]
+  # Minimum distance between drones when randomizing start pos. [m]
+  min_dist: 2
+
+
+# -------------------------------
+# Physics Parameters
+# -------------------------------
+physics:
+  # Fixed simulation timestep (seconds)
+  dt: 0.02
+  # Maximum allowed velocity magnitude
+  # max_velocity: 15.0
+  # # Linear drag coefficient
+  # drag: 0.1
+
+
+# -------------------------------
+# Collision Handling
+# -------------------------------
+collisions:
+  # Collision radius per drone
+  radius: 0.5
+  # Disable drone immediately after collision
+  # disable_on_hit: true
+
+# -------------------------------
+# Built-in Rule-Based Controllers
+# -------------------------------
+controllers:
+  rule_based:
+    # Enable simulator-owned drones
+    enabled: true
+    # Team ID controlled by simulator logic (e.g. opponent team)
+    team_id: 1
+    # Behavior name (mapped internally in Rust)
+    behavior: "patrol"
+
+# -------------------------------
+# Logging Configuration
+# -------------------------------
+logging:
+  # Enable episode logging
+  enabled: true
+  # # Output directory for logs
+  # output_dir: "logs"
+  # # Write one file per episode
+  # per_episode: true
+
+# -------------------------------
+# Debug / Development Options
+# -------------------------------
+debug:
+  # Print simulator events to stdout
+  verbose: true
