@@ -10,9 +10,9 @@ pub struct SimConfig {
     pub arena: ArenaConfig,
     pub physics: PhysicsConfig,
     pub collisions: CollisionConfig,
-    pub controllers: ControllersConfig,
+    // pub controllers: ControllersConfig,
     pub logging: LoggingConfig,
-    pub debug: DebugConfig,
+    // pub debug: DebugConfig,
 }
 
 //
@@ -43,10 +43,10 @@ pub struct ArenaConfig {
 pub struct PhysicsConfig {
     /// Fixed simulation timestep (seconds)
     pub dt: f32,
-    /// Maximum allowed velocity magnitude
-    pub max_velocity: f32,
-    /// Linear drag coefficient
-    pub drag: f32,
+    // /// Maximum allowed velocity magnitude
+    // pub max_velocity: f32,
+    // /// Linear drag coefficient
+    // pub drag: f32,
 }
 
 //
@@ -58,8 +58,8 @@ pub struct PhysicsConfig {
 pub struct CollisionConfig {
     /// Collision radius per drone
     pub radius: f32,
-    /// Disable drone immediately after collision
-    pub disable_on_hit: bool,
+    // /// Disable drone immediately after collision
+    // pub disable_on_hit: bool,
 }
 
 //
@@ -67,20 +67,20 @@ pub struct CollisionConfig {
 // Built-in Controllers
 // ===============================
 //
-#[derive(Debug, Deserialize)]
-pub struct ControllersConfig {
-    pub rule_based: RuleBasedControllerConfig,
-}
+// #[derive(Debug, Deserialize)]
+// pub struct ControllersConfig {
+//     pub rule_based: RuleBasedControllerConfig,
+// }
 
-#[derive(Debug, Deserialize)]
-pub struct RuleBasedControllerConfig {
-    /// Enable simulator-owned rule-based drones
-    pub enabled: bool,
-    /// Team ID controlled by simulator logic
-    pub team_id: u8,
-    /// Behavior name ("patrol", "seek", etc.)
-    pub behavior: String,
-}
+// #[derive(Debug, Deserialize)]
+// pub struct RuleBasedControllerConfig {
+//     /// Enable simulator-owned rule-based drones
+//     pub enabled: bool,
+//     /// Team ID controlled by simulator logic
+//     pub team_id: u8,
+//     /// Behavior name ("patrol", "seek", etc.)
+//     pub behavior: String,
+// }
 
 //
 // ===============================
@@ -91,12 +91,11 @@ pub struct RuleBasedControllerConfig {
 pub struct LoggingConfig {
     /// Enable episode logging
     pub enabled: bool,
-    /// Output directory for logs
-    pub output_dir: String,
-    /// Logging format ("binary", "csv", "json")
-    pub format: String,
-    /// Write one file per episode
-    pub per_episode: bool,
+    // /// Output directory for logs
+    // pub output_dir: String,
+    /// Enable profiling of simulator
+    pub profiling_enabled: bool,
+    pub profiling_frequency: i32,
 }
 
 //
@@ -104,8 +103,8 @@ pub struct LoggingConfig {
 // Debug / Development Options
 // ===============================
 //
-#[derive(Debug, Deserialize)]
-pub struct DebugConfig {
-    /// Print simulator events to stdout
-    pub verbose: bool,
-}
+// #[derive(Debug, Deserialize)]
+// pub struct DebugConfig {
+//     /// Print simulator events to stdout
+//     pub verbose: bool,
+// }

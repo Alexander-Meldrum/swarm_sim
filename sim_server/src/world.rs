@@ -104,9 +104,6 @@ impl World {
         let dt = config.physics.dt;
 
 
-
-
-
         // events are per-step; reserve aggressively to avoid realloc
         let events = Vec::with_capacity(num_drones / 4);
         let max_targets = 2;    // TODO
@@ -168,6 +165,41 @@ impl World {
             // Pre-allocate spatial grid. Each cell holds drone indices
             grid: vec![Vec::new(); num_cells],
             rewards: Rewards::new(num_drones),
+            done: false,
+        }
+    }
+
+
+    // Dummy used for init of world at simulator startup
+    pub fn dummy() -> Self {
+        Self {
+            profiler: None,
+            step: 0,
+            max_steps: 0,
+            dt: 0.02,
+            num_drones_team_0: 0,
+            num_drones_team_1: 0,
+            num_drones: 0,
+            episode: 0,
+            state_log: None,
+            event_log: None,
+            position: Vec::new(),
+            velocity: Vec::new(),
+            acceleration: Vec::new(),
+            alive: Vec::new(),
+            team: Vec::new(),
+            drone_radius: 0.0,
+            collisions_desired: Vec::new(),
+            collisions_undesired: Vec::new(),
+            targets: Vec::new(),
+            events: Vec::new(),
+            arena_min: Vec3 {x: 0.0, y: 0.0, z: 0.0},
+            arena_max: Vec3 {x: 0.0, y: 0.0, z: 0.0},
+            cell_size: 0.0,
+            grid_dim: (0, 0, 0),
+            // Pre-allocate spatial grid. Each cell holds drone indices
+            grid: Vec::new(),
+            rewards: Rewards::new(0),
             done: false,
         }
     }

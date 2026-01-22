@@ -21,7 +21,9 @@ pub struct SimServer {
     /// Immutable configuration (arena, physics, rules)
     pub config: Arc<SimConfig>,
     // world is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
-    pub world: Mutex<Option<World>>,
+    // pub world: Mutex<Option<World>>,
+    pub world: Mutex<World>,
+
 }
 
 #[tonic::async_trait]
@@ -33,21 +35,7 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] Resetting Simulator World...");
 
         // Use async "await" at async network / sync simulator boundary
-        // let mut world = self.world.lock().await;
-        // let world = world.as_mut().expect("World must exist here");
-
-
-        let mut world_guard = self.world.lock().await;
-
-        let world = match world_guard.as_mut() {
-            Some(world) => world,
-            None => {
-                // world not initialized yet
-                return Err(Status::failed_precondition("World not initialized"));
-            }
-        };
-
-
+        let mut world = self.world.lock().await;
 
         let config = self.config.clone();
 
@@ -56,10 +44,18 @@ impl SwarmProtoService for SimServer {
 
         // Prepare Log for the Episode
         world.episode += 1;
-        world.state_log = Some(open_new_log("states", world.episode));
-        world.event_log = Some(open_new_log("events", world.episode));
+        let mut state_log = None;
+        let mut event_log = None; 
+        if config.logging.enabled {
+            world.state_log = Some(open_new_log("states", world.episode));
+            world.event_log = Some(open_new_log("events", world.episode));
+            // move out log safely from Option<>
+            state_log = world.state_log.take();
+            event_log = world.event_log.take(); 
+        } 
 
-        // Read requested num_drones_team_0, num_drones_team_1, max_steps, dt, seed, randomize_init_pos, arena_size, min_dist
+
+        // Read request
         let num_drones_team_0 = request.num_drones_team_0 as usize;
         let num_drones_team_1 = request.num_drones_team_1 as usize;
         if num_drones_team_0 == 0 {
@@ -68,20 +64,16 @@ impl SwarmProtoService for SimServer {
         let max_steps= request.max_steps;
         let seed = request.seed;
 
-        // move out log safely from Option<>
-        let state_log = world.state_log.take();
-        let event_log = world.event_log.take(); 
-
         
         // Reset world state, replace the World inside the mutex
-        // *guard = Some(World::new(config));
-        *world_guard = Some(World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log));
+        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
 
         // TODO
         // let enable_profiling = true;
         // Start profiling after creating new world
-        world.profiler = Some(ProfilerGuard::new(1000).expect("failed to start profiler")); // Unit: Hz
-
+        if config.logging.profiling_enabled {
+            world.profiler = Some(ProfilerGuard::new(config.logging.profiling_frequency).expect("failed to start profiler")); // Unit: Hz
+        }
         world.init_drones(Some(seed), config.clone());
         
 
@@ -91,9 +83,9 @@ impl SwarmProtoService for SimServer {
         }).collect();
 
         // Log World, braces ensure the log lock is released quickly.
-        {
-            // log_world(&mut world).unwrap();
-            log_world(world).unwrap();
+        if config.logging.enabled {
+            log_world(&mut world).unwrap();
+            log_events(&mut world).unwrap();
         }
 
         println!("[simulator] Simulator World Setup Complete");
@@ -122,20 +114,7 @@ impl SwarmProtoService for SimServer {
         &self,
         request: Request<StepRequest>,
     ) -> Result<Response<StepResponse>, Status> {
-        // let mut world = self.world.lock().await;
-        // let world = world.as_mut().expect("World must exist here");
-        // let world = world.as_mut().expect("World must exist here");
-        // let world = guard.as_mut().expect("World must exist here");
-
-        let mut world_guard = self.world.lock().await;
-
-        let world = match world_guard.as_mut() {
-            Some(world) => world,
-            None => {
-                // world not initialized yet
-                return Err(Status::failed_precondition("World not initialized"));
-            }
-        };
+        let mut world = self.world.lock().await;
 
         // ----- 1. Handle Inputs ------ 
         // Reject stepping after done
@@ -176,7 +155,7 @@ impl SwarmProtoService for SimServer {
 
         // ----- 3. Log ------ 
         // Log World, braces ensure the log lock is released quickly.
-        {
+        if self.config.logging.enabled {
             log_world(&mut world).unwrap();
             log_events(&mut world).unwrap();
         }
@@ -191,18 +170,20 @@ impl SwarmProtoService for SimServer {
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
 
-            // Finish profiling
-            if let Some(guard) = world.profiler.take() {
-                let report = guard.report().build().unwrap();
-                let mut dir = std::env::current_dir().unwrap();
-                dir.push("profiles");
-                fs::create_dir_all(&dir).unwrap();
-                let filename = format!("flamegraph-episode-{}.svg", world.episode);
-                let path = dir.join(filename);
-                let file = File::create(&path).unwrap();
-                report.flamegraph(file).unwrap();
-                println!("🔥 Flamegraph written to: {}", path.display());                
-            } 
+            if self.config.logging.profiling_enabled {
+                // Finish profiling
+                if let Some(guard) = world.profiler.take() {
+                    let report = guard.report().build().unwrap();
+                    let mut dir = std::env::current_dir().unwrap();
+                    dir.push("profiles");
+                    fs::create_dir_all(&dir).unwrap();
+                    let filename = format!("flamegraph-episode-{}.svg", world.episode);
+                    let path = dir.join(filename);
+                    let file = File::create(&path).unwrap();
+                    report.flamegraph(file).unwrap();
+                    println!("🔥 Flamegraph written to: {}", path.display());                
+                }
+            }
 
         }
         // TODO: observations, add to stepresponse

@@ -24,11 +24,11 @@ def main():
     env = SwarmEnv(device=device)
     policy = SwarmPolicy(obs_dim=6, action_dim=3).to(device)
 
-    # Optimizer
+    # Optimizer, Adam smooths updates, adapts per-parameter, handles noisy signals
     optimizer = optim.Adam(policy.parameters(), lr=3e-4)
 
     # Training loop
-    for episode in range(100):
+    for episode in range(3):
         # Reset simulator world
         obs = env.reset(
             num_drones_team_0=8,
@@ -40,9 +40,9 @@ def main():
         ep_reward = 0.0
 
         # Episode rollout
-        while not done:
-            # Compute actions for all drones
-            actions = policy(obs)
+        while not done:            
+            # Compute actions for all drones, obs already flattened
+            actions = policy(obs)  # this calls forward()
 
             # Step simulator
             obs, reward, done = env.step(actions)
@@ -52,11 +52,16 @@ def main():
             # (Replace with PPO/SAC logic later)
             loss = -reward
 
+            # Clear gradients to prevent build-up
             optimizer.zero_grad()
+
+            # Update gradients
             loss.backward()
+
+            # Adam updates parameters
             optimizer.step()
 
-        print(f"Episode {episode}, reward = {ep_reward:.2f}")
+        print(f"[swarm_py] Episode {episode}, reward = {ep_reward:.2f}")
 
 
 if __name__ == "__main__":

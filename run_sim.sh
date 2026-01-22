@@ -70,7 +70,7 @@ cd - >/dev/null
 
 # ---------------- Start simulator ----------------
 echo "🚀 Starting Simulator..."
-"$SIM_BIN" --config sim_serve/configs/sim.yaml &
+"$SIM_BIN" --config sim_server/configs/sim.yaml &
 SIM_PID=$!
 
 # Ensure simulator is killed on exit

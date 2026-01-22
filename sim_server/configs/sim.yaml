@@ -15,6 +15,8 @@ arena:
   # Minimum distance between drones when randomizing start pos. [m]
   min_dist: 2
 
+  randomize_init_pos: true
+
 
 # -------------------------------
 # Physics Parameters
@@ -55,10 +57,9 @@ controllers:
 logging:
   # Enable episode logging
   enabled: true
-  # # Output directory for logs
-  # output_dir: "logs"
-  # # Write one file per episode
-  # per_episode: true
+  # Enable profiling
+  profiling_enabled: true
+  profiling_frequency: 1000 # Hz
 
 # -------------------------------
 # Debug / Development Options

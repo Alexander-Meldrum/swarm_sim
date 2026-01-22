@@ -1,5 +1,5 @@
 """
-This file defines a SwarmEnv class that acts like a Gym-style environment.
+This file defines a SwarmEnv class.
 It communicates with the Rust simulator over gRPC.
 
 Responsibilities:
@@ -38,8 +38,9 @@ class SwarmEnv:
         self.device = device
 
         # Number of drones per team (set during reset)
-        self.num_team0 = 0
-        self.num_team1 = 0
+        self.num_drones_team_0 = 0
+        self.num_drones_team_1 = 0
+        self.num_drones        = 0
 
         # Observation structure per drone:
         # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z]
@@ -65,26 +66,13 @@ class SwarmEnv:
         # Store configuration locally
         self.num_drones_team_0 = num_drones_team_0
         self.num_drones_team_1 = num_drones_team_1
-
-        # Build ResetRequest protobuf
-        #   uint64 seed = 1;
-        #   uint32 num_drones_team_0 = 2;  // Number of learning (RL) drones
-        #   uint32 num_drones_team_1 = 3;  // Number of rule-based / opponent drones
-        #   uint64 max_steps = 4;
-        #   float dt = 5;
-        #   bool randomize_init_pos = 6;
-        #   float arena_size = 7;
-        #   float min_dist=8;
+        self.num_drones = self.num_drones_team_0 + self.num_drones_team_1
 
         request = swarm_pb2.ResetRequest(
             seed = 0,
             num_drones_team_0=num_drones_team_0,
             num_drones_team_1=num_drones_team_1,
             max_steps=max_steps,
-            dt = 0.02,
-            randomize_init_pos=True,
-            arena_size=float(10.0),  # TODO check
-            min_dist = 2.0,
         )
 
         # Blocking RPC call (synchronous semantics)
@@ -110,7 +98,7 @@ class SwarmEnv:
         request = swarm_pb2.StepRequest()
 
         # Convert tensor actions → protobuf messages
-        for i in range(self.num_team0):
+        for i in range(self.num_drones_team_0):
             request.actions.append(
                 swarm_pb2.DroneAction(
                     ax=float(actions[i, 0]),
@@ -124,7 +112,7 @@ class SwarmEnv:
 
         # Parse observations, reward, and done flag
         obs = self._extract_team0_obs(response.observations)
-        reward = torch.tensor(response.reward, device=self.device)
+        reward = torch.tensor(response.global_reward, device=self.device)
         done = response.done
 
         return obs, reward, done
@@ -141,16 +129,13 @@ class SwarmEnv:
         """
 
         # Preallocate NumPy array for speed
-        obs = np.zeros((self.num_team0, self.obs_dim), dtype=np.float32)
-
+        obs = np.zeros((self.num_drones_team_0, self.obs_dim), dtype=np.float32)
         idx = 0
-        for o in observations:
-            if o.team_id != 0:
-                continue
-
+        print("Alex debug")
+        for idx, o in enumerate(observations[:self.num_drones_team_0]):
             obs[idx] = [
-                o.pos_x, o.pos_y, o.pos_z,
-                o.vel_x, o.vel_y, o.vel_z,
+                o.ox, o.oy, o.oz,
+                o.vx, o.vy, o.vz,
             ]
             idx += 1
 
