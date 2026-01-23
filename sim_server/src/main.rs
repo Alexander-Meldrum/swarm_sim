@@ -11,13 +11,11 @@ pub mod swarm_proto {
 use world::World;
 use tokio::sync::Mutex;
 use std::sync::Arc;
-
-
-use utils::Args;
+use utils::{Args,ObservationBuffer};
 use utils::load_config;
 use clap::Parser;
 
-use grpc::SimServer;
+use grpc::{SimServer, Simulator};
 use crate::grpc::swarm_proto::swarm_proto_service_server::{SwarmProtoServiceServer};
 
 #[tokio::main]
@@ -31,11 +29,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(config);
     println!("[simulator] ✅ Loaded config from {}", args.config);
 
+    // let simulator = Simulator {
+    //     world: Mutex::new(World::dummy()),
+    //     obs_buf: ObservationBuffer::new(0,0),
+    // };
+    // let server = SimServer {
+    //     // Clone the Arc, does not copy the config data
+    //     config: config.clone(),
+    //     // World will be setup afte reset gRPC call
+
+    //     sim: Mutex<simulator,
+    //     // tokio::sync::Mutex<Simulator>,
+    //     // world: Mutex::new(World::dummy()),
+
+    //     // obs_buf: ObservationBuffer::new(0,0),
+    // };
+    // let config =  config: config.clone(),
+
     let server = SimServer {
-        // Clone the Arc, does not copy the config data
         config: config.clone(),
-        // World will be setup afte reset gRPC call
-        world: Mutex::new(World::dummy()),
+        sim: Mutex::new(Simulator {
+            world: World::dummy(),
+            obs_buf: ObservationBuffer::new(0, 0),
+        }),
     };
 
     let addr = "[::1]:50051".parse()?;

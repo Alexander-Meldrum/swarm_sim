@@ -23,7 +23,14 @@ pub fn calc_rewards(world: &World) -> Rewards {
         for event in &world.events {
             rewards.individual_rewards[event.drone_a as usize] += 10.0;
         }
-        rewards.global_reward = world.num_drones_team_0 as f32;
+        rewards.global_reward = 0.0 as f32;
+
+        for i in 0..world.num_drones_team_0 {
+            if !world.alive[i] { continue; }
+            rewards.global_reward += world.position[i].z;
+            rewards.global_reward -= (2.0 * world.position[i].x.abs());
+            rewards.global_reward -= (2.0 * world.position[i].y.abs());
+        }
 
         rewards
 

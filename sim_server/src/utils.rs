@@ -2,6 +2,7 @@ use clap::Parser;
 use std::fs::File;
 use std::io::Read;
 use crate::config::SimConfig;
+use crate::world::World;
 
 /// Simulator command-line arguments
 #[derive(Parser, Debug)]
@@ -15,10 +16,6 @@ pub struct Args {
     #[arg(long, default_value = "[::1]:50051")]
     pub bind: String,
 }
-
-
-// use std::fs::File;
-// use std::io::Read;
 
 pub fn load_config(path: &str) -> Result<SimConfig, Box<dyn std::error::Error>> {
     let mut file = File::open(path)
@@ -34,24 +31,32 @@ pub fn load_config(path: &str) -> Result<SimConfig, Box<dyn std::error::Error>> 
     Ok(config)
 }
 
-// pub fn load_config(path: &str) -> Result<SimConfig, Box<dyn std::error::Error>> {
-//     let mut file = File::open(path)?;
-//     let mut contents = String::new();
-//     file.read_to_string(&mut contents)?;
+pub const OBS_DIM: usize = 6;
+pub struct ObservationBuffer {
+    pub obs: Vec<f32>,
+    // pub obs_dim: usize,
+}
 
-//     let config: SimConfig = serde_yaml::from_str(&contents)?;
-//     Ok(config)
-// }
+impl ObservationBuffer {
+    pub fn new(num_drones: usize, obs_dim: usize) -> Self {
+        Self {
+            obs: Vec::with_capacity(num_drones * obs_dim),
+            // obs_dim,
+        }
+    }
 
-// use std::fs;
-// use anyhow::{Context, Result};
+    pub fn build(&mut self, world: &World) {
+        self.obs.clear();
 
-// fn load_config(path: &Path) -> Result<Config> {
-//     let text = fs::read_to_string(path)
-//         .with_context(|| format!("Failed to read config file {}", path.display()))?;
+        for i in 0..world.num_drones {
+            let pos = world.position[i];
 
-//     let config: Config = serde_yaml::from_str(&text)
-//         .with_context(|| format!("Failed to parse config file {}", path.display()))?;
-
-//     Ok(config)
-// }
+            self.obs.push(pos.x);
+            self.obs.push(pos.y);
+            self.obs.push(pos.z);
+            self.obs.push(world.collisions_desired[i] as f32);
+            self.obs.push(world.collisions_undesired[i] as f32);
+            self.obs.push(world.alive[i] as u8 as f32);
+        }
+    }
+}

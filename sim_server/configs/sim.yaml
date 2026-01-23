@@ -9,9 +9,9 @@ arena:
   # # arena size (m)
   # arena_size: 50
   # Minimum corner of the arena (x, y, z)
-  min: [-50.0, -50.0, 0.0]
+  min: [-50.0, -50.0, -50.0]
   # Maximum corner of the arena (x, y, z)
-  max: [50.0, 50.0, 20.0]
+  max: [50.0, 50.0, 50.0]
   # Minimum distance between drones when randomizing start pos. [m]
   min_dist: 2
 

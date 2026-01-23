@@ -41,9 +41,10 @@ class SwarmEnv:
         self.num_drones_team_0 = 0
         self.num_drones_team_1 = 0
         self.num_drones        = 0
+        self.step_count        = 0
 
         # Observation structure per drone:
-        # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z]
+        # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z] TODO
         self.obs_dim = 6
 
         # Action structure per drone:
@@ -67,6 +68,7 @@ class SwarmEnv:
         self.num_drones_team_0 = num_drones_team_0
         self.num_drones_team_1 = num_drones_team_1
         self.num_drones = self.num_drones_team_0 + self.num_drones_team_1
+        self.step_count = 0
 
         request = swarm_pb2.ResetRequest(
             seed = 0,
@@ -77,6 +79,10 @@ class SwarmEnv:
 
         # Blocking RPC call (synchronous semantics)
         response = self.stub.Reset(request)
+
+        self.step_count = response.step
+        print("step debug in reset")
+        print(self.step_count)
 
         # Extract only team-0 observations for RL
         return self._extract_team0_obs(response.observations)
@@ -107,19 +113,30 @@ class SwarmEnv:
                 )
             )
 
+        
+
+        request.step = self.step_count
+
+        # TODO assign team id to request in a better way
+        request.team_id = 1
+
+
+        # print(request)
+
         # Send step request to simulator
         response = self.stub.Step(request)
 
-        # Parse observations, reward, and done flag
-        obs = self._extract_team0_obs(response.observations)
+        # Parse step, observations, reward, and done flag
+        self.step_count = response.step
+        obs_team_0 = self._extract_team0_obs(response.observations)
         reward = torch.tensor(response.global_reward, device=self.device)
         done = response.done
 
-        return obs, reward, done
+        return obs_team_0, reward, done
 
     def _extract_team0_obs(self, observations):
         """
-        Convert protobuf observations into a flat torch tensor.
+        Convert protobuf observations (Already flat) into a torch tensor.
 
         Simulator returns observations for *all* drones.
         We filter out team 1 and keep team 0 only.
@@ -128,16 +145,10 @@ class SwarmEnv:
             Tensor of shape [num_team0, obs_dim]
         """
 
-        # Preallocate NumPy array for speed
-        obs = np.zeros((self.num_drones_team_0, self.obs_dim), dtype=np.float32)
-        idx = 0
-        print("Alex debug")
-        for idx, o in enumerate(observations[:self.num_drones_team_0]):
-            obs[idx] = [
-                o.ox, o.oy, o.oz,
-                o.vx, o.vy, o.vz,
-            ]
-            idx += 1
-
-        # Convert to torch tensor on desired device
-        return torch.tensor(obs, device=self.device)
+        # Assume obs already flat, reshape only, Convert to torch tensor on desired device
+        obs = torch.tensor(observations, dtype=torch.float32, device=self.device)
+        obs = obs.view(self.num_drones, self.obs_dim)
+        # Cut away team_1 observations
+        obs_team0 = obs[:self.num_drones_team_0]
+        
+        return obs_team0

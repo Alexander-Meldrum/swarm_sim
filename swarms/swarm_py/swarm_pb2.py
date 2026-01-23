@@ -24,27 +24,25 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bswarm.proto\x12\x0bswarm_proto\"1\n\x0b\x44roneAction\x12\n\n\x02\x61x\x18\x01 \x01(\x02\x12\n\n\x02\x61y\x18\x02 \x01(\x02\x12\n\n\x02\x61z\x18\x03 \x01(\x02\"\x7f\n\x10\x44roneObservation\x12\n\n\x02ox\x18\x01 \x01(\x02\x12\n\n\x02oy\x18\x02 \x01(\x02\x12\n\n\x02oz\x18\x03 \x01(\x02\x12\x1a\n\x12\x63ollisions_desired\x18\x04 \x01(\r\x12\x1c\n\x14\x63ollisions_undesired\x18\x05 \x01(\r\x12\r\n\x05\x61live\x18\x06 \x01(\x08\"W\n\x0bStepRequest\x12\x0f\n\x07team_id\x18\x01 \x01(\r\x12\x0c\n\x04step\x18\x02 \x01(\x04\x12)\n\x07\x61\x63tions\x18\x03 \x03(\x0b\x32\x18.swarm_proto.DroneAction\"v\n\x0cStepResponse\x12\x0c\n\x04step\x18\x01 \x01(\x04\x12\x33\n\x0cobservations\x18\x02 \x03(\x0b\x32\x1d.swarm_proto.DroneObservation\x12\x15\n\rglobal_reward\x18\x03 \x01(\x02\x12\x0c\n\x04\x64one\x18\x04 \x01(\x08\"\xe5\x01\n\x0cResetRequest\x12\x0c\n\x04seed\x18\x01 \x01(\x04\x12\x19\n\x11num_drones_team_0\x18\x02 \x01(\r\x12\x19\n\x11num_drones_team_1\x18\x03 \x01(\r\x12\x30\n\x0eteam_0_control\x18\x04 \x01(\x0e\x32\x18.swarm_proto.TeamControl\x12\x30\n\x0eteam_1_control\x18\x05 \x01(\x0e\x32\x18.swarm_proto.TeamControl\x12\x11\n\tmax_steps\x18\x06 \x01(\x04\x12\x1a\n\x12randomize_init_pos\x18\x08 \x01(\x08\"\xa7\x01\n\rResetResponse\x12\x0c\n\x04step\x18\x01 \x01(\x04\x12\x19\n\x11num_drones_team_0\x18\x02 \x01(\r\x12\x19\n\x11num_drones_team_1\x18\x03 \x01(\r\x12\x11\n\tmax_steps\x18\x04 \x01(\x04\x12\n\n\x02\x64t\x18\x05 \x01(\x02\x12\x33\n\x0cobservations\x18\x06 \x03(\x0b\x32\x1d.swarm_proto.DroneObservation*+\n\x0bTeamControl\x12\x0c\n\x08\x45XTERNAL\x10\x00\x12\x0e\n\nRULE_BASED\x10\x01\x32\x92\x01\n\x13swarm_proto_service\x12;\n\x04Step\x12\x18.swarm_proto.StepRequest\x1a\x19.swarm_proto.StepResponse\x12>\n\x05Reset\x12\x19.swarm_proto.ResetRequest\x1a\x1a.swarm_proto.ResetResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0bswarm.proto\x12\x0bswarm_proto\"1\n\x0b\x44roneAction\x12\n\n\x02\x61x\x18\x01 \x01(\x02\x12\n\n\x02\x61y\x18\x02 \x01(\x02\x12\n\n\x02\x61z\x18\x03 \x01(\x02\"W\n\x0bStepRequest\x12\x0f\n\x07team_id\x18\x01 \x01(\r\x12\x0c\n\x04step\x18\x02 \x01(\x04\x12)\n\x07\x61\x63tions\x18\x03 \x03(\x0b\x32\x18.swarm_proto.DroneAction\"W\n\x0cStepResponse\x12\x0c\n\x04step\x18\x01 \x01(\x04\x12\x14\n\x0cobservations\x18\x02 \x03(\x02\x12\x15\n\rglobal_reward\x18\x03 \x01(\x02\x12\x0c\n\x04\x64one\x18\x04 \x01(\x08\"\xe5\x01\n\x0cResetRequest\x12\x0c\n\x04seed\x18\x01 \x01(\x04\x12\x19\n\x11num_drones_team_0\x18\x02 \x01(\r\x12\x19\n\x11num_drones_team_1\x18\x03 \x01(\r\x12\x30\n\x0eteam_0_control\x18\x04 \x01(\x0e\x32\x18.swarm_proto.TeamControl\x12\x30\n\x0eteam_1_control\x18\x05 \x01(\x0e\x32\x18.swarm_proto.TeamControl\x12\x11\n\tmax_steps\x18\x06 \x01(\x04\x12\x1a\n\x12randomize_init_pos\x18\x08 \x01(\x08\"\x88\x01\n\rResetResponse\x12\x0c\n\x04step\x18\x01 \x01(\x04\x12\x19\n\x11num_drones_team_0\x18\x02 \x01(\r\x12\x19\n\x11num_drones_team_1\x18\x03 \x01(\r\x12\x11\n\tmax_steps\x18\x04 \x01(\x04\x12\n\n\x02\x64t\x18\x05 \x01(\x02\x12\x14\n\x0cobservations\x18\x06 \x03(\x02*+\n\x0bTeamControl\x12\x0c\n\x08\x45XTERNAL\x10\x00\x12\x0e\n\nRULE_BASED\x10\x01\x32\x92\x01\n\x13swarm_proto_service\x12;\n\x04Step\x12\x18.swarm_proto.StepRequest\x1a\x19.swarm_proto.StepResponse\x12>\n\x05Reset\x12\x19.swarm_proto.ResetRequest\x1a\x1a.swarm_proto.ResetResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'swarm_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_TEAMCONTROL']._serialized_start=819
-  _globals['_TEAMCONTROL']._serialized_end=862
+  _globals['_TEAMCONTROL']._serialized_start=628
+  _globals['_TEAMCONTROL']._serialized_end=671
   _globals['_DRONEACTION']._serialized_start=28
   _globals['_DRONEACTION']._serialized_end=77
-  _globals['_DRONEOBSERVATION']._serialized_start=79
-  _globals['_DRONEOBSERVATION']._serialized_end=206
-  _globals['_STEPREQUEST']._serialized_start=208
-  _globals['_STEPREQUEST']._serialized_end=295
-  _globals['_STEPRESPONSE']._serialized_start=297
-  _globals['_STEPRESPONSE']._serialized_end=415
-  _globals['_RESETREQUEST']._serialized_start=418
-  _globals['_RESETREQUEST']._serialized_end=647
-  _globals['_RESETRESPONSE']._serialized_start=650
-  _globals['_RESETRESPONSE']._serialized_end=817
-  _globals['_SWARM_PROTO_SERVICE']._serialized_start=865
-  _globals['_SWARM_PROTO_SERVICE']._serialized_end=1011
+  _globals['_STEPREQUEST']._serialized_start=79
+  _globals['_STEPREQUEST']._serialized_end=166
+  _globals['_STEPRESPONSE']._serialized_start=168
+  _globals['_STEPRESPONSE']._serialized_end=255
+  _globals['_RESETREQUEST']._serialized_start=258
+  _globals['_RESETREQUEST']._serialized_end=487
+  _globals['_RESETRESPONSE']._serialized_start=490
+  _globals['_RESETRESPONSE']._serialized_end=626
+  _globals['_SWARM_PROTO_SERVICE']._serialized_start=674
+  _globals['_SWARM_PROTO_SERVICE']._serialized_end=820
 # @@protoc_insertion_point(module_scope)

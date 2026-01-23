@@ -28,38 +28,61 @@ def main():
     optimizer = optim.Adam(policy.parameters(), lr=3e-4)
 
     # Training loop
-    for episode in range(3):
+    for episode in range(10):
         # Reset simulator world
         obs = env.reset(
             num_drones_team_0=8,
             num_drones_team_1=8,
             max_steps=500
         )
+        # print(obs)
+        # break
 
         done = False
         ep_reward = 0.0
 
-        # Episode rollout
+        # Episode rollout, PPO
         while not done:            
-            # Compute actions for all drones, obs already flattened
-            actions = policy(obs)  # this calls forward()
+            # ---- forward policy (OLD) ----
+            mean, std = policy(obs)
+            dist = torch.distributions.Normal(mean, std)
 
-            # Step simulator
-            obs, reward, done = env.step(actions)
-            ep_reward += reward.item()
+            action = dist.sample()
+            log_prob_old = dist.log_prob(action).sum(dim=-1).detach()
 
-            # Dummy loss: maximize reward directly
-            # (Replace with PPO/SAC logic later)
-            loss = -reward
+            # ---- environment step ----
+            next_obs, reward, done = env.step(action)
+
+            # ---- advantage (simplest possible) ----
+            advantage = reward   # scalar or (num_agents,)
+
+            # ---- forward policy (NEW) ----
+            mean_new, std_new = policy(obs)
+            dist_new = torch.distributions.Normal(mean_new, std_new)
+
+            log_prob_new = dist_new.log_prob(action).sum(dim=-1)
+
+            # ---- PPO ratio + clipping ----
+            ratio = torch.exp(log_prob_new - log_prob_old)
+            clipped_ratio = torch.clamp(ratio, 0.8, 1.2)
+
+            # ---- PPO loss (core line) ----
+            loss = -torch.min(
+                ratio * advantage,
+                clipped_ratio * advantage
+            ).mean()
+
+            # print(loss.requires_grad)   # MUST be True
+            # print(loss.grad_fn)         # MUST NOT be None
 
             # Clear gradients to prevent build-up
             optimizer.zero_grad()
-
             # Update gradients
             loss.backward()
-
             # Adam updates parameters
             optimizer.step()
+
+            obs = next_obs
 
         print(f"[swarm_py] Episode {episode}, reward = {ep_reward:.2f}")
 

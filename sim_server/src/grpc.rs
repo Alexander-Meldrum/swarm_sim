@@ -9,21 +9,25 @@ use crate::physics;
 use crate::config::SimConfig;
 use crate::learning::{Rewards, calc_rewards};
 use crate::logging::{open_new_log, log_world, log_events};
+use crate::utils::{ObservationBuffer, OBS_DIM};
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
 use swarm_proto::swarm_proto_service_server::{
     SwarmProtoService,
 };
-use swarm_proto::{DroneObservation, StepRequest, StepResponse, ResetRequest, ResetResponse};
+use swarm_proto::{StepRequest, StepResponse, ResetRequest, ResetResponse};
+
+pub struct Simulator {
+    pub world: World,
+    pub obs_buf: ObservationBuffer,
+}
 
 pub struct SimServer {
     /// Immutable configuration (arena, physics, rules)
     pub config: Arc<SimConfig>,
-    // world is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
-    // pub world: Mutex<Option<World>>,
-    pub world: Mutex<World>,
-
+    /// Simulator is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
+    pub sim: Mutex<Simulator>,
 }
 
 #[tonic::async_trait]
@@ -35,7 +39,11 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] Resetting Simulator World...");
 
         // Use async "await" at async network / sync simulator boundary
-        let mut world = self.world.lock().await;
+        let mut sim = self.sim.lock().await;
+        // destructure with a single borrow
+        let Simulator { world, obs_buf } = &mut *sim;
+        // let mut world = &mut sim.world;
+        // let obs_buf = &mut sim.obs_buf;
 
         let config = self.config.clone();
 
@@ -54,7 +62,6 @@ impl SwarmProtoService for SimServer {
             event_log = world.event_log.take(); 
         } 
 
-
         // Read request
         let num_drones_team_0 = request.num_drones_team_0 as usize;
         let num_drones_team_1 = request.num_drones_team_1 as usize;
@@ -66,8 +73,14 @@ impl SwarmProtoService for SimServer {
 
         
         // Reset world state, replace the World inside the mutex
+        // *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
         *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
 
+        // Initialize observation buffer once per episode
+        // *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
+        *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
+
+        println!("[simulator] New World, step: {}", world.step);
         // TODO
         // let enable_profiling = true;
         // Start profiling after creating new world
@@ -77,15 +90,14 @@ impl SwarmProtoService for SimServer {
         world.init_drones(Some(seed), config.clone());
         
 
-        // TODO improve obs, flatten?
-        let obs = (0..world.position.len()).map(|_| DroneObservation {
-            ox: 0.0, oy: 0.0, oz: 0.0, collisions_desired: 0, collisions_undesired: 0, alive: false
-        }).collect();
+        // build flattened observations, zero copy move, obs_buf.obs set to empty vec
+        obs_buf.build(&world);
+        let obs = std::mem::take(&mut obs_buf.obs);
 
         // Log World, braces ensure the log lock is released quickly.
         if config.logging.enabled {
-            log_world(&mut world).unwrap();
-            log_events(&mut world).unwrap();
+            log_world(world).unwrap();
+            log_events(world).unwrap();
         }
 
         println!("[simulator] Simulator World Setup Complete");
@@ -114,7 +126,11 @@ impl SwarmProtoService for SimServer {
         &self,
         request: Request<StepRequest>,
     ) -> Result<Response<StepResponse>, Status> {
-        let mut world = self.world.lock().await;
+        let mut sim = self.sim.lock().await;
+        // destructure with a single borrow
+        let Simulator { world, obs_buf } = &mut *sim;
+        // let mut world = &mut sim.world;
+        // let obs_buf = &mut sim.obs_buf;
 
         // ----- 1. Handle Inputs ------ 
         // Reject stepping after done
@@ -129,7 +145,7 @@ impl SwarmProtoService for SimServer {
         // Step order check
         if req.step != world.step {
             return Err(Status::failed_precondition(format!(
-                "Out-of-order step: client={}, server={}",
+                "Out-of-order step: req.step={}, world.step={}",
                 req.step, world.step
             )));
         }       
@@ -141,14 +157,14 @@ impl SwarmProtoService for SimServer {
         // Clear per-step events
         world.events.clear();
 
-        physics::step(&mut world, &actions);
+        physics::step(world, &actions);
 
         // Build spatial index
-        rebuild_grid(&mut world);
+        rebuild_grid(world);
 
         // Detect collisions & target hits
-        detect_collisions(&mut world);
-        detect_target_hits(&mut world);
+        detect_collisions(world);
+        detect_target_hits(world);
 
         // Calculate Rewards
         let rewards: Rewards = calc_rewards(&world);
@@ -156,12 +172,12 @@ impl SwarmProtoService for SimServer {
         // ----- 3. Log ------ 
         // Log World, braces ensure the log lock is released quickly.
         if self.config.logging.enabled {
-            log_world(&mut world).unwrap();
-            log_events(&mut world).unwrap();
+            log_world(world).unwrap();
+            log_events(world).unwrap();
         }
 
-        // println!("[simulator] Step: {}, Time: {}", world.step, (world.step as f32) * world.dt);
-        // println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+        println!("[simulator] Step: {}, Time: {}", world.step, (world.step as f32) * world.dt);
+        println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
         // Check if simulation done
         if world.step >= world.max_steps {
             world.done = true;
@@ -186,10 +202,11 @@ impl SwarmProtoService for SimServer {
             }
 
         }
-        // TODO: observations, add to stepresponse
-
+        // build flattened observations, zero copy move, obs_buf.obs set to empty vec
+        obs_buf.build(&world);
+        let obs = std::mem::take(&mut obs_buf.obs);
 
         // ----- 4. Output ------ 
-        Ok(Response::new(StepResponse{ step: world.step, observations: vec![], done: world.done, global_reward: rewards.global_reward }))
+        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, global_reward: rewards.global_reward }))
     }
 }

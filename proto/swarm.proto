@@ -15,20 +15,6 @@ message DroneAction {
   float az = 3;
 }
 
-message DroneObservation {
-  // 3 observations
-  float ox = 1;
-  float oy = 2;
-  float oz = 3;
-
-  // Collision information, desired: hit target foe, undesired: hit friend or ground.
-  uint32 collisions_desired = 4;
-  uint32 collisions_undesired = 5;
-
-  // Alive flag
-  bool alive = 6;
-}
-
 /* --- Step API --- */
 message StepRequest {
   // team_id, 0 for external, 1 for rule-based or second external controller
@@ -40,8 +26,8 @@ message StepRequest {
 
 message StepResponse {
   uint64 step = 1;
-  // One observation per drone (same ordering)
-  repeated DroneObservation observations = 2;
+  // flattened observations
+  repeated float observations = 2;
   // Global RL signals
   float global_reward = 3;
   bool done = 4;
@@ -69,5 +55,5 @@ message ResetResponse {
   uint32 num_drones_team_1 = 3;
   uint64 max_steps = 4;
   float dt = 5;
-  repeated DroneObservation observations = 6;
+  repeated float observations = 6;
 }

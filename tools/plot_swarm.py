@@ -6,11 +6,11 @@ from bin_reader import read_swarm_state_log
 
 
 # ---- load binary log ----
-state_log = read_swarm_state_log("logs/00001_states.bin")
+state_log = read_swarm_state_log("logs/00010_states.bin")
 
 pos = state_log.pos          # (T, N, 3)
 steps = state_log.steps
-rewards = state_log.rewards
+rewards = state_log.global_rewards
 T, N, _ = pos.shape
 
 
@@ -21,7 +21,7 @@ fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
 # world bounds (adjust)
-L = 20
+L = 1000
 
 ax.set_xlim(-L, L)
 ax.set_ylim(-L, L)
