@@ -10,6 +10,7 @@ pub fn step(world: &mut World, actions: &[Vec3]) {
         world.position[i].x += world.velocity[i].x * world.dt;
         world.position[i].y += world.velocity[i].y * world.dt;
         world.position[i].z += world.velocity[i].z * world.dt;
+        world.distance_to_origin2[i] = world.position[i].x * world.position[i].x + world.position[i].y * world.position[i].y + world.position[i].z * world.position[i].z;
     }
     world.step += 1;
 }

@@ -28,9 +28,9 @@ message StepResponse {
   uint64 step = 1;
   // flattened observations
   repeated float observations = 2;
-  // Global RL signals
-  float global_reward = 3;
-  bool done = 4;
+  repeated float rewards = 3;
+  float global_reward = 4;
+  bool done = 5;
 }
 
 /* --- Reset API --- */
@@ -46,7 +46,7 @@ message ResetRequest {
   TeamControl team_0_control = 4;
   TeamControl team_1_control = 5;
   uint64 max_steps = 6;
-  bool randomize_init_pos = 8;
+  bool randomize_init_pos = 7;
 }
 
 message ResetResponse {

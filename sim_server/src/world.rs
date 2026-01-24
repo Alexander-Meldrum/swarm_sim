@@ -4,7 +4,7 @@ use std::sync::Arc;
 use rand::rngs::SmallRng;
 use rand::{SeedableRng, Rng};
 use pprof::ProfilerGuard;
-use crate::learning::{Rewards};
+// use crate::learning::{Rewards};
 use crate::config::SimConfig;
 
 
@@ -36,6 +36,7 @@ pub struct World {
     pub velocity: Vec<Vec3>,
     pub acceleration: Vec<Vec3>,
     pub alive: Vec<bool>,
+    pub distance_to_origin2: Vec<f32>,
 
     // Collision accounting
     pub collisions_desired: Vec<u32>,
@@ -55,7 +56,7 @@ pub struct World {
     pub grid: Vec<Vec<usize>>, // flat grid: cell → drone indices
 
     // Reinforcement Learning Rewards
-    pub rewards: Rewards,
+    // pub rewards: Rewards,
 
     pub done: bool,
 }
@@ -152,6 +153,7 @@ impl World {
             velocity: vec![Vec3::zero(); num_drones],
             acceleration: vec![Vec3::zero(); num_drones],
             alive: vec![true; num_drones],
+            distance_to_origin2: vec![0.0; num_drones],
             team: vec![0; num_drones],
             drone_radius,
             collisions_desired: vec![0; num_drones],
@@ -164,7 +166,7 @@ impl World {
             grid_dim: (nx, ny, nz),
             // Pre-allocate spatial grid. Each cell holds drone indices
             grid: vec![Vec::new(); num_cells],
-            rewards: Rewards::new(num_drones),
+            // rewards: Rewards::new(num_drones),
             done: false,
         }
     }
@@ -187,6 +189,7 @@ impl World {
             velocity: Vec::new(),
             acceleration: Vec::new(),
             alive: Vec::new(),
+            distance_to_origin2: Vec::new(),
             team: Vec::new(),
             drone_radius: 0.0,
             collisions_desired: Vec::new(),
@@ -199,7 +202,7 @@ impl World {
             grid_dim: (0, 0, 0),
             // Pre-allocate spatial grid. Each cell holds drone indices
             grid: Vec::new(),
-            rewards: Rewards::new(0),
+            // rewards: Rewards::new(0),
             done: false,
         }
     }

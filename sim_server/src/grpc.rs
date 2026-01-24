@@ -96,7 +96,7 @@ impl SwarmProtoService for SimServer {
 
         // Log World, braces ensure the log lock is released quickly.
         if config.logging.enabled {
-            log_world(world).unwrap();
+            log_world(world, &Rewards::new(0)).unwrap();
             log_events(world).unwrap();
         }
 
@@ -172,11 +172,11 @@ impl SwarmProtoService for SimServer {
         // ----- 3. Log ------ 
         // Log World, braces ensure the log lock is released quickly.
         if self.config.logging.enabled {
-            log_world(world).unwrap();
+            log_world(world, &rewards).unwrap();
             log_events(world).unwrap();
         }
 
-        println!("[simulator] Step: {}, Time: {}", world.step, (world.step as f32) * world.dt);
+        println!("[simulator] Epidsode: {}, Step: {}, Time: {}", world.episode, world.step, (world.step as f32) * world.dt);
         println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
         // Check if simulation done
         if world.step >= world.max_steps {
@@ -207,6 +207,6 @@ impl SwarmProtoService for SimServer {
         let obs = std::mem::take(&mut obs_buf.obs);
 
         // ----- 4. Output ------ 
-        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, global_reward: rewards.global_reward }))
+        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.individual_rewards, global_reward: rewards.global_reward}))
     }
 }

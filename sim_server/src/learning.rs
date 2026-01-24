@@ -25,11 +25,25 @@ pub fn calc_rewards(world: &World) -> Rewards {
         }
         rewards.global_reward = 0.0 as f32;
 
+
+
+
         for i in 0..world.num_drones_team_0 {
             if !world.alive[i] { continue; }
-            rewards.global_reward += world.position[i].z;
-            rewards.global_reward -= (2.0 * world.position[i].x.abs());
-            rewards.global_reward -= (2.0 * world.position[i].y.abs());
+            // rewards.global_reward += world.position[i].z;
+            // rewards.global_reward -= (2.0 * world.position[i].x.abs());
+            // rewards.global_reward -= (2.0 * world.position[i].y.abs());
+
+            // rewards.individual_rewards[i] += world.position[i].z;
+            rewards.individual_rewards[i] -= world.position[i].z.abs();
+            rewards.individual_rewards[i] -= (1.0 * world.position[i].x.abs());
+            rewards.individual_rewards[i] -= (1.0 * world.position[i].y.abs());
+            rewards.individual_rewards[i] -= (10.0 * world.velocity[i].x.abs());
+            rewards.individual_rewards[i] -= (10.0 * world.velocity[i].y.abs());
+            rewards.individual_rewards[i] -= (10.0 * world.velocity[i].z.abs());
+
+
+            println!("x y z: {} {} {}, reward: {}", world.position[i].x, world.position[i].y, world.position[i].z, rewards.individual_rewards[i])
         }
 
         rewards

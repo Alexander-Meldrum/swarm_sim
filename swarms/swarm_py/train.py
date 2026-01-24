@@ -22,7 +22,7 @@ def main():
 
     # Create environment and policy
     env = SwarmEnv(device=device)
-    policy = SwarmPolicy(obs_dim=6, action_dim=3).to(device)
+    policy = SwarmPolicy(obs_dim=7, action_dim=3).to(device)
 
     # Optimizer, Adam smooths updates, adapts per-parameter, handles noisy signals
     optimizer = optim.Adam(policy.parameters(), lr=3e-4)
@@ -39,7 +39,7 @@ def main():
         # break
 
         done = False
-        ep_reward = 0.0
+        # ep_reward = 0.0
 
         # Episode rollout, PPO
         while not done:            
@@ -51,10 +51,11 @@ def main():
             log_prob_old = dist.log_prob(action).sum(dim=-1).detach()
 
             # ---- environment step ----
-            next_obs, reward, done = env.step(action)
+            next_obs, rewards, global_reward, done = env.step(action)
 
-            # ---- advantage (simplest possible) ----
-            advantage = reward   # scalar or (num_agents,)
+            # ---- advantage TODO  advantage = returns - value_prediction ----
+            advantage = rewards - rewards.mean()  # (num_drones,)
+            advantage_global = global_reward  # scalar
 
             # ---- forward policy (NEW) ----
             mean_new, std_new = policy(obs)
@@ -84,7 +85,7 @@ def main():
 
             obs = next_obs
 
-        print(f"[swarm_py] Episode {episode}, reward = {ep_reward:.2f}")
+        # print(f"[swarm_py] Episode {episode}, reward = {ep_reward:.2f}")
 
 
 if __name__ == "__main__":

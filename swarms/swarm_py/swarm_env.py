@@ -45,7 +45,7 @@ class SwarmEnv:
 
         # Observation structure per drone:
         # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z] TODO
-        self.obs_dim = 6
+        self.obs_dim = 7
 
         # Action structure per drone:
         # [ax, ay, az]
@@ -81,8 +81,6 @@ class SwarmEnv:
         response = self.stub.Reset(request)
 
         self.step_count = response.step
-        print("step debug in reset")
-        print(self.step_count)
 
         # Extract only team-0 observations for RL
         return self._extract_team0_obs(response.observations)
@@ -96,7 +94,8 @@ class SwarmEnv:
 
         Returns:
             obs: next observations (team 0)
-            reward: scalar reward tensor
+            rewards: reward tensor [num_team0,]
+            global_reward: global reward tensor (scalar)
             done: episode termination flag
         """
 
@@ -113,8 +112,6 @@ class SwarmEnv:
                 )
             )
 
-        
-
         request.step = self.step_count
 
         # TODO assign team id to request in a better way
@@ -129,10 +126,11 @@ class SwarmEnv:
         # Parse step, observations, reward, and done flag
         self.step_count = response.step
         obs_team_0 = self._extract_team0_obs(response.observations)
-        reward = torch.tensor(response.global_reward, device=self.device)
+        rewards = torch.tensor(response.rewards, device=self.device)
+        global_reward = torch.tensor(response.global_reward, device=self.device)
         done = response.done
 
-        return obs_team_0, reward, done
+        return obs_team_0, rewards, global_reward, done
 
     def _extract_team0_obs(self, observations):
         """
@@ -150,5 +148,7 @@ class SwarmEnv:
         obs = obs.view(self.num_drones, self.obs_dim)
         # Cut away team_1 observations
         obs_team0 = obs[:self.num_drones_team_0]
+        # print(obs_team0)
+        
         
         return obs_team0

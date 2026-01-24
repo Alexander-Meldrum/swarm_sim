@@ -76,4 +76,4 @@ sudo apt install protobuf-compiler-grpc
 
 TODO
 
-python tools/plot_swarm.py logs/episode_000001.bin
+python tools/plot_swarm.py logs/00001_states.bin

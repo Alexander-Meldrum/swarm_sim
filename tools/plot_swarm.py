@@ -1,12 +1,16 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 from matplotlib.animation import FuncAnimation
 
 from bin_reader import read_swarm_state_log
 
+parser = argparse.ArgumentParser()
+parser.add_argument("path", help="Relative path to file")
+args = parser.parse_args()
 
 # ---- load binary log ----
-state_log = read_swarm_state_log("logs/00010_states.bin")
+state_log = read_swarm_state_log(args.path) # "logs/00010_states.bin")
 
 pos = state_log.pos          # (T, N, 3)
 steps = state_log.steps
@@ -21,7 +25,7 @@ fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
 # world bounds (adjust)
-L = 1000
+L = 500
 
 ax.set_xlim(-L, L)
 ax.set_ylim(-L, L)

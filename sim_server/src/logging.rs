@@ -1,6 +1,7 @@
 use std::fs::{File, create_dir_all};
 use std::io::{BufWriter, Write};
 use crate::world::{World};
+use crate::learning::{Rewards};
 
 pub fn open_new_log(type_of_log: &str, episode: u64) -> BufWriter<File> {
     create_dir_all("logs").unwrap();
@@ -9,16 +10,16 @@ pub fn open_new_log(type_of_log: &str, episode: u64) -> BufWriter<File> {
     BufWriter::new(File::create(path).unwrap())
 }
 
-// When updating logging, tools/bin_to_csv.py might need edits.
+// When updating logging, tools/bin_reader.py might need edits.
 pub fn log_world(
-    world: &mut World,
+    world: &mut World, rewards: &Rewards
 ) -> std::io::Result<()> {
 
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
     log.write_all(&world.num_drones_team_0.to_le_bytes())?;
-    log.write_all(&world.rewards.global_reward.to_le_bytes())?;
+    log.write_all(&rewards.global_reward.to_le_bytes())?;
 
     for i in 0..world.num_drones_team_0 as usize {
         let p = &world.position[i];
