@@ -27,7 +27,7 @@ class SwarmEnv:
     - team 1: controlled by rule-based logic inside simulator
     """
 
-    def __init__(self, address="localhost:50051", device="cpu"):
+    def __init__(self, address="localhost:50051", device="cpu", obs_dim = 0, action_dim = 0):
         # Open a gRPC channel to the simulator
         self.channel = grpc.insecure_channel(address)
 
@@ -45,11 +45,11 @@ class SwarmEnv:
 
         # Observation structure per drone:
         # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z] TODO
-        self.obs_dim = 7
+        self.obs_dim = obs_dim
 
         # Action structure per drone:
         # [ax, ay, az]
-        self.action_dim = 3
+        self.action_dim = action_dim
 
     def reset(self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int):
         """
@@ -127,10 +127,10 @@ class SwarmEnv:
         self.step_count = response.step
         obs_team_0 = self._extract_team0_obs(response.observations)
         rewards = torch.tensor(response.rewards, device=self.device)
-        global_reward = torch.tensor(response.global_reward, device=self.device)
+        # global_reward = torch.tensor(response.global_reward, device=self.device)
         done = response.done
 
-        return obs_team_0, rewards, global_reward, done
+        return obs_team_0, rewards,  done # global_reward,
 
     def _extract_team0_obs(self, observations):
         """

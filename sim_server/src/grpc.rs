@@ -157,7 +157,7 @@ impl SwarmProtoService for SimServer {
         // Clear per-step events
         world.events.clear();
 
-        physics::step(world, &actions);
+        physics::step(world, &actions, self.config.physics.max_velocity);
 
         // Build spatial index
         rebuild_grid(world);
@@ -176,8 +176,8 @@ impl SwarmProtoService for SimServer {
             log_events(world).unwrap();
         }
 
-        println!("[simulator] Epidsode: {}, Step: {}, Time: {}", world.episode, world.step, (world.step as f32) * world.dt);
-        println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+        // println!("[simulator] Epidsode: {}, Step: {}, Time: {}", world.episode, world.step, (world.step as f32) * world.dt);
+        // println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
         // Check if simulation done
         if world.step >= world.max_steps {
             world.done = true;
@@ -185,6 +185,8 @@ impl SwarmProtoService for SimServer {
             world.state_log.as_mut().expect("log file not initialized before flush").flush()?;
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
+            println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+            println!("[simulator] State of (drone 0): x = {}, y = {}, z = {}", world.position[0].x, world.position[0].y, world.position[0].z);
 
             if self.config.logging.profiling_enabled {
                 // Finish profiling

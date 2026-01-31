@@ -81,42 +81,42 @@ def read_swarm_state_log(path: str) -> SwarmStateLog:
         vel=np.stack(velocities),
     )
 
+# TODO update below
+# def read_swarm_event_log(path: str) -> SwarmStateLog:
+#     steps = []
+#     global_rewards = []
+#     positions = []
+#     velocities = []
 
-def read_swarm_event_log(path: str) -> SwarmStateLog:
-    steps = []
-    global_rewards = []
-    positions = []
-    velocities = []
+#     with open(path, "rb") as f:
+#         while True:
+#             # ---- read step header ----
+#             header = f.read(STEP_HEADER_SIZE)
+#             if not header:
+#                 break
 
-    with open(path, "rb") as f:
-        while True:
-            # ---- read step header ----
-            header = f.read(STEP_HEADER_SIZE)
-            if not header:
-                break
+#             step, num_drones, reward = struct.unpack(
+#                 STEP_HEADER_FMT, header
+#             )
 
-            step, num_drones, reward = struct.unpack(
-                STEP_HEADER_FMT, header
-            )
+#             # ---- read all drone data in one shot ----
+#             drone_fmt = "<" + DRONE_FMT_BASE * (DRONE_STATE_FIELDS_NUM * num_drones)
+#             drone_bytes = f.read(DRONE_STATE_FIELDS_NUM * num_drones * DRONE_BASE_SIZE)
 
-            # ---- read all drone data in one shot ----
-            drone_fmt = "<" + DRONE_FMT_BASE * (DRONE_STATE_FIELDS_NUM * num_drones)
-            drone_bytes = f.read(DRONE_STATE_FIELDS_NUM * num_drones * DRONE_BASE_SIZE)
+#             drone_states = struct.unpack(drone_fmt, drone_bytes)
 
-            drone_states = struct.unpack(drone_fmt, drone_bytes)
+#             arr = np.asarray(drone_states, dtype=np.float32).reshape(
+#                 num_drones, DRONE_STATE_FIELDS_NUM
+#             )
 
-            arr = np.asarray(drone_states, dtype=np.float32).reshape(
-                num_drones, DRONE_STATE_FIELDS_NUM
-            )
+#             steps.append(step)
+#             global_rewards.append(reward)
+#             positions.append(arr[:, :3])
+#             velocities.append(arr[:, 3:])
 
-            steps.append(step)
-            global_rewards.append(reward)
-            positions.append(arr[:, :3])
-            velocities.append(arr[:, 3:])
-
-    return SwarmStateLog(
-        steps=np.asarray(steps, dtype=np.uint64),
-        global_rewards=np.asarray(global_rewards, dtype=np.float32),
-        pos=np.stack(positions),
-        vel=np.stack(velocities),
-    )
+#     return SwarmEventLog(
+#         steps=np.asarray(steps, dtype=np.uint64),
+#         global_rewards=np.asarray(global_rewards, dtype=np.float32),
+#         pos=np.stack(positions),
+#         vel=np.stack(velocities),
+#     )

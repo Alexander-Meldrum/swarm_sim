@@ -13,6 +13,10 @@ pub struct Vec3 { pub x: f32, pub y: f32, pub z: f32 }
 
 impl Vec3 {
     pub fn zero() -> Self { Self { x:0.0,y:0.0,z:0.0 } }
+
+    #[inline]
+    pub fn norm_squared(self) -> f32 {self.x * self.x + self.y * self.y + self.z * self.z
+    }
 }
 
 pub struct World {

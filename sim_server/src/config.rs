@@ -44,7 +44,7 @@ pub struct PhysicsConfig {
     /// Fixed simulation timestep (seconds)
     pub dt: f32,
     // /// Maximum allowed velocity magnitude
-    // pub max_velocity: f32,
+    pub max_velocity: f32,
     // /// Linear drag coefficient
     // pub drag: f32,
 }

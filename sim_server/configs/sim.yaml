@@ -25,7 +25,7 @@ physics:
   # Fixed simulation timestep (seconds)
   dt: 0.02
   # Maximum allowed velocity magnitude
-  # max_velocity: 15.0
+  max_velocity: 100.0
   # # Linear drag coefficient
   # drag: 0.1
 

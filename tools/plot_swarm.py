@@ -25,7 +25,7 @@ fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
 # world bounds (adjust)
-L = 500
+L = 75
 
 ax.set_xlim(-L, L)
 ax.set_ylim(-L, L)
