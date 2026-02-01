@@ -23,27 +23,27 @@ OBS_DIM = 7
 ACTION_DIM = 3
 ALIVE_IDX = OBS_DIM - 1
 
-EPS = 1e-6         # numerical stability
-GAMMA = 0.99
-VALUE_COEF = 0.05
-ENTROPY_COEF = 0.0022
-CLIP = 0.2         # PPO clipping range
-V_CLIP = 500.0
-SAT_COEF = 0.005
-
-EPISODE_COUNT = 500  # Amount of simulation runs
-MAX_STEPS = 1000
+EPISODE_COUNT = 500     # Number of full environment resets (training episodes)
+MAX_STEPS = 1000        # Maximum number of simulation steps per episode, Episode terminates early if all drones are dead
 SEED = 0
 NUM_DRONES_TEAM_0 = 10
 NUM_DRONES_TEAM_1 = 0
 
-ROLLOUT_STEPS = 250
-PPO_EPOCHS = 5
-MINIBATCH_SIZE = 64 # TODO should consider num_drones batch size
+V_CLIP = MAX_STEPS      # Assumes magnitude of reward roughly 1, MAX_STEPS * Reward Magnitude, Prevents critic explosion when rewards accumulate over long episodes
+EPS = 1e-6              # numerical stability. Used in log(), division, and tanh Jacobian correction
+GAMMA = 0.99            # Discount factor. Controls how much future rewards matter
+VALUE_COEF = 0.05       # Weight of value (critic) loss relative to policy loss. Smaller values reduce critic dominance
+ENTROPY_COEF = 0.0022   # Entropy bonus coefficient. Encourages exploration by preventing premature policy collapse
+CLIP = 0.2              # PPO clipping range (ε). Limits policy updates to prevent large, destabilizing changes
+SAT_COEF = 0.005        # Penalty for action saturation (|a| close to 1 after tanh). Discourages banging against action limits constantly
 
-MAX_ACC = 3.0      # max acceleration magnitude
-MAX_DISTANCE = 100
-MAX_VELOCITY = 15
+ROLLOUT_STEPS = 250     # Number of environment steps collected before each PPO update. Must be large enough for stable advantage estimates
+PPO_EPOCHS = 5          # Number of passes over the same rollout data. Higher = more sample efficiency, but risk of overfitting
+MINIBATCH_SIZE = int(0.15 * (ROLLOUT_STEPS * NUM_DRONES_TEAM_0))  # Number of samples per PPO minibatch, This should be ≪ total batch size for good SGD behavior
+
+MAX_ACC = 3.0           # max acceleration magnitude
+MAX_DISTANCE = 100      # Rougly the maximum size of the arena, used for normalizing observations for NN
+MAX_VELOCITY = 15       # Max velocity of drones, only used for normalizing. Real Max Velocity set in sim_server/configs/sim.yaml
 
 
 def main():
@@ -71,11 +71,7 @@ def main():
         )
         # Normalize
         obs[:, 0:3] /= MAX_DISTANCE
-        # obs[:, 6:7] /= MAX_DISTANCE*MAX_DISTANCE  # distance squared
         obs[:, 3:6] /= MAX_VELOCITY
-        # print(obs[:, 6:7] )
-        # print(obs)
-        # break
         # Extract alive flag from observations
         alive = obs[:, ALIVE_IDX].float()          # (num_drones,)
 
@@ -154,7 +150,6 @@ def main():
 
             # Normalize observations (VERY important for NN stability)
             next_obs[:, 0:3] /= MAX_DISTANCE
-            # next_obs[:, 6:7] /= MAX_DISTANCE*MAX_DISTANCE  # distance squared
             next_obs[:, 3:6] /= MAX_VELOCITY
 
             alive = next_obs[:, ALIVE_IDX].float()          # (num_drones,), PyTorch does not allow: float_tensor * bool_tensor
@@ -199,10 +194,6 @@ def main():
                 value_batch = torch.cat(rollout["value"])
                 next_value_batch = torch.cat(rollout["next_value"])
 
-                # Done mask: 1 = non-terminal, 0 = terminal
-                # done_batch = torch.cat(rollout["done"]).float() # [T*num_drones]
-                # not_done_batch = 1.0 - done_batch
-
                 alive_batch = torch.cat(rollout["alive"]).float() # [T*num_drones]
                 # ============================================================
                 # ADVANTAGE
@@ -219,8 +210,7 @@ def main():
 
                 # Value target
                 value_target = reward_batch + GAMMA * next_value_batch * alive_batch
-                # value_target = reward_batch + GAMMA * next_value_batch
-                value_target = torch.clamp(value_target, -V_CLIP, V_CLIP)  # TODO, is this best approach?
+                value_target = torch.clamp(value_target, -V_CLIP, V_CLIP)  # Clamping = stability tool, not theory  TODO, is this best approach?
 
                 # ============================================================
                 # PPO OPTIMIZATION (MULTIPLE EPOCHS + MINIBATCHES)
@@ -232,9 +222,6 @@ def main():
                     for start in range(0, batch_size, MINIBATCH_SIZE):
                         end = start + MINIBATCH_SIZE
                         mb_idx = indices[start:end]
-                        # mb_mask = alive_batch[mb_idx]        # [mb]
-                        # mask_sum = mb_mask.sum().clamp(min=1.0)
-
                         mb_alive = alive_batch[mb_idx]
                         mask_sum = mb_alive.sum().clamp(min=1.0)
 
@@ -273,10 +260,6 @@ def main():
                         # VALUE LOSS (CRITIC TRAINING)
                         # ============================================================
                         value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
-                        # value_loss = torch.mean(
-                        #     (value_pred - value_target[mb_idx].detach()) ** 2
-                        # )
-
                         value_error = (value_pred - value_target[mb_idx].detach()) ** 2
                         value_loss = (value_error * mb_alive).sum() / mask_sum
 

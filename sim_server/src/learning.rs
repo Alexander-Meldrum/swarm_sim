@@ -53,27 +53,25 @@ pub fn calc_rewards(world: &World) -> Rewards {
 
             // Cosine alignment in [-1, 1]
             let alignment = radial_in.dot(&vel_dir);
-            // rewards.rewards[i] += 5.0 * alignment;
-            // let alignment_reward = 10.0 * alignment;
-            let mut alignment_reward = 0.0;
-            if vel_norm > 0.1 {
-                alignment_reward = 1.5 * alignment * vel_norm;
-            }
+            let velocity_alignment_reward = if alignment >= 0.0 {
+                1.0 * alignment.powf(4.0) * vel_norm  // Reward alignment closer to 0.99
+            } else {
+                5.0 * alignment * vel_norm // strongly penalize alignment away from target
+            };
             
             let time_penalty = -1.0;
             let distance_penalty = -0.0005* world.distance_to_origin2[i];
-            let velocity_penalty = -0.001* vel_norm_squared;
-            let delta_distance_reward = 0.05* (world.previous_position[i].norm_squared() - world.position[i].norm_squared());
+            let velocity_penalty = -0.0005* vel_norm_squared;
+            let delta_distance_reward = 0.5* (world.previous_position[i].norm_squared().sqrt() - world.position[i].norm_squared().sqrt());
 
             // let damping_reward  = -0.5 * velocity_norm_squared * world.distance_to_origin2[i];         // penalize high speed when close
 
             
-            rewards.rewards[i] += time_penalty + distance_penalty + velocity_penalty + delta_distance_reward + alignment_reward;
+            rewards.rewards[i] += time_penalty + distance_penalty + velocity_penalty + delta_distance_reward + velocity_alignment_reward;
 
 
-            
-
-            // println!("distance_penalty, velocity_penalty, delta_distance_reward, alignment_reward: {} {} {} {}",distance_penalty, velocity_penalty, delta_distance_reward, alignment_reward)
+    
+            // println!("distance_penalty, velocity_penalty, delta_distance_reward, velocity_alignment_reward: {} {} {} {}",distance_penalty, velocity_penalty, delta_distance_reward, velocity_alignment_reward)
 
             // println!("rewards.rewards[i]: {}", rewards.rewards[i])
 

@@ -1,79 +1,240 @@
-# swarm_sim
-Deterministic swarm simulator for testing & training swarm controllers
+# Swarm Simulator
 
-## Components
-- Simulator Server (Rust)
-- Swarm Controller for Reinforcement Learning (RL) (Python)
-- Swarm Controller Deployment Example (C++)
-- gRPC (protobuf) Communication
-- Log Decoder & Visualizer (Python)
+**Deterministic swarm simulation framework for developing, testing, and deploying swarm control algorithms.**
+
+This project provides a high-performance, deterministic physics simulator paired with gRPC-based controllers, enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
+
+---
+
+## Key Features
+
+- Deterministic physics simulation for reproducible training and evaluation
+- Scales to large swarms using an ECS (Entity Component System) architecture
+- Language-agnostic control interface via gRPC (Rust, Python, C++)
+- Clear separation of training and deployment workflows
+- Binary logging and visualization tools for analysis and debugging
+
+---
+
+## Architecture Overview
+
+**Core components:**
+
+- **Simulator Server (Rust)**  
+  High-performance deterministic physics engine and event logger.
+
+- **Swarm Controller (Python, RL-focused)**  
+  Intended for deep learning training .
+
+- **Deployment Controller Example (C++)**  
+  Production-style inference client demonstrating how trained policies can be deployed without Python dependencies.
+
+- **gRPC / Protobuf Interface**  
+  Bidirectional streaming API shared across training and deployment. Lockstep simulation.
+
+- **Log Decoder & Visualization Tools (Python)**  
+  Offline analysis, 3D animation and CSV export from binary logs.
+
+---
 
 ## Simulator Server (Rust)
-- Deterministic Physics Simulator for Swarm Controllers [Rust]
-- ECS (Entity Component System) for cache efficiency supporting large number of agents in a swarm.
-- Binary State & Event (Collisions) Logger
 
-## Swarm Controller for Reinforcement Learning (RL) (Python)
-TODO
+- Deterministic physics simulator designed for swarm control research/development
+- ECS-based architecture for cache efficiency and scalability
+- Spatial grid optimization for high performance collision detection (Drone - Drone, Drone - Target)
+- Binary logging of:
+  - Agent state
+  - Collision and event data
+- Reward calculation module for RL 
+- Yaml config file configurable (World & drone related settings), the controllers control amount of drones etc. on gRPC reset request.
 
-## Swarm Controller Deployment Example (C++)
-Roadmap:
-A production-style inference client that loads trained policies and controls the swarm through the same gRPC API as the training controller. This demonstrates how learned policies can be deployed without Python dependencies, suitable for embedded systems, robotics, or large-scale evaluation.
+This component is the authoritative simulation source used by all controllers.
 
-## gRPC (protobuf) Communication
-- gRPC for bidirectional streaming, lockstep for enabling Reinforcment Learning
+---
 
-## Log Decoder & Visualizer
-TODO
+## Swarm Controller (Python, Deep Learning Reinforcement Learning)
 
-## How to run
+This component is intended for:
+- Training swarm controllers using reinforcement learning
+- Controller implements deep learning using PPO algorithm (Proximal Policy Optimization)
+- PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
+- Step-synchronized (lockstep) interaction with the simulator over gRPC
 
-To run the general build/run script:
+### PPO Implementation Overview
+This project implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
+It is intentionally designed as a **scaffold for experimentation**, not a full-featured RL framework.
+
+- **Actor–critic architecture** with separate policy and value networks.
+- **Multi-agent friendly**:
+  - Each drone is treated as an independent sample.
+  - Alive masking ensures dead agents do not affect learning.
+- **Continuous control**:
+  - Gaussian policy in unconstrained space.
+  - `tanh` squashing with proper log-probability correction.
+- **Stability-focused engineering**:
+  - PPO clipped objective
+  - 1-step TD advantage (no GAE)
+  - Advantage normalization
+  - Value target clamping
+  - Entropy bonus for exploration
+  - Action saturation penalty to discourage boundary banging
+- **Simple rollout collection**:
+  - Periodic PPO updates using minibatches.
+  - Multiple optimization epochs per rollout.
+- **Philosophy**:
+  - Prioritizes **clarity, debuggability, and control** over abstraction or performance.
+  - Avoids heavy RL frameworks and hidden magic.
+  - Well-suited for **research, prototyping, and swarm-specific RL experiments** tightly coupled to the simulator.
+
+---
+
+## Deployment Controller Example (C++)
+
+An example of a **production-style inference client** that:
+
+- Loads trained policies
+- Controls the swarm through the same gRPC API as training
+- Runs without Python dependencies
+
+This demonstrates how learned policies can be deployed to:
+- Embedded systems
+- Robotics platforms
+- Large-scale evaluation or simulation clusters
+
+---
+
+## gRPC Communication
+
+- Protobuf-defined API shared across all languages
+- Bidirectional streaming
+- Lockstep simulation support for reinforcement learning
+
+This design ensures training and deployment use **identical interfaces**, reducing sim-to-prod gaps.
+
+---
+
+## Log Decoder & Visualization
+
+- Binary simulation logs for performance and determinism
+- Tools for:
+  - 3D animation playback
+  - CSV export for analysis and plotting
+
+---
+
+## Getting Started
+
+### Quick Run
+
+To build and run rust server + python RL controller:
+
+```bash
 ./run_sim.sh
+```
+This will update protobuf bindings for both simulator and the controller.
+---
 
-For manual build see below.
+## Manual Build & Run
 
-### Simulation Server [Rust]
+### Simulation Server (Rust)
 
-protobuf-compiler  (sudo apt install protobuf-compiler)  
-cd sim_server  
-cargo build --release  
-cargo run --release  
+**Dependencies**
+```bash
+sudo apt install protobuf-compiler
+```
 
+**Build & Run**
+```bash
+cd sim_server
+cargo build --release
+cd - >/dev/null
+sim_server/target/release/sim_server --config sim_server/configs/sim.yaml
+```
 
-### Swarm Controller for Reinforcement Learning (RL) (Python)
+---
 
-Build proto files:
+### Swarm Controller (Python)
 
+Generate Python gRPC bindings:
+
+```bash
 python -m grpc_tools.protoc \
   -I ../../proto \
   --python_out=. \
   --grpc_python_out=. \
   ../../proto/swarm.proto
+```
 
-### Swarm Controller Example [C++]
+---
 
-cd swarms/swarm_cpp  
-mkdir build && cd build  
+### Swarm Controller Example (C++)
+
+```bash
+cd swarms/swarm_cpp
+mkdir build && cd build
 mkdir proto
-cmake ..  
-make  
-./swarm  
+cmake ..
+make
+./swarm
+```
 
-#### How to update proto bindings
+**Dependencies**
+```bash
+sudo apt install protobuf-compiler libgrpc++-dev
+sudo apt install protobuf-compiler-grpc
+```
+
+#### Updating Protobuf Bindings
+
+```bash
 protoc \
   --proto_path=proto \
   --cpp_out=swarms/swarm_cpp/build/proto \
   --grpc_out=swarms/swarm_cpp/build/proto \
   --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \
   proto/swarm.proto
+```
 
-Dependencies:
-sudo apt install protobuf-compiler libgrpc++-dev  
-sudo apt install protobuf-compiler-grpc  
+---
 
-### Visualization
+## Visualization & Analysis
 
-TODO
+### 3D Animation
 
-python tools/plot_swarm.py logs/00001_states.bin
+Given log files:
+```
+logs/00001_states.bin
+logs/00001_events.bin
+```
+
+Run:
+```bash
+python tools/plot_swarm.py logs/00001
+```
+
+#### Result example
+
+![Python controller swarm simulation demo](results/PPO_DL_Controller.gif)
+
+
+### Convert Logs to CSV
+
+```bash
+python tools/bin_to_csv.py logs/00001
+```
+
+---
+
+## Use Cases
+
+- Swarm robotics research
+- Reinforcement learning experimentation
+- Deterministic multi-agent benchmarking
+- Deployment-oriented controller evaluation
+
+---
+
+
+## License
+
+Apache License Version 2.0

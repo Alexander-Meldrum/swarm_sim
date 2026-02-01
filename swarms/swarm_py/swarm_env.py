@@ -44,7 +44,6 @@ class SwarmEnv:
         self.step_count        = 0
 
         # Observation structure per drone:
-        # [pos_x, pos_y, pos_z, vel_x, vel_y, vel_z] TODO
         self.obs_dim = obs_dim
 
         # Action structure per drone:
@@ -118,7 +117,7 @@ class SwarmEnv:
         request.step = self.step_count
 
         # TODO assign team id to request in a better way
-        request.team_id = 1
+        request.team_id = 0
 
         # Send step request to simulator
         response = self.stub.Step(request)
@@ -148,7 +147,6 @@ class SwarmEnv:
         obs = obs.view(self.num_drones, self.obs_dim)
         # Cut away team_1 observations
         obs_team0 = obs[:self.num_drones_team_0]
-        # print(obs_team0)
         
         
         return obs_team0
