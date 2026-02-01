@@ -4,6 +4,10 @@
 
 This project provides a high-performance, deterministic physics simulator paired with gRPC-based controllers, enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
+<p align="left">
+  <img src="results/PPO_DL_Controller.gif" width="400" />
+</p>
+
 ---
 
 ## Key Features
@@ -43,10 +47,10 @@ This project provides a high-performance, deterministic physics simulator paired
 - ECS-based architecture for cache efficiency and scalability
 - Spatial grid optimization for high performance collision detection (Drone - Drone, Drone - Target)
 - Binary logging of:
-  - Agent state
-  - Collision and event data
+  - Drone state
+  - Collision events
 - Reward calculation module for RL 
-- Yaml config file configurable (World & drone related settings), the controllers control amount of drones etc. on gRPC reset request.
+- Yaml config file configurable (World & drone physical settings), the controllers set amount of drones etc. on gRPC reset request.
 
 This component is the authoritative simulation source used by all controllers.
 
@@ -57,17 +61,17 @@ This component is the authoritative simulation source used by all controllers.
 This component is intended for:
 - Training swarm controllers using reinforcement learning
 - Controller implements deep learning using PPO algorithm (Proximal Policy Optimization)
-- PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
 - Step-synchronized (lockstep) interaction with the simulator over gRPC
 
 ### PPO Implementation Overview
 This project implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
 It is intentionally designed as a **scaffold for experimentation**, not a full-featured RL framework.
+PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
 
 - **Actor–critic architecture** with separate policy and value networks.
-- **Multi-agent friendly**:
+- **Multi-drone friendly**:
   - Each drone is treated as an independent sample.
-  - Alive masking ensures dead agents do not affect learning.
+  - Alive masking ensures dead drones do not affect learning.
 - **Continuous control**:
   - Gaussian policy in unconstrained space.
   - `tanh` squashing with proper log-probability correction.
@@ -131,7 +135,9 @@ To build and run rust server + python RL controller:
 ```bash
 ./run_sim.sh
 ```
-This will update protobuf bindings for both simulator and the controller.
+
+This will update protobuf bindings for both simulator and the controller. 
+
 ---
 
 ## Manual Build & Run
@@ -212,11 +218,6 @@ Run:
 python tools/plot_swarm.py logs/00001
 ```
 
-#### Result example
-
-![Python controller swarm simulation demo](results/PPO_DL_Controller.gif)
-
-
 ### Convert Logs to CSV
 
 ```bash
@@ -229,8 +230,16 @@ python tools/bin_to_csv.py logs/00001
 
 - Swarm robotics research
 - Reinforcement learning experimentation
-- Deterministic multi-agent benchmarking
+- Deterministic multi-drone benchmarking
 - Deployment-oriented controller evaluation
+
+---
+
+## Roadmap, Future Work
+
+- Default simulator controllers for dummy swarms (targets)
+- Addition of GAE to PPO algorithm
+- Enable 3d animation to show intended collisions as green triangles.
 
 ---
 
