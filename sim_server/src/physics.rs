@@ -11,6 +11,7 @@ pub fn step(world: &mut World, actions: &[Vec3], max_velocity: f32) {
         world.velocity[i].y = world.velocity[i].y.clamp(-max_velocity, max_velocity);
         world.velocity[i].z = world.velocity[i].z.clamp(-max_velocity, max_velocity);
 
+        world.previous_position[i] = world.position[i];
         world.position[i].x += world.velocity[i].x * world.dt;
         world.position[i].y += world.velocity[i].y * world.dt;
         world.position[i].z += world.velocity[i].z * world.dt;

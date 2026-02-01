@@ -36,7 +36,7 @@ impl SwarmProtoService for SimServer {
         &self,
         request: Request<ResetRequest>,
     ) -> Result<Response<ResetResponse>, Status> {
-        println!("[simulator] Resetting Simulator World...");
+        println!("\n[simulator] Resetting Simulator World...");
 
         // Use async "await" at async network / sync simulator boundary
         let mut sim = self.sim.lock().await;
@@ -80,7 +80,7 @@ impl SwarmProtoService for SimServer {
         // *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
         *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
 
-        println!("[simulator] New World, step: {}", world.step);
+        // println!("[simulator] New World, step: {}", world.step);
         // TODO
         // let enable_profiling = true;
         // Start profiling after creating new world
@@ -96,20 +96,20 @@ impl SwarmProtoService for SimServer {
 
         // Log World, braces ensure the log lock is released quickly.
         if config.logging.enabled {
-            log_world(world, &Rewards::new(0)).unwrap();
+            log_world(world, &Rewards::new(world.num_drones_team_0)).unwrap();
             log_events(world).unwrap();
         }
 
         println!("[simulator] Simulator World Setup Complete");
         println!("[simulator] **********************");
+        println!("[simulator] episode:           {}", world.episode);
         println!("[simulator] num_drones_team_0: {}", world.num_drones_team_0);
         println!("[simulator] num_drones_team_1: {}", world.num_drones_team_1);
-        println!("[simulator] cell_size:  {}", world.cell_size);
-        println!("[simulator] max_steps:  {}", world.max_steps);
-        println!("[simulator] step:       {}", world.step);
-        println!("[simulator] dt:         {}", world.dt);
-        println!("[simulator] done:       {}", world.done);
-        
+        // println!("[simulator] cell_size:  {}", world.cell_size);
+        println!("[simulator] max_steps:         {}", world.max_steps);
+        // println!("[simulator] step:       {}", world.step);
+        // println!("[simulator] dt:         {}", world.dt);
+        // println!("[simulator] done:       {}", world.done);
         println!("[simulator] **********************");
 
         Ok(Response::new(ResetResponse {
@@ -164,7 +164,7 @@ impl SwarmProtoService for SimServer {
 
         // Detect collisions & target hits
         detect_collisions(world);
-        detect_target_hits(world);
+        detect_target_hits(world, self.config.collisions.radius);
 
         // Calculate Rewards
         let rewards: Rewards = calc_rewards(&world);
@@ -181,8 +181,10 @@ impl SwarmProtoService for SimServer {
         // Check if simulation done
         if world.step >= world.max_steps {
             world.done = true;
-            // Flush log writing
-            world.state_log.as_mut().expect("log file not initialized before flush").flush()?;
+            if self.config.logging.enabled {
+                // Flush log writing
+                world.state_log.as_mut().expect("log file not initialized before flush").flush()?;
+            }
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
             println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
@@ -209,6 +211,6 @@ impl SwarmProtoService for SimServer {
         let obs = std::mem::take(&mut obs_buf.obs);
 
         // ----- 4. Output ------ 
-        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.individual_rewards, global_reward: rewards.global_reward}))
+        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.rewards, global_reward: rewards.global_reward}))
     }
 }

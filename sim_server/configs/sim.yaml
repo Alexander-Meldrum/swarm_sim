@@ -17,6 +17,13 @@ arena:
 
   randomize_init_pos: true
 
+# -------------------------------
+# Target
+# -------------------------------
+target:
+  position: [0.0, 0.0, 0.0]
+  radius: 1.0
+
 
 # -------------------------------
 # Physics Parameters
@@ -58,7 +65,7 @@ logging:
   # Enable episode logging
   enabled: true
   # Enable profiling
-  profiling_enabled: true
+  profiling_enabled: false
   profiling_frequency: 1000 # Hz
 
 # -------------------------------

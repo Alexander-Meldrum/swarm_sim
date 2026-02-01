@@ -51,7 +51,7 @@ class SwarmEnv:
         # [ax, ay, az]
         self.action_dim = action_dim
 
-    def reset(self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int):
+    def reset(self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int, seed: int):
         """
         Start a new episode in the simulator.
 
@@ -64,14 +64,11 @@ class SwarmEnv:
             torch.Tensor of observations for team 0
         """
 
-        # Store configuration locally
-        self.num_drones_team_0 = num_drones_team_0
-        self.num_drones_team_1 = num_drones_team_1
-        self.num_drones = self.num_drones_team_0 + self.num_drones_team_1
+        
         self.step_count = 0
 
         request = swarm_pb2.ResetRequest(
-            seed = 0,
+            seed = seed,
             num_drones_team_0=num_drones_team_0,
             num_drones_team_1=num_drones_team_1,
             max_steps=max_steps,
@@ -79,6 +76,12 @@ class SwarmEnv:
 
         # Blocking RPC call (synchronous semantics)
         response = self.stub.Reset(request)
+
+        # Store configuration locally
+        self.num_drones_team_0 = response.num_drones_team_0
+        self.num_drones_team_1 = response.num_drones_team_1
+        self.num_drones = self.num_drones_team_0 + self.num_drones_team_1
+
 
         self.step_count = response.step
 
@@ -116,9 +119,6 @@ class SwarmEnv:
 
         # TODO assign team id to request in a better way
         request.team_id = 1
-
-
-        # print(request)
 
         # Send step request to simulator
         response = self.stub.Step(request)

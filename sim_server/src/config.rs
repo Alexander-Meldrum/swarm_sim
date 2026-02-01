@@ -1,13 +1,12 @@
 use serde::Deserialize;
 
-//
 // ===============================
 // Top-level simulator config
 // ===============================
-//
 #[derive(Debug, Deserialize)]
 pub struct SimConfig {
     pub arena: ArenaConfig,
+    pub target: TargetConfig,
     pub physics: PhysicsConfig,
     pub collisions: CollisionConfig,
     // pub controllers: ControllersConfig,
@@ -15,30 +14,35 @@ pub struct SimConfig {
     // pub debug: DebugConfig,
 }
 
-//
+
 // ===============================
 // Arena / World Geometry
 // ===============================
-//
 #[derive(Debug, Deserialize)]
 pub struct ArenaConfig {
-    // /// size of Arena, m TODO
-    // pub arena_size: f32,
     /// Minimum corner of the arena (x, y, z)
     pub min: [f32; 3],
     /// Maximum corner of the arena (x, y, z)
     pub max: [f32; 3],
     /// Minimum distance between drones when randomizing start pos.
     pub min_dist: f32,
-
     pub randomize_init_pos: bool,
 }
 
-//
+// ===============================
+// Target
+// ===============================
+#[derive(Debug, Deserialize)]
+pub struct TargetConfig {
+
+    pub position: [f32; 3],
+    pub radius: f32,
+
+}
+
 // ===============================
 // Physics Parameters
 // ===============================
-//
 #[derive(Debug, Deserialize)]
 pub struct PhysicsConfig {
     /// Fixed simulation timestep (seconds)
@@ -49,11 +53,10 @@ pub struct PhysicsConfig {
     // pub drag: f32,
 }
 
-//
+
 // ===============================
 // Collision Handling
 // ===============================
-//
 #[derive(Debug, Deserialize)]
 pub struct CollisionConfig {
     /// Collision radius per drone
@@ -62,11 +65,9 @@ pub struct CollisionConfig {
     // pub disable_on_hit: bool,
 }
 
-//
 // ===============================
 // Built-in Controllers
 // ===============================
-//
 // #[derive(Debug, Deserialize)]
 // pub struct ControllersConfig {
 //     pub rule_based: RuleBasedControllerConfig,
@@ -82,11 +83,9 @@ pub struct CollisionConfig {
 //     pub behavior: String,
 // }
 
-//
 // ===============================
 // Logging Configuration
 // ===============================
-//
 #[derive(Debug, Deserialize)]
 pub struct LoggingConfig {
     /// Enable episode logging
@@ -98,7 +97,6 @@ pub struct LoggingConfig {
     pub profiling_frequency: i32,
 }
 
-//
 // ===============================
 // Debug / Development Options
 // ===============================

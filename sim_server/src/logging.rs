@@ -18,8 +18,8 @@ pub fn log_world(
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&world.num_drones_team_0.to_le_bytes())?;
-    log.write_all(&rewards.global_reward.to_le_bytes())?;
+    log.write_all(&(world.num_drones_team_0 as u32).to_le_bytes())?;
+    
 
     for i in 0..world.num_drones_team_0 as usize {
         let p = &world.position[i];
@@ -32,6 +32,8 @@ pub fn log_world(
         log.write_all(&v.x.to_le_bytes())?;
         log.write_all(&v.y.to_le_bytes())?;
         log.write_all(&v.z.to_le_bytes())?;
+
+        log.write_all(&rewards.rewards[i].to_le_bytes())?;
     }
 
     log.flush()?; // flush once at the end for efficiency
@@ -46,7 +48,6 @@ pub fn log_events(world: &mut World) -> std::io::Result<()> {
     }
     let log = world.event_log.as_mut().expect("event log not initialized");
 
-    // log: &mut BufWriter<File>, events: &Vec<Event>
     for e in &world.events {
         // Step
         log.write_all(&e.step.to_le_bytes())?;
@@ -54,7 +55,13 @@ pub fn log_events(world: &mut World) -> std::io::Result<()> {
         log.write_all(&[e.kind as u8])?;
         // Drone / target fields
         log.write_all(&e.drone_a.to_le_bytes())?;
+        log.write_all(&e.drone_a_position.x.to_le_bytes())?;
+        log.write_all(&e.drone_a_position.y.to_le_bytes())?;
+        log.write_all(&e.drone_a_position.z.to_le_bytes())?;
         log.write_all(&e.drone_b.to_le_bytes())?;
+        log.write_all(&e.drone_b_position.x.to_le_bytes())?;
+        log.write_all(&e.drone_b_position.y.to_le_bytes())?;
+        log.write_all(&e.drone_b_position.z.to_le_bytes())?;
         log.write_all(&e.target_id.to_le_bytes())?;
     }
     log.flush()?; // flush once at the end for efficiency
