@@ -159,9 +159,8 @@ def main():
 
             alive = next_obs[:, ALIVE_IDX].float()          # (num_drones,), PyTorch does not allow: float_tensor * bool_tensor
 
-            all_dead = not alive.any()
-            if all_dead:
-                done = True   # end episode logically
+            if not alive.any():
+                done = True  # end episode logically
             if done:
                 alive = torch.ones_like(alive)
 
