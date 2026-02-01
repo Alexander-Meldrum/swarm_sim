@@ -57,7 +57,6 @@ def main():
     value_net = ValueNet(obs_dim=OBS_DIM).to(device)
 
     # Optimizer, Adam smooths updates, adapts per-parameter, handles noisy signals
-    # optimizer = optim.Adam(policy.parameters(), lr=3e-4)
     optimizer = optim.Adam(list(policy.parameters()) + list(value_net.parameters()), lr=3e-4)
     
 
@@ -79,8 +78,6 @@ def main():
         # break
         # Extract alive flag from observations
         alive = obs[:, ALIVE_IDX].float()          # (num_drones,)
-        done_agent = 1.0 - alive                # 1 = terminal, 0 = ongoing
-        done_agent.shape == (NUM_DRONES_TEAM_0,)
 
         done = False
         step_count = 0
@@ -96,7 +93,7 @@ def main():
             "reward": [],
             "value": [],
             "next_value": [],
-            "done": [],
+            "alive": [],
         }
 
         # Episode rollout, PPO (Proximal Policy Optimization)
@@ -160,11 +157,13 @@ def main():
             # next_obs[:, 6:7] /= MAX_DISTANCE*MAX_DISTANCE  # distance squared
             next_obs[:, 3:6] /= MAX_VELOCITY
 
-            alive = obs[:, ALIVE_IDX].float()          # (num_drones,), PyTorch does not allow: float_tensor * bool_tensor
-            done_agent = 1.0 - alive                   # 1 = terminal, 0 = ongoing
-            done_agent.shape == (NUM_DRONES_TEAM_0,)
+            alive = next_obs[:, ALIVE_IDX].float()          # (num_drones,), PyTorch does not allow: float_tensor * bool_tensor
+
+            all_dead = not alive.any()
+            if all_dead:
+                done = True   # end episode logically
             if done:
-                done_agent = torch.ones_like(done_agent)
+                alive = torch.ones_like(alive)
 
 
             # ============================================================
@@ -185,15 +184,14 @@ def main():
             rollout["reward"].append(reward.detach())
             rollout["value"].append(value.detach())
             rollout["next_value"].append(next_value.detach())
-            # rollout["done"].append(torch.full_like(reward, float(done)))
-            rollout["done"].append(done_agent.detach())
+            rollout["alive"].append(alive.detach())
 
             step_count += 1
 
             # ============================================================
             # BATCH PPO UPDATE EVERY 500 STEPS
             # ============================================================
-            if step_count % ROLLOUT_STEPS == 0:
+            if step_count % ROLLOUT_STEPS == 0 or done:     # Make sure to update policy even if all drones crash
                 # Stack rollout tensors
                 obs_batch = torch.cat(rollout["obs"])
                 u_batch = torch.cat(rollout["u"])
@@ -203,9 +201,10 @@ def main():
                 next_value_batch = torch.cat(rollout["next_value"])
 
                 # Done mask: 1 = non-terminal, 0 = terminal
-                done_batch = torch.cat(rollout["done"]).float() # [T*num_drones]
-                not_done_batch = 1.0 - done_batch
+                # done_batch = torch.cat(rollout["done"]).float() # [T*num_drones]
+                # not_done_batch = 1.0 - done_batch
 
+                alive_batch = torch.cat(rollout["alive"]).float() # [T*num_drones]
                 # ============================================================
                 # ADVANTAGE
                 # ============================================================
@@ -214,13 +213,13 @@ def main():
 
                 # One-step TD advantage:
                 # actual outcome        - expected outcome
-                advantage = reward_batch + GAMMA * next_value_batch * not_done_batch - value_batch
+                advantage = reward_batch + GAMMA * next_value_batch * alive_batch - value_batch
 
                 # Normalize advantage to reduce gradient variance
                 advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
 
                 # Value target
-                value_target = reward_batch + GAMMA * next_value_batch * not_done_batch
+                value_target = reward_batch + GAMMA * next_value_batch * alive_batch
                 # value_target = reward_batch + GAMMA * next_value_batch
                 value_target = torch.clamp(value_target, -V_CLIP, V_CLIP)  # TODO, is this best approach?
 
@@ -234,8 +233,11 @@ def main():
                     for start in range(0, batch_size, MINIBATCH_SIZE):
                         end = start + MINIBATCH_SIZE
                         mb_idx = indices[start:end]
-                        mb_mask = not_done_batch[mb_idx]        # [mb]
-                        mask_sum = mb_mask.sum().clamp(min=1.0)
+                        # mb_mask = alive_batch[mb_idx]        # [mb]
+                        # mask_sum = mb_mask.sum().clamp(min=1.0)
+
+                        mb_alive = alive_batch[mb_idx]
+                        mask_sum = mb_alive.sum().clamp(min=1.0)
 
                         # ============================================================
                         # FORWARD NEW POLICY (same obs, same sampled action u)
@@ -244,7 +246,8 @@ def main():
                         dist_new = Normal(mean_new, std_new)
 
                         entropy = dist_new.entropy().sum(dim=-1)   # (num_drones,)
-                        entropy_bonus = entropy.mean()
+                        # entropy_bonus = entropy.mean()
+                        entropy_bonus = (entropy * mb_alive).sum() / mask_sum
 
                         log_prob_u_new = dist_new.log_prob(u_batch[mb_idx]).sum(dim=-1)
 
@@ -260,29 +263,30 @@ def main():
                         # ============================================================
                         ratio = torch.exp(log_prob_new - log_prob_old_batch[mb_idx])
 
-                        policy_loss = -torch.mean(
-                            torch.min(
-                                ratio * advantage[mb_idx],
-                                torch.clamp(ratio, 1 - CLIP, 1 + CLIP) * advantage[mb_idx]
-                            )
+                        policy_loss_per_sample = torch.min(
+                            ratio * advantage[mb_idx],
+                            torch.clamp(ratio, 1 - CLIP, 1 + CLIP) * advantage[mb_idx]
                         )
+
+                        policy_loss = -(policy_loss_per_sample * mb_alive).sum() / mask_sum
 
                         # ============================================================
                         # VALUE LOSS (CRITIC TRAINING)
                         # ============================================================
                         value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
-                        value_loss = torch.mean(
-                            (value_pred - value_target[mb_idx].detach()) ** 2
-                        )
+                        # value_loss = torch.mean(
+                        #     (value_pred - value_target[mb_idx].detach()) ** 2
+                        # )
+
+                        value_error = (value_pred - value_target[mb_idx].detach()) ** 2
+                        value_loss = (value_error * mb_alive).sum() / mask_sum
 
                         # ============================================================
                         # TOTAL LOSS + UPDATE
                         # ============================================================
                         # Value loss stabilizes learning
                         # Policy loss improves actions
-
-                        
-                        saturation = (a.abs() > 0.95).float().mean()
+                        saturation = (a.abs() > 0.95).float().mean()  # TODO
 
                         total_loss = policy_loss + VALUE_COEF * value_loss - ENTROPY_COEF * entropy_bonus + SAT_COEF * saturation
 
@@ -290,6 +294,7 @@ def main():
                         total_loss.backward()
                         optimizer.step()
 
+                # RL Debug prints
                 print(
                 "action mean:", action.mean(dim=0).cpu().numpy(),
                 "action std :", action.std(dim=0).cpu().numpy()
@@ -338,128 +343,6 @@ def main():
             obs = next_obs
 
 
-
-
-            
-
-
-
-
-        # while not done:        
-            
-        #     # ============================================================
-        #     # 1. FORWARD OLD POLICY (sampling)
-        #     # ============================================================
-
-        #     mean, std = policy(obs)               # obs: (num_drones, obs_dim)
-        #     dist = Normal(mean, std)              # Gaussian policy
-
-        #     # Sample in unconstrained space ℝ
-        #     u = dist.sample()                     # shape: (num_drones, act_dim)
-
-        #     # Squash to (-1, 1) so actions are bounded
-        #     a = torch.tanh(u)
-
-        #     # Scale to environment units (acceleration)
-        #     action = a * MAX_ACC                  # THIS is sent to simulator
-
-        #     # ============================================================
-        #     # 2. LOG-PROBABILITY OF THE ACTION (OLD POLICY)
-        #     # ============================================================
-
-        #     # Log-probability in unconstrained Gaussian space
-        #     # Sum over action dimensions → one log_prob per drone
-        #     log_prob_u = dist.log_prob(u).sum(dim=-1)
-
-        #     # Change-of-variables correction for tanh:
-        #     # tanh(u) squashes space, changing probability density
-        #     log_det_jacobian = torch.log(
-        #         1.0 - a.pow(2) + EPS
-        #     ).sum(dim=-1)
-
-        #     # Final log-probability of the action actually sent to env
-        #     # detach() is CRITICAL: old policy must not get gradients
-        #     log_prob_old = (log_prob_u - log_det_jacobian).detach()
-
-        #     # ============================================================
-        #     # 3. ENVIRONMENT STEP
-        #     # ============================================================
-        #     # Debug controller showing we can move towards origin
-        #     # action = -obs[:, 0:3] * 10
-
-        #     next_obs, reward, done = env.step(action)  # reward: (num_drones,)
-
-        #     # Normalize
-        #     next_obs[:, 0:3] /= MAX_DISTANCE
-        #     next_obs[:, 3:6] /= MAX_VELOCITY
-
-        #     # ============================================================
-        #     # 4. ADVANTAGE (MINIMAL, BUT VALID)
-        #     # ============================================================
-
-        #     # Simplest advantage:
-        #     # "Was this drone better or worse than average?"
-        #     # TODO consider next_obs
-        #     # advantage = reward - reward.mean()
-
-        #     # # Normalize advantage → stable gradients
-        #     # advantage = advantage / (advantage.std() + 1e-8)
-
-        #     advantage = reward.detach()
-        #     advantage = advantage / (advantage.std() + 1e-8)
-
-        #     # ============================================================
-        #     # 5. FORWARD NEW POLICY (same states, same sampled u)
-        #     # ============================================================
-
-        #     mean_new, std_new = policy(obs)
-        #     dist_new = Normal(mean_new, std_new)
-
-        #     # Log-prob under new policy (same u!)
-        #     log_prob_u_new = dist_new.log_prob(u).sum(dim=-1)
-
-        #     # Apply SAME tanh correction
-        #     log_prob_new = log_prob_u_new - log_det_jacobian
-
-        #     # ============================================================
-        #     # 6. PPO RATIO + CLIPPED OBJECTIVE
-        #     # ============================================================
-
-        #     # Likelihood ratio: how much did policy change?
-        #     ratio = torch.exp(log_prob_new - log_prob_old)
-
-        #     # PPO clipped objective:
-        #     # prevents overly large policy updates
-        #     loss = -torch.mean(
-        #         torch.min(
-        #             ratio * advantage,
-        #             torch.clamp(ratio, 1 - CLIP, 1 + CLIP) * advantage
-        #         )
-        #     )
-
-        #     # ============================================================
-        #     # 7. BACKPROP + UPDATE
-        #     # ============================================================
-
-        #     optimizer.zero_grad()   # clear old gradients
-        #     loss.backward()         # compute gradients
-        #     optimizer.step()        # update policy parameters
-
-        #     # Move to next state
-        #     obs = next_obs
-
-
-            
-            
-            
-
-        print("policy std mean:", std.mean().item())
-
-
-
-
-
-        # print(f"[swarm_py] Episode {episode}, reward = {ep_reward:.2f}")
 
 
 if __name__ == "__main__":
