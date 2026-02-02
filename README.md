@@ -2,7 +2,7 @@
 
 **Deterministic swarm simulation framework for developing, testing, and deploying swarm control algorithms.**
 
-This project provides a high-performance, deterministic physics simulator paired with gRPC-based controllers. <br>
+This project provides a high-performance, deterministic physics simulator (Rust) paired with gRPC-based controllers (Python, C++). <br>
 Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
