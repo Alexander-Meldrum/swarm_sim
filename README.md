@@ -2,11 +2,14 @@
 
 **Deterministic swarm simulation framework for developing, testing, and deploying swarm control algorithms.**
 
-This project provides a high-performance, deterministic physics simulator paired with gRPC-based controllers, enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
+This project provides a high-performance, deterministic physics simulator paired with gRPC-based controllers. <br>
+Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
-  <img src="results/PPO_DL_Controller.gif" width="400" />
+  <img src="results/PPO_DL_Controller.gif" width="500" />
 </p>
+
+PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator.
 
 ---
 
@@ -28,7 +31,7 @@ This project provides a high-performance, deterministic physics simulator paired
   High-performance deterministic physics engine and event logger.
 
 - **Swarm Controller (Python, RL-focused)**  
-  Intended for deep learning training .
+  A PyTorch deep learning training controller (PPO: Proximal Policy Optimization).
 
 - **Deployment Controller Example (C++)**  
   Production-style inference client demonstrating how trained policies can be deployed without Python dependencies.
@@ -238,6 +241,8 @@ python tools/bin_to_csv.py logs/00001
 ## Roadmap, Future Work
 
 - Default simulator controllers for dummy swarms (targets)
+- Save weights after training in Python controller
+- Update C++ controller to use saved weights
 - Addition of GAE to PPO algorithm
 - Enable 3d animation to show intended collisions as green triangles.
 
