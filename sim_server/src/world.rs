@@ -7,6 +7,7 @@ use pprof::ProfilerGuard;
 // use crate::learning::{Rewards};
 use crate::config::SimConfig;
 
+use std::ops::{Add, Sub};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 { pub x: f32, pub y: f32, pub z: f32 }
@@ -24,11 +25,37 @@ impl Vec3 {
         self.dot(self)
     }
 
-    // #[inline(always)]
-    // pub fn norm(&self) -> f32 {
-    //     self.norm_squared().sqrt()
-    // }
+    #[inline(always)]
+    pub fn norm(&self) -> f32 {
+        self.norm_squared().sqrt()
+    }
 }
+impl Add for Vec3 {
+    type Output = Vec3;
+
+    #[inline(always)]
+    fn add(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+impl Sub for Vec3 {
+    type Output = Vec3;
+
+    #[inline(always)]
+    fn sub(self, rhs: Vec3) -> Vec3 {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+pub const K_NEIGHBORS: usize = 1;
 
 pub struct World {
     pub profiler: Option<ProfilerGuard<'static>>,
@@ -38,6 +65,9 @@ pub struct World {
     pub num_drones_team_0: usize,
     pub num_drones_team_1: usize,
     pub num_drones: usize,
+    // Per-drone nearest neighbors
+    pub team0_neighbors: Vec<[Option<(Vec3, Vec3)>; K_NEIGHBORS]>,
+    pub team1_neighbors: Vec<[Option<(Vec3, Vec3)>; K_NEIGHBORS]>,
     pub episode: u64,
     pub state_log: Option<BufWriter<File>>,
     pub event_log: Option<BufWriter<File>>,
@@ -54,10 +84,6 @@ pub struct World {
     pub alive: Vec<bool>,
     pub distance_to_origin2: Vec<f32>,
 
-    // Collision accounting
-    pub collisions_desired: Vec<u32>,
-    pub collisions_undesired: Vec<u32>,
-
     // Targets
     pub targets: Vec<Target>,
 
@@ -71,9 +97,6 @@ pub struct World {
     pub grid_dim: (usize, usize, usize),
     pub grid: Vec<Vec<usize>>, // flat grid: cell → drone indices
 
-    // Reinforcement Learning Rewards
-    // pub rewards: Rewards,
-
     pub done: bool,
 }
 /// Static target that drones can hit
@@ -84,7 +107,7 @@ pub struct Target {
 }
 
 #[repr(u8)]  // for binary logging compatibility.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum EventKind {
     TargetHit = 1,
     DroneCollision = 2,
@@ -105,9 +128,13 @@ pub struct Event {
 impl World {
     /// Init a new world
     pub fn new(config: Arc<SimConfig>, num_drones_team_0: usize, num_drones_team_1: usize, max_steps: u64, episode: u64, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>) -> Self {
-        // TODO? implement a reset fn to avoid reallocation each episode.
-
         let num_drones = num_drones_team_0 + num_drones_team_1;
+
+        let mut team = Vec::with_capacity(num_drones_team_0 + num_drones_team_1);
+        // First team 0 drones
+        team.extend(std::iter::repeat(0).take(num_drones_team_0));
+        // Then team 1 drones
+        team.extend(std::iter::repeat(1).take(num_drones_team_1));
         // Get values from config
         // lowest & highest corner of the arena
         let arena_min = Vec3 { x: config.arena.min[0], y: config.arena.min[1], z: config.arena.min[2] };
@@ -118,24 +145,8 @@ impl World {
 
         // events are per-step; reserve aggressively to avoid realloc
         let events = Vec::with_capacity(num_drones / 4);
+        let cell_size = config.arena.cell_size;
 
-        
-        // Try to keep cell_size close to "interaction_radius". cell_size affects performance a lot
-        // Too small → grid overhead dominates, Too large → neighbor checks dominate
-        // let cell_size = 50.0;      // TODO
-        // Guestimate good value for cell_size
-        let arena_extent = Vec3 {
-            x: arena_max.x - arena_min.x,
-            y: arena_max.y - arena_min.y,
-            z: arena_max.z - arena_min.z,
-        };
-        let desired_average_drones_per_cell = 2.0;
-        let num_cells = num_drones as f32 / desired_average_drones_per_cell;
-        let cells_per_axis = num_cells.cbrt().ceil();  // Approximation when non-uniform arena
-        let max_extent = arena_extent.x
-            .max(arena_extent.y)
-            .max(arena_extent.z);
-        let cell_size = max_extent / cells_per_axis;
 
         // Compute grid dimensions, axis-aligned bounding box
         let nx = ((arena_max.x - arena_min.x) / cell_size).ceil() as usize;
@@ -151,6 +162,8 @@ impl World {
             num_drones_team_0: num_drones_team_0,
             num_drones_team_1: num_drones_team_1,
             num_drones: num_drones,
+            team0_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
+            team1_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             episode: episode,
             state_log: state_log,
             event_log: event_log,
@@ -161,10 +174,8 @@ impl World {
             acceleration: vec![Vec3::zero(); num_drones],
             alive: vec![true; num_drones],
             distance_to_origin2: vec![0.0; num_drones],
-            team: vec![0; num_drones],
+            team: team,
             drone_radius,
-            collisions_desired: vec![0; num_drones],
-            collisions_undesired: vec![0; num_drones],
             targets: targets,
             events,
             arena_min,
@@ -189,6 +200,8 @@ impl World {
             num_drones_team_0: 0,
             num_drones_team_1: 0,
             num_drones: 0,
+            team0_neighbors: vec![[None; K_NEIGHBORS]; 0],
+            team1_neighbors: vec![[None; K_NEIGHBORS]; 0],
             episode: 0,
             state_log: None,
             event_log: None,
@@ -200,8 +213,6 @@ impl World {
             distance_to_origin2: Vec::new(),
             team: Vec::new(),
             drone_radius: 0.0,
-            collisions_desired: Vec::new(),
-            collisions_undesired: Vec::new(),
             targets: Vec::new(),
             events: Vec::new(),
             arena_min: Vec3 {x: 0.0, y: 0.0, z: 0.0},
@@ -300,9 +311,7 @@ pub fn rebuild_grid(world: &mut World) {
             continue;
         }
 
-        // if let Some(idx) = grid_index(world, world.position[i]) {
         if let Some(idx) = grid_index(&world.arena_min, &world.cell_size, &world.grid_dim, &world.position[i]) {
-
             world.grid[idx].push(i);
         }
     }
@@ -310,7 +319,6 @@ pub fn rebuild_grid(world: &mut World) {
 
 /// Detects physical collisions between drones using the spatial grid
 pub fn detect_collisions(world: &mut World) {
-    // TODO check logic
     let r2 = (2.0 * world.drone_radius) * (2.0 * world.drone_radius);
     let (nx, ny, nz) = world.grid_dim;
 
@@ -328,7 +336,6 @@ pub fn detect_collisions(world: &mut World) {
                     }
 
                     let pi = world.position[i];
-                    let team_i = world.team[i];
 
                     // Check neighboring cells for possible collisions
                     for (dx, dy, dz) in NEIGHBORS {
@@ -369,17 +376,6 @@ pub fn detect_collisions(world: &mut World) {
                                 world.alive[j] = false;
                                 // Bindary logging uses u32 instead of usize for portability. 
                                 world.events.push(Event::drone_collision(world.step, i.try_into().unwrap(), pi, j.try_into().unwrap(), pj));
-
-                                // TODO improve team goal logic, now both teams want to hit eachother
-                                // Count all physical collisions
-                                world.collisions_undesired[i] += 1;
-                                world.collisions_undesired[j] += 1;
-
-                                // Tactical collision: only if teams differ
-                                if team_i != world.team[j] {
-                                    world.collisions_desired[i] += 1;
-                                    world.collisions_desired[j] += 1;
-                                }
                             }
                         }
                     }
@@ -392,15 +388,9 @@ pub fn detect_collisions(world: &mut World) {
 /// Detects meaningful drone–target hits using the spatial grid
 pub fn detect_target_hits(world: &mut World, drone_radius: f32) {
     let (nx, ny, nz) = world.grid_dim;
-
-    // let (targets, grid) = (&mut world.targets, &world.grid);
-
     let (arena_min, cell_size, grid_dim) =  (&world.arena_min, &world.cell_size, &world.grid_dim);
 
-    // let targets = &world.targets;
-
     for (target_id, target) in world.targets.iter_mut().enumerate() {
-    // for (target_id, target) in targets.iter().enumerate() {
         if !target.alive {
             continue;
         }
@@ -472,6 +462,144 @@ pub fn detect_target_hits(world: &mut World, drone_radius: f32) {
         }
     }
 }
+
+pub fn find_k_nearest_per_team<const K: usize>(
+    world: &World,
+    drone_id: usize,
+    max_radius: f32,
+) -> (
+    [Option<(Vec3, Vec3)>; K],
+    [Option<(Vec3, Vec3)>; K],
+) {
+    // --------------------------------------------------
+    // Setup
+    // --------------------------------------------------
+    let pos = world.position[drone_id];
+    let vel = world.velocity[drone_id];
+
+    let max_r2 = max_radius * max_radius;
+
+    let cell_size = world.cell_size;
+    let arena_min = world.arena_min;
+    let (nx, ny, nz) = world.grid_dim;
+
+    // Compute grid coordinates of this drone
+    let ix = ((pos.x - arena_min.x) / cell_size) as isize;
+    let iy = ((pos.y - arena_min.y) / cell_size) as isize;
+    let iz = ((pos.z - arena_min.z) / cell_size) as isize;
+
+    // Fixed-size k-nearest buffers
+    let mut team0: [Option<(usize, f32)>; K] = [None; K];
+    let mut team1: [Option<(usize, f32)>; K] = [None; K];
+
+    // --------------------------------------------------
+    // Scan neighbor cells
+    // --------------------------------------------------
+    for (dx, dy, dz) in NEIGHBORS {
+        let nix = ix + dx;
+        let niy = iy + dy;
+        let niz = iz + dz;
+
+        // Skip invalid cells
+        if nix < 0 || niy < 0 || niz < 0 {
+            continue;
+        }
+        if nix >= nx as isize || niy >= ny as isize || niz >= nz as isize {
+            continue;
+        }
+
+        let cell_idx =
+            nix as usize
+            + niy as usize * nx
+            + niz as usize * nx * ny;
+
+        // --------------------------------------------------
+        // Check drones in this cell
+        // --------------------------------------------------
+        for &other in &world.grid[cell_idx] {
+            if other == drone_id || !world.alive[other] {
+                continue;
+            }
+
+            let delta = world.position[other] - pos;
+            let dist2 = delta.norm_squared();
+
+            // Max sensing radius check
+            if dist2 > max_r2 {
+                continue;
+            }
+
+            // Select team buffer
+            let buf = match world.team[other] {
+                0 => &mut team0,
+                1 => &mut team1,
+                _ => continue,
+            };
+
+            // --------------------------------------------------
+            // Insert into k-nearest buffer (sorted)
+            // --------------------------------------------------
+            if let Some((_, worst)) = buf[K - 1] {
+                if dist2 >= worst {
+                    continue;
+                }
+            }
+
+            let mut i = 0;
+            while i < K {
+                match buf[i] {
+                    Some((_, d)) if d <= dist2 => i += 1,
+                    _ => {
+                        for j in (i + 1..K).rev() {
+                            buf[j] = buf[j - 1];
+                        }
+                        buf[i] = Some((other, dist2));
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // --------------------------------------------------
+    // Convert to relative position & velocity, points from the agent toward the target
+    // --------------------------------------------------
+    let mut out0: [Option<(Vec3, Vec3)>; K] = [None; K];
+    let mut out1: [Option<(Vec3, Vec3)>; K] = [None; K];
+
+    for i in 0..K {
+        if let Some((id, _)) = team0[i] {
+            out0[i] = Some((
+                world.position[id] - pos,
+                world.velocity[id] - vel,
+            ));
+        }
+        if let Some((id, _)) = team1[i] {
+            out1[i] = Some((
+                world.position[id] - pos,
+                world.velocity[id] - vel,
+            ));
+        }
+    }
+
+    (out0, out1)
+}
+
+pub fn find_k_nearest_drones(world: &mut World, max_radius: f32, ) {
+    
+    for i in 0..world.num_drones {
+        if !world.alive[i] {
+            continue;
+        }
+
+        let (t0, t1) =
+            find_k_nearest_per_team::<K_NEIGHBORS>(&world, i, max_radius);
+
+        world.team0_neighbors[i] = t0;
+        world.team1_neighbors[i] = t1;
+    }
+}
+
 
 pub const NONE_U32: u32 = u32::MAX;
 

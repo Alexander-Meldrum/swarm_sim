@@ -115,8 +115,6 @@ class SwarmEnv:
             )
 
         request.step = self.step_count
-
-        # TODO assign team id to request in a better way
         request.team_id = 0
 
         # Send step request to simulator
@@ -142,11 +140,36 @@ class SwarmEnv:
             Tensor of shape [num_team0, obs_dim]
         """
 
+        from train import MAX_DISTANCE, MAX_VELOCITY
+
         # Assume obs already flat, reshape only, Convert to torch tensor on desired device
         obs = torch.tensor(observations, dtype=torch.float32, device=self.device)
-        obs = obs.view(self.num_drones, self.obs_dim)
+        obs = obs.view(self.num_drones_team_0, self.obs_dim)
         # Cut away team_1 observations
         obs_team0 = obs[:self.num_drones_team_0]
-        
-        
+
+        # Normalize, assuming K_NEIGHBORS = 2
+        # obs_team0[:, 0:3] /= MAX_DISTANCE
+        # obs_team0[:, 7:10] /= MAX_DISTANCE
+        # obs_team0[:, 14:17] /= MAX_DISTANCE
+        # obs_team0[:, 21:24] /= MAX_DISTANCE
+        # obs_team0[:, 28:31] /= MAX_DISTANCE
+        # obs_team0[:, 3:6] /= MAX_VELOCITY
+        # obs_team0[:, 10:13] /= MAX_VELOCITY
+        # obs_team0[:, 17:20] /= MAX_VELOCITY
+        # obs_team0[:, 24:27] /= MAX_VELOCITY
+        # obs_team0[:, 31:34] /= MAX_VELOCITY
+
+        # obs_team0[:, 3] /= 10 # Turn alive flag into 0.1
+        obs_team0[:, 4:7] /= MAX_DISTANCE
+        obs_team0[:, 10:13] /= MAX_DISTANCE
+        # obs_team0[:, 18:21] /= MAX_DISTANCE
+        # obs_team0[:, 25:28] /= MAX_DISTANCE
+
+        obs_team0[:, 0:3] /= MAX_VELOCITY
+        obs_team0[:, 7:10] /= MAX_VELOCITY
+        obs_team0[:, 13:16] /= MAX_VELOCITY
+        # obs_team0[:, 21:24] /= MAX_VELOCITY
+        # obs_team0[:, 28:31] /= MAX_VELOCITY
+
         return obs_team0

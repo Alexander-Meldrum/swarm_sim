@@ -5,14 +5,16 @@ mod config;
 mod logging;
 mod learning;
 mod utils;
+mod observations;
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
 use world::World;
 use tokio::sync::Mutex;
 use std::sync::Arc;
-use utils::{Args,ObservationBuffer};
+use utils::{Args};
 use utils::load_config;
+use observations::{ObservationBuffer};
 use clap::Parser;
 
 use grpc::{SimServer, Simulator};

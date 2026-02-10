@@ -21,31 +21,58 @@ class SwarmPolicy(nn.Module):
         # Simple MLP
         # Tanh here keeps hidden activations bounded → stable means
         self.net = nn.Sequential(
-            nn.Linear(obs_dim, 64),
-            nn.Tanh(),                # stabilizes hidden state
-            nn.Linear(64, act_dim),   # outputs action mean
+            nn.Linear(obs_dim, 128),
+            nn.Tanh(),          # OK
+            nn.Linear(128, 128),
+            nn.Tanh(),          # OK
+            nn.Linear(128, act_dim)  # UNBOUNDED
         )
 
-        # One log_std per action dimension
-        # Shared across all drones (simplest setup)
-        self.log_std = nn.Parameter(torch.zeros(act_dim))
+        self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
+
+        # Global log-std (shared across all drones)
+        # self.log_std = nn.Parameter(torch.zeros(act_dim))
+
+        # Reasonable bounds for exploration
+        self.LOG_STD_MIN = -1.0   # std ≈ 0.37
+        self.LOG_STD_MAX = 0.5    # std ≈ 1.65
 
     def forward(self, obs):
+        """
+        obs: (N, obs_dim)
+        returns:
+            mean: (N, act_dim)
+            std:  (N, act_dim)
+        """
 
-        # Mean of Gaussian policy
-        raw_mean = self.net(obs)
-
-        # Smoothly bound the mean to prevent tanh saturation downstream
-        # This keeps gradients healthy and prevents runaway μ
-        mean = 2.0 * torch.tanh(raw_mean / 2.0)
-
-        # Clamp log_std to avoid:
-        #  - std → 0  (no exploration)
-        #  - std → ∞  (random thrashing)
-        log_std = torch.clamp(self.log_std, -5, 2)
-        std = log_std.exp()
-
+        mean = self.net(obs)           # ← no squash here
+        std = self.log_std.exp()
+        std = std.unsqueeze(0).expand_as(mean)
         return mean, std
+
+        # # ----------------------------------
+        # # Mean (state-dependent)
+        # # ----------------------------------
+        # raw_mean = self.net(obs)
+
+        # # Bound the mean to avoid tanh saturation downstream
+        # mean = 0.5 * torch.tanh(raw_mean)
+
+        # # ----------------------------------
+        # # Std (state-independent, shared)
+        # # ----------------------------------
+        # log_std = torch.clamp(
+        #     self.log_std,
+        #     self.LOG_STD_MIN,
+        #     self.LOG_STD_MAX
+        # )
+
+        # std = log_std.exp()
+
+        # # Expand std to match batch shape
+        # std = std.unsqueeze(0).expand_as(mean)
+
+        # return mean, std
 
 class ValueNet(nn.Module):
     def __init__(self, obs_dim):

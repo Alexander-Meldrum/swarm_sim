@@ -238,9 +238,9 @@ python tools/bin_to_csv.py logs/00001
 
 ---
 
-## Roadmap, Future Work
-
+## Roadmap
 - Default simulator controllers for dummy swarms (targets)
+- Add observations for relative pos vel to target and friends 
 - Save weights after training in Python controller
 - Update C++ controller to use saved weights
 - Addition of GAE to PPO algorithm
@@ -248,6 +248,11 @@ python tools/bin_to_csv.py logs/00001
 
 ---
 
+## Future Work
+
+- Move over to shared memory instead of gRPC communication
+
+---
 
 ## License
 

@@ -4,12 +4,12 @@ use std::sync::Arc;
 use std::io::{Write};
 use pprof::ProfilerGuard;
 use std::fs::{self, File};
-use crate::world::{Vec3, World, rebuild_grid, detect_collisions, detect_target_hits};
+use crate::world::{Vec3, World, rebuild_grid, detect_collisions, detect_target_hits, find_k_nearest_drones};
 use crate::physics;
 use crate::config::SimConfig;
 use crate::learning::{Rewards, calc_rewards};
 use crate::logging::{open_new_log, log_world, log_events};
-use crate::utils::{ObservationBuffer, OBS_DIM};
+use crate::observations::{ObservationBuffer, OBS_DIM};
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
@@ -42,8 +42,6 @@ impl SwarmProtoService for SimServer {
         let mut sim = self.sim.lock().await;
         // destructure with a single borrow
         let Simulator { world, obs_buf } = &mut *sim;
-        // let mut world = &mut sim.world;
-        // let obs_buf = &mut sim.obs_buf;
 
         let config = self.config.clone();
 
@@ -73,25 +71,22 @@ impl SwarmProtoService for SimServer {
 
         
         // Reset world state, replace the World inside the mutex
-        // *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
         *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
 
         // Initialize observation buffer once per episode
-        // *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
         *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
 
-        // println!("[simulator] New World, step: {}", world.step);
-        // TODO
-        // let enable_profiling = true;
         // Start profiling after creating new world
         if config.logging.profiling_enabled {
             world.profiler = Some(ProfilerGuard::new(config.logging.profiling_frequency).expect("failed to start profiler")); // Unit: Hz
         }
         world.init_drones(Some(seed), config.clone());
-        
+
+        // Build spatial index
+        rebuild_grid(world);
 
         // build flattened observations, zero copy move, obs_buf.obs set to empty vec
-        obs_buf.build(&world);
+        obs_buf.build(&world, config.sensing.max_sensing);
         let obs = std::mem::take(&mut obs_buf.obs);
 
         // Log World, braces ensure the log lock is released quickly.
@@ -105,7 +100,7 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] episode:           {}", world.episode);
         println!("[simulator] num_drones_team_0: {}", world.num_drones_team_0);
         println!("[simulator] num_drones_team_1: {}", world.num_drones_team_1);
-        // println!("[simulator] cell_size:  {}", world.cell_size);
+        println!("[simulator] cell_size:  {}", world.cell_size);
         println!("[simulator] max_steps:         {}", world.max_steps);
         // println!("[simulator] step:       {}", world.step);
         // println!("[simulator] dt:         {}", world.dt);
@@ -129,8 +124,7 @@ impl SwarmProtoService for SimServer {
         let mut sim = self.sim.lock().await;
         // destructure with a single borrow
         let Simulator { world, obs_buf } = &mut *sim;
-        // let mut world = &mut sim.world;
-        // let obs_buf = &mut sim.obs_buf;
+        let config = self.config.clone();
 
         // ----- 1. Handle Inputs ------ 
         // Reject stepping after done
@@ -165,6 +159,7 @@ impl SwarmProtoService for SimServer {
         // Detect collisions & target hits
         detect_collisions(world);
         detect_target_hits(world, self.config.collisions.radius);
+        find_k_nearest_drones(world, config.sensing.max_sensing);
 
         // Calculate Rewards
         let rewards: Rewards = calc_rewards(&world);
@@ -207,9 +202,9 @@ impl SwarmProtoService for SimServer {
 
         }
         // build flattened observations, zero copy move, obs_buf.obs set to empty vec
-        obs_buf.build(&world);
+        obs_buf.build(&world, config.sensing.max_sensing);
         let obs = std::mem::take(&mut obs_buf.obs);
-
+        // panic!("something went wrong");
         // ----- 4. Output ------ 
         Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.rewards, global_reward: rewards.global_reward}))
     }

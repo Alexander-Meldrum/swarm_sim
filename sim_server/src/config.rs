@@ -8,6 +8,7 @@ pub struct SimConfig {
     pub arena: ArenaConfig,
     pub target: TargetConfig,
     pub physics: PhysicsConfig,
+    pub sensing: SensingConfig,
     pub collisions: CollisionConfig,
     // pub controllers: ControllersConfig,
     pub logging: LoggingConfig,
@@ -27,6 +28,7 @@ pub struct ArenaConfig {
     /// Minimum distance between drones when randomizing start pos.
     pub min_dist: f32,
     pub randomize_init_pos: bool,
+    pub cell_size: f32,
 }
 
 // ===============================
@@ -53,6 +55,15 @@ pub struct PhysicsConfig {
     // pub drag: f32,
 }
 
+// ===============================
+// Sensing Parameters
+// ===============================
+#[derive(Debug, Deserialize)]
+pub struct SensingConfig {
+    /// Max sensing distance, has to be smaller than 2*cell_size
+    pub max_sensing: f32,
+    // pub nr_of_neighbors: u32  // Hard coded for performance
+}
 
 // ===============================
 // Collision Handling

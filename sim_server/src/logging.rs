@@ -3,6 +3,18 @@ use std::io::{BufWriter, Write};
 use crate::world::{World};
 use crate::learning::{Rewards};
 
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct LogMetadata {
+    pub max_distance: f32,
+    pub max_velocity: f32,
+    pub dt: f32,
+    pub num_drones_team_0: u32,
+    pub num_drones_team_1: u32,
+    pub schema_version: u16,
+}
+
 pub fn open_new_log(type_of_log: &str, episode: u64) -> BufWriter<File> {
     create_dir_all("logs").unwrap();
     let path = format!("logs/{:05}_{}.bin", episode, type_of_log);
@@ -18,7 +30,7 @@ pub fn log_world(
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&(world.num_drones_team_0 as u32).to_le_bytes())?;
+    log.write_all(&(world.num_drones as u32).to_le_bytes())?;
     
 
     for i in 0..world.num_drones_team_0 as usize {
@@ -34,6 +46,21 @@ pub fn log_world(
         log.write_all(&v.z.to_le_bytes())?;
 
         log.write_all(&rewards.rewards[i].to_le_bytes())?;
+    }
+
+    for i in 0..world.num_drones_team_1 as usize {
+        let p = &world.position[world.num_drones_team_0+i];
+        let v = &world.velocity[world.num_drones_team_0+i];
+
+        log.write_all(&p.x.to_le_bytes())?;
+        log.write_all(&p.y.to_le_bytes())?;
+        log.write_all(&p.z.to_le_bytes())?;
+
+        log.write_all(&v.x.to_le_bytes())?;
+        log.write_all(&v.y.to_le_bytes())?;
+        log.write_all(&v.z.to_le_bytes())?;
+
+        log.write_all(&0.0f32.to_le_bytes())?; // No rewards to team 1
     }
 
     log.flush()?; // flush once at the end for efficiency

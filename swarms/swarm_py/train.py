@@ -12,6 +12,7 @@ import torch
 import torch.optim as optim
 import math
 import torch.nn as nn
+import numpy as np
 
 from torch.distributions import Normal
 
@@ -19,31 +20,34 @@ from torch.distributions import Normal
 from swarm_env import SwarmEnv
 from policy import SwarmPolicy, ValueNet
 
-OBS_DIM = 7
+OBS_DIM = 4 + 6*2
 ACTION_DIM = 3
 ALIVE_IDX = OBS_DIM - 1
 
-EPISODE_COUNT = 500     # Number of full environment resets (training episodes)
+EPISODE_COUNT = 300       # Number of full environment resets (training episodes)
 MAX_STEPS = 1000        # Maximum number of simulation steps per episode, Episode terminates early if all drones are dead
 SEED = 0
-NUM_DRONES_TEAM_0 = 10
-NUM_DRONES_TEAM_1 = 0
+NUM_DRONES_TEAM_0 = 15
+NUM_DRONES_TEAM_1 = 30
 
+POLICY_LEARNING_RATE = 3e-4
+VALUE_LEARNING_RATE = 3e-3
 V_CLIP = MAX_STEPS      # Assumes magnitude of reward roughly 1, MAX_STEPS * Reward Magnitude, Prevents critic explosion when rewards accumulate over long episodes
 EPS = 1e-6              # numerical stability. Used in log(), division, and tanh Jacobian correction
 GAMMA = 0.99            # Discount factor. Controls how much future rewards matter
 VALUE_COEF = 0.05       # Weight of value (critic) loss relative to policy loss. Smaller values reduce critic dominance
-ENTROPY_COEF = 0.0022   # Entropy bonus coefficient. Encourages exploration by preventing premature policy collapse
+ENTROPY_COEF = 0.02   # Entropy bonus coefficient. Encourages exploration by preventing premature policy collapse
 CLIP = 0.2              # PPO clipping range (ε). Limits policy updates to prevent large, destabilizing changes
 SAT_COEF = 0.005        # Penalty for action saturation (|a| close to 1 after tanh). Discourages banging against action limits constantly
 
 ROLLOUT_STEPS = 250     # Number of environment steps collected before each PPO update. Must be large enough for stable advantage estimates
 PPO_EPOCHS = 5          # Number of passes over the same rollout data. Higher = more sample efficiency, but risk of overfitting
 MINIBATCH_SIZE = int(0.15 * (ROLLOUT_STEPS * NUM_DRONES_TEAM_0))  # Number of samples per PPO minibatch, This should be ≪ total batch size for good SGD behavior
+FREEZE_LEARNING_STEPS = 0
 
-MAX_ACC = 3.0           # max acceleration magnitude
-MAX_DISTANCE = 100      # Rougly the maximum size of the arena, used for normalizing observations for NN
-MAX_VELOCITY = 15       # Max velocity of drones, only used for normalizing. Real Max Velocity set in sim_server/configs/sim.yaml
+MAX_ACC = 10          # max acceleration magnitude
+MAX_DISTANCE = 10      # Rougly the maximum size of the arena, used for normalizing observations for NN
+MAX_VELOCITY = 5       # Max velocity of drones, only used for normalizing. Real Max Velocity set in sim_server/configs/sim.yaml
 
 
 def main():
@@ -57,9 +61,13 @@ def main():
     value_net = ValueNet(obs_dim=OBS_DIM).to(device)
 
     # Optimizer, Adam smooths updates, adapts per-parameter, handles noisy signals
-    optimizer = optim.Adam(list(policy.parameters()) + list(value_net.parameters()), lr=3e-4)
-    
+    # optimizer = optim.Adam(list(policy.parameters()) + list(value_net.parameters()), lr=LEARNING_RATE)
 
+    policy_optimizer = torch.optim.Adam(policy.parameters(), lr=POLICY_LEARNING_RATE)
+    value_optimizer = torch.optim.Adam(value_net.parameters(), lr=VALUE_LEARNING_RATE)
+
+    global_step = 0
+    
     # Training loop
     for idx, episode in enumerate(range(EPISODE_COUNT)):
         # Reset simulator world
@@ -69,9 +77,6 @@ def main():
             num_drones_team_1=NUM_DRONES_TEAM_1,
             max_steps=MAX_STEPS
         )
-        # Normalize
-        obs[:, 0:3] /= MAX_DISTANCE
-        obs[:, 3:6] /= MAX_VELOCITY
         # Extract alive flag from observations
         alive = obs[:, ALIVE_IDX].float()          # (num_drones,)
 
@@ -97,24 +102,36 @@ def main():
         # Value: “How good is this situation in the long run?”
         # Advantage: “Was my action better than expected here?”
         while not done:
+            global_step += 1
             # ============================================================
             # 1. FORWARD OLD POLICY (sampling actions)
             # ============================================================
             # The policy answers: "what actions should I try in this state?"
             # It does NOT know how good the state is.
-            mean, std = policy(obs)                    # (num_drones, act_dim), note: already squashed
-            dist = Normal(mean, std)                   # Gaussian policy π_old
+            # mean, std = policy(obs)                    # (num_drones, act_dim)
+            # dist = Normal(mean, std)                   # Gaussian policy π_old
 
-            # Sample in unconstrained ℝ space
-            u = dist.sample()                          # (num_drones, act_dim)
+            mean, std = policy(obs)
 
-            # Squash to (-1, 1) to enforce action bounds
-            a = torch.tanh(u)
+            dist = torch.distributions.Normal(mean, std)
+            # u = dist.rsample()                 # reparameterization trick
+            # action = torch.tanh(u)
+
+            u = dist.rsample()
+            a = torch.tanh(u)      # OR clamp(-1,1)
 
 
             # Scale to environment units (e.g. max acceleration)
             action = a * MAX_ACC                       
             action = action * alive.unsqueeze(-1)      # dead drones send zero action, THIS is sent to simulator
+
+            
+
+            # ### DEBUG
+            # action = obs[..., 18:21]
+            # action = action / (torch.norm(action, dim=-1, keepdim=True) + 1e-6)
+            # ###
+
 
             # ============================================================
             # 2. LOG-PROBABILITY UNDER OLD POLICY
@@ -148,10 +165,6 @@ def main():
             # ============================================================
             next_obs, reward, done = env.step(action)  # reward: (num_drones,)
 
-            # Normalize observations (VERY important for NN stability)
-            next_obs[:, 0:3] /= MAX_DISTANCE
-            next_obs[:, 3:6] /= MAX_VELOCITY
-
             alive = next_obs[:, ALIVE_IDX].float()          # (num_drones,), PyTorch does not allow: float_tensor * bool_tensor
 
             if not alive.any():
@@ -183,7 +196,7 @@ def main():
             step_count += 1
 
             # ============================================================
-            # BATCH PPO UPDATE EVERY 500 STEPS
+            # BATCH PPO UPDATE EVERY 'ROLLOUT_STEPS' STEPS
             # ============================================================
             if step_count % ROLLOUT_STEPS == 0 or done:     # Make sure to update policy even if all drones crash
                 # Stack rollout tensors
@@ -205,8 +218,39 @@ def main():
                 # actual outcome        - expected outcome
                 advantage = reward_batch + GAMMA * next_value_batch * alive_batch - value_batch
 
-                # Normalize advantage to reduce gradient variance
-                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+                # ------------------------------------------------------------
+                # Reshape to [T, N] for per-timestep normalization
+                # ------------------------------------------------------------
+                total_samples = advantage.shape[0]
+
+                # Number of timesteps in this rollout chunk
+                assert total_samples % NUM_DRONES_TEAM_0 == 0, "Rollout shape mismatch"
+                T = total_samples // NUM_DRONES_TEAM_0
+
+                advantage = advantage.view(T, NUM_DRONES_TEAM_0)   # Now each row = one timestep, columns = drones.
+
+                # ------------------------------------------------------------
+                # Normalize advantages *per timestep*
+                # This prevents swarm-wide bias where all drones
+                # reinforce the same early action direction
+                # ------------------------------------------------------------
+                advantage_local = (advantage - advantage.mean(dim=1, keepdim=True)) / (
+                    advantage.std(dim=1, keepdim=True) + 1e-8)
+
+
+                adv_global = advantage
+                adv_global = (adv_global - adv_global.mean()) / (adv_global.std() + 1e-8)
+
+                # Mix local + global advantages
+                LOCAL_WEIGHT  = 0.7   # try 0.6–0.8
+                GLOBAL_WEIGHT = 0.3
+                advantage = LOCAL_WEIGHT * advantage_local + GLOBAL_WEIGHT * adv_global
+
+
+                # ------------------------------------------------------------
+                # Flatten back to [T * N] for PPO minibatching
+                # ------------------------------------------------------------
+                advantage = advantage.view(-1)
 
                 # Value target
                 value_target = reward_batch + GAMMA * next_value_batch * alive_batch
@@ -260,26 +304,56 @@ def main():
                         # VALUE LOSS (CRITIC TRAINING)
                         # ============================================================
                         value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
+                        # IMPORTANT: detach targets, not predictions
                         value_error = (value_pred - value_target[mb_idx].detach()) ** 2
                         value_loss = (value_error * mb_alive).sum() / mask_sum
 
                         # ============================================================
-                        # TOTAL LOSS + UPDATE
+                        # AUXILIARY TERMS (ACTOR ONLY)
                         # ============================================================
-                        # Value loss stabilizes learning
-                        # Policy loss improves actions
-                        saturation = (a.abs() > 0.95).float().mean()  # TODO
+                        # Action saturation penalty (actor-only!)
+                        saturation = (a.abs() > 0.95).float().mean()
 
-                        total_loss = policy_loss + VALUE_COEF * value_loss - ENTROPY_COEF * entropy_bonus + SAT_COEF * saturation
+                        # ============================================================
+                        # ACTOR UPDATE
+                        # ============================================================
+                        policy_optimizer.zero_grad()
 
-                        optimizer.zero_grad()
-                        total_loss.backward()
-                        optimizer.step()
+                        if global_step < FREEZE_LEARNING_STEPS:
+                            actor_loss = -ENTROPY_COEF * entropy_bonus
+                        else:
+                            actor_loss = (
+                                policy_loss
+                                - ENTROPY_COEF * entropy_bonus
+                                + SAT_COEF * saturation
+                            )
+
+                        actor_loss.backward()
+                        torch.nn.utils.clip_grad_norm_(policy.parameters(), 0.5)
+                        policy_optimizer.step()
+
+                        # ============================================================
+                        # CRITIC UPDATE
+                        # ============================================================
+                        value_optimizer.zero_grad()
+
+                        critic_loss = VALUE_COEF * value_loss
+                        critic_loss.backward()
+                        torch.nn.utils.clip_grad_norm_(value_net.parameters(), 0.5)
+                        value_optimizer.step()
+
 
                 # RL Debug prints
+
+                print("mean std across drones:", mean.std(dim=0))
+                print("action std across drones:", action.std(dim=0))
+                print("obs std across drones:", obs.std(dim=0).mean())
+                # print("obs: ", obs)
+                print("mean |action|:", action.abs().mean().item())
+                print("mean action norm:", action.norm(dim=1).mean().item())
                 print(
-                "action mean:", action.mean(dim=0).cpu().numpy(),
-                "action std :", action.std(dim=0).cpu().numpy()
+                "action mean:", action.mean(dim=0).detach().cpu().numpy(),
+                "action std :", action.std(dim=0).detach().cpu().numpy()
                 )
                 print("per-drone action norm std:", action.norm(dim=1).std().item())
                 print(
@@ -313,7 +387,7 @@ def main():
                 mean_dir = action.mean(dim=0)
                 print(
                     "mean action direction:",
-                    (mean_dir / (mean_dir.norm() + 1e-8)).cpu().numpy()
+                    (mean_dir / (mean_dir.norm() + 1e-8)).detach().cpu().numpy()
                 )
                 # ============================================================
                 # CLEAR ROLLOUT BUFFER (START FRESH)
