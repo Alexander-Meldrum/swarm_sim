@@ -28,9 +28,14 @@ pub fn step(world: &mut World, actions: &[Vec3], max_velocity: f32) {
         // world.velocity[i].x += world.acceleration[i].x * world.dt;
         // world.velocity[i].y += world.acceleration[i].y * world.dt;
         // world.velocity[i].z += world.acceleration[i].z * world.dt;
-        world.velocity[idx].x = 0.01;
-        world.velocity[idx].y = 0.01;
-        world.velocity[idx].z = 0.01;
+
+        let theta = world.episode as f32 * 1.9416;   // Golden angle
+        world.velocity[idx].x = theta.cos();
+        world.velocity[idx].y = theta.cos();
+        world.velocity[idx].z = theta.cos();
+        // world.velocity[idx].x = 0.0;
+        // world.velocity[idx].y = 0.0;
+        // world.velocity[idx].z = 0.0;
 
         world.previous_position[idx] = world.position[idx];
         world.position[idx].x += world.velocity[idx].x * world.dt;

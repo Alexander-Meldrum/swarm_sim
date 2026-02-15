@@ -7,7 +7,7 @@ use pprof::ProfilerGuard;
 // use crate::learning::{Rewards};
 use crate::config::SimConfig;
 
-use std::ops::{Add, Sub};
+use std::ops::{Add, Sub, Div};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 { pub x: f32, pub y: f32, pub z: f32 }
@@ -51,6 +51,18 @@ impl Sub for Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.y,
             z: self.z - rhs.z,
+        }
+    }
+}
+
+impl Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Vec3 {
+        Vec3 {
+            x: self.x / rhs,
+            y: self.y / rhs,
+            z: self.z / rhs,
         }
     }
 }
@@ -127,7 +139,7 @@ pub struct Event {
 
 impl World {
     /// Init a new world
-    pub fn new(config: Arc<SimConfig>, num_drones_team_0: usize, num_drones_team_1: usize, max_steps: u64, episode: u64, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>) -> Self {
+    pub fn new(config: Arc<SimConfig>, num_drones_team_0: usize, num_drones_team_1: usize, max_steps: u64, episode: u64) -> Self {   //, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>
         let num_drones = num_drones_team_0 + num_drones_team_1;
 
         let mut team = Vec::with_capacity(num_drones_team_0 + num_drones_team_1);
@@ -141,7 +153,19 @@ impl World {
         let arena_max = Vec3 { x: config.arena.max[0], y: config.arena.max[1], z: config.arena.max[2] };
         let drone_radius = config.collisions.radius;
         let dt = config.physics.dt;
-        let targets = vec![Target{position : Vec3 {x: config.target.position[0], y: config.target.position[1], z: config.target.position[2]}, radius : config.target.radius, alive : true}];
+        let targets: Vec<Target> = if config.target.enabled {
+            vec![Target {
+                position: Vec3 {
+                    x: config.target.position[0],
+                    y: config.target.position[1],
+                    z: config.target.position[2],
+                },
+                radius: config.target.radius,
+                alive: true,
+            }]
+        } else {
+            Vec::new() // empty vector
+        };
 
         // events are per-step; reserve aggressively to avoid realloc
         let events = Vec::with_capacity(num_drones / 4);
@@ -165,8 +189,10 @@ impl World {
             team0_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             team1_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             episode: episode,
-            state_log: state_log,
-            event_log: event_log,
+            // state_log: state_log,
+            // event_log: event_log,
+            state_log: None, // Initiated after creation of world
+            event_log: None,
             // Pre-allocate per-drone state (SoA layout)
             position: vec![Vec3::zero(); num_drones],
             previous_position: vec![Vec3::zero(); num_drones],

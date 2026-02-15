@@ -25,23 +25,26 @@ ACTION_DIM = 3
 ALIVE_IDX = OBS_DIM - 1
 
 EPISODE_COUNT = 300       # Number of full environment resets (training episodes)
-MAX_STEPS = 1000        # Maximum number of simulation steps per episode, Episode terminates early if all drones are dead
+MAX_STEPS = 500        # Maximum number of simulation steps per episode, Episode terminates early if all drones are dead
 SEED = 0
 NUM_DRONES_TEAM_0 = 15
 NUM_DRONES_TEAM_1 = 30
 
-POLICY_LEARNING_RATE = 3e-4
-VALUE_LEARNING_RATE = 3e-3
-V_CLIP = MAX_STEPS      # Assumes magnitude of reward roughly 1, MAX_STEPS * Reward Magnitude, Prevents critic explosion when rewards accumulate over long episodes
+POLICY_LEARNING_RATE = 5e-4
+VALUE_LEARNING_RATE = 1e-3
+# V_CLIP = MAX_STEPS      # Assumes magnitude of reward roughly 1, MAX_STEPS * Reward Magnitude, Prevents critic explosion when rewards accumulate over long episodes
+V_CLIP = 10      # Assumes magnitude of reward roughly 1, MAX_STEPS * Reward Magnitude, Prevents critic explosion when rewards accumulate over long episodes
 EPS = 1e-6              # numerical stability. Used in log(), division, and tanh Jacobian correction
 GAMMA = 0.99            # Discount factor. Controls how much future rewards matter
-VALUE_COEF = 0.05       # Weight of value (critic) loss relative to policy loss. Smaller values reduce critic dominance
-ENTROPY_COEF = 0.02   # Entropy bonus coefficient. Encourages exploration by preventing premature policy collapse
-CLIP = 0.2              # PPO clipping range (ε). Limits policy updates to prevent large, destabilizing changes
+VALUE_COEF = 0.1       # Weight of value (critic) loss relative to policy loss. Smaller values reduce critic dominance
+ENTROPY_COEF = 0.003  # Entropy bonus coefficient. Encourages exploration by preventing premature policy collapse
+CLIP = 0.3             # PPO clipping range (ε). Limits policy updates to prevent large, destabilizing changes
 SAT_COEF = 0.005        # Penalty for action saturation (|a| close to 1 after tanh). Discourages banging against action limits constantly
+PRE_TANH_PENALTY_COEF = 0.001
+MEAN_REG_COEF = 1e-3    # # try 3e-4 or 1e-4 if motion becomes too conservative
 
-ROLLOUT_STEPS = 250     # Number of environment steps collected before each PPO update. Must be large enough for stable advantage estimates
-PPO_EPOCHS = 5          # Number of passes over the same rollout data. Higher = more sample efficiency, but risk of overfitting
+ROLLOUT_STEPS = 248     # Number of environment steps collected before each PPO update. Must be large enough for stable advantage estimates
+PPO_EPOCHS = 2          # Number of passes over the same rollout data. Higher = more sample efficiency, but risk of overfitting
 MINIBATCH_SIZE = int(0.15 * (ROLLOUT_STEPS * NUM_DRONES_TEAM_0))  # Number of samples per PPO minibatch, This should be ≪ total batch size for good SGD behavior
 FREEZE_LEARNING_STEPS = 0
 
@@ -67,6 +70,7 @@ def main():
     value_optimizer = torch.optim.Adam(value_net.parameters(), lr=VALUE_LEARNING_RATE)
 
     global_step = 0
+    entropy_coef = ENTROPY_COEF  # Enable manipulation in loop
     
     # Training loop
     for idx, episode in enumerate(range(EPISODE_COUNT)):
@@ -108,15 +112,10 @@ def main():
             # ============================================================
             # The policy answers: "what actions should I try in this state?"
             # It does NOT know how good the state is.
-            # mean, std = policy(obs)                    # (num_drones, act_dim)
-            # dist = Normal(mean, std)                   # Gaussian policy π_old
 
-            mean, std = policy(obs)
+            mean, std = policy(obs)         # (num_drones, act_dim)
 
             dist = torch.distributions.Normal(mean, std)
-            # u = dist.rsample()                 # reparameterization trick
-            # action = torch.tanh(u)
-
             u = dist.rsample()
             a = torch.tanh(u)      # OR clamp(-1,1)
 
@@ -125,10 +124,13 @@ def main():
             action = a * MAX_ACC                       
             action = action * alive.unsqueeze(-1)      # dead drones send zero action, THIS is sent to simulator
 
+            if global_step < 10:
+                action += 0.1 * torch.randn_like(action)
+
             
 
             # ### DEBUG
-            # action = obs[..., 18:21]
+            # action = obs[..., 10:13]
             # action = action / (torch.norm(action, dim=-1, keepdim=True) + 1e-6)
             # ###
 
@@ -169,8 +171,8 @@ def main():
 
             if not alive.any():
                 done = True  # end episode logically
-            if done:
-                alive = torch.ones_like(alive)
+            # if done:    # TODO
+            #     alive = torch.ones_like(alive)
 
 
             # ============================================================
@@ -180,6 +182,7 @@ def main():
             # It predicts the total future reward from now on.
             with torch.no_grad():
                 next_value = value_net(next_obs).squeeze(-1)  # (num_drones,)
+                next_value = next_value * alive
 
 
             # ============================================================
@@ -206,61 +209,152 @@ def main():
                 reward_batch = torch.cat(rollout["reward"])
                 value_batch = torch.cat(rollout["value"])
                 next_value_batch = torch.cat(rollout["next_value"])
-
                 alive_batch = torch.cat(rollout["alive"]).float() # [T*num_drones]
-                # ============================================================
-                # ADVANTAGE
-                # ============================================================
-                # Advantage answers:
-                # "Was this action better or worse than expected in THIS state?"
 
-                # One-step TD advantage:
-                # actual outcome        - expected outcome
-                advantage = reward_batch + GAMMA * next_value_batch * alive_batch - value_batch
+                # ============================================================
+                # ADVANTAGE COMPUTATION (USING ROLLOUT RETURNS, NO GAE)
+                # ============================================================
+
+                # value_batch must be the value prediction for ALL rollout states
+                # shape: [T * N]
+
+                # returns must already be computed over rollout
+                # shape: [T * N]
 
                 # ------------------------------------------------------------
-                # Reshape to [T, N] for per-timestep normalization
+                # Advantage = Return - Value
+                # ------------------------------------------------------------
+                advantage = returns - value_batch.detach()
+
+                # ------------------------------------------------------------
+                # Reshape to [T, N] (timesteps, drones)
                 # ------------------------------------------------------------
                 total_samples = advantage.shape[0]
-
-                # Number of timesteps in this rollout chunk
-                assert total_samples % NUM_DRONES_TEAM_0 == 0, "Rollout shape mismatch"
+                assert total_samples % NUM_DRONES_TEAM_0 == 0
                 T = total_samples // NUM_DRONES_TEAM_0
 
-                advantage = advantage.view(T, NUM_DRONES_TEAM_0)   # Now each row = one timestep, columns = drones.
+                advantage = advantage.view(T, NUM_DRONES_TEAM_0)
 
                 # ------------------------------------------------------------
-                # Normalize advantages *per timestep*
-                # This prevents swarm-wide bias where all drones
-                # reinforce the same early action direction
+                # REMOVE PER-TIMESTEP GLOBAL BIAS (CRITICAL FOR SWARMS)
                 # ------------------------------------------------------------
-                advantage_local = (advantage - advantage.mean(dim=1, keepdim=True)) / (
-                    advantage.std(dim=1, keepdim=True) + 1e-8)
-
-
-                adv_global = advantage
-                adv_global = (adv_global - adv_global.mean()) / (adv_global.std() + 1e-8)
-
-                # Mix local + global advantages
-                LOCAL_WEIGHT  = 0.7   # try 0.6–0.8
-                GLOBAL_WEIGHT = 0.3
-                advantage = LOCAL_WEIGHT * advantage_local + GLOBAL_WEIGHT * adv_global
-
+                advantage = advantage - advantage.mean(dim=1, keepdim=True)
 
                 # ------------------------------------------------------------
-                # Flatten back to [T * N] for PPO minibatching
+                # Recommended: normalize instead of clamp
+                # ------------------------------------------------------------
+                advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
+
+                # If you REALLY want magnitude cap:
+                # advantage = advantage.clamp(-5.0, 5.0)
+
+                # ------------------------------------------------------------
+                # Flatten back to [T * N] for PPO
                 # ------------------------------------------------------------
                 advantage = advantage.view(-1)
 
+                # # ============================================================
+                # # ADVANTAGE COMPUTATION (SWARM-SAFE, NO GAE)
+                # # ============================================================
+
+                # # One-step TD advantage
+                # # shape: [T * N]
+                # advantage = reward_batch + GAMMA * next_value_batch * alive_batch - value_batch
+
+                # # ------------------------------------------------------------
+                # # Reshape to [T, N] (timesteps, drones)
+                # # ------------------------------------------------------------
+                # total_samples = advantage.shape[0]
+                # assert total_samples % NUM_DRONES_TEAM_0 == 0
+                # T = total_samples // NUM_DRONES_TEAM_0
+
+                # advantage = advantage.view(T, NUM_DRONES_TEAM_0)
+
+                # # ------------------------------------------------------------
+                # # REMOVE PER-TIMESTEP GLOBAL BIAS (CRITICAL)
+                # # This prevents swarm-wide directional collapse
+                # # ------------------------------------------------------------
+                # advantage = advantage - advantage.mean(dim=1, keepdim=True)
+
+                # # ------------------------------------------------------------
+                # # Optional: soft magnitude control (NOT normalization)
+                # # ------------------------------------------------------------
+                # advantage = advantage.clamp(-5.0, 5.0)
+
+                # # ------------------------------------------------------------
+                # # Flatten back to [T * N] for PPO
+                # # ------------------------------------------------------------
+                # advantage = advantage.view(-1)
+
+                # ============================================================
+                # ADVANTAGE
+                # ============================================================
+                # # Advantage answers:
+                # # "Was this action better or worse than expected in THIS state?"
+
+                # # One-step TD advantage:
+                # # actual outcome        - expected outcome
+                # advantage = reward_batch + GAMMA * next_value_batch * alive_batch - value_batch
+
+                # # ------------------------------------------------------------
+                # # Reshape to [T, N] for per-timestep normalization
+                # # ------------------------------------------------------------
+                # total_samples = advantage.shape[0]
+
+                # # Number of timesteps in this rollout chunk
+                # assert total_samples % NUM_DRONES_TEAM_0 == 0, "Rollout shape mismatch"
+                # T = total_samples // NUM_DRONES_TEAM_0
+
+                # advantage = advantage.view(T, NUM_DRONES_TEAM_0)   # Now each row = one timestep, columns = drones.
+
+                # # ------------------------------------------------------------
+                # # Normalize advantages *per timestep*
+                # # This prevents swarm-wide bias where all drones
+                # # reinforce the same early action direction
+                # # ------------------------------------------------------------
+                # advantage_local = (advantage - advantage.mean(dim=1, keepdim=True)) / (
+                #     advantage.std(dim=1, keepdim=True) + 1e-8)
+
+
+                # adv_global = advantage
+                # # adv_global = (adv_global - adv_global.mean()) / (adv_global.std() + 1e-8) # TODO enable this again
+                # adv_global = adv_global.clamp(-10, 10)
+
+                # # Mix local + global advantages
+                # LOCAL_WEIGHT  = 0.7   # try 0.6–0.8
+                # GLOBAL_WEIGHT = 0.3
+                # advantage = LOCAL_WEIGHT * advantage_local + GLOBAL_WEIGHT * adv_global
+
+
+                # # ------------------------------------------------------------
+                # # Flatten back to [T * N] for PPO minibatching
+                # # ------------------------------------------------------------
+                # advantage = advantage.view(-1)
+
                 # Value target
-                value_target = reward_batch + GAMMA * next_value_batch * alive_batch
-                value_target = torch.clamp(value_target, -V_CLIP, V_CLIP)  # Clamping = stability tool, not theory  TODO, is this best approach?
+                # value_target = reward_batch + GAMMA * next_value_batch * alive_batch
+
+                returns = torch.zeros_like(reward_batch)
+                R = next_value_batch[-1]  # bootstrap only once at end
+
+                for t in reversed(range(T)):
+                    R = reward_batch[t] + GAMMA * R * alive_batch[t]
+                    returns[t] = R
+
+                
+                returns = returns.reshape(-1)
+
+                # value_target = torch.clamp(value_target, -V_CLIP, V_CLIP)  # Clamping = stability tool, not theory  TODO, is this best approach?
 
                 # ============================================================
                 # PPO OPTIMIZATION (MULTIPLE EPOCHS + MINIBATCHES)
                 # ============================================================
                 batch_size = obs_batch.size(0)
                 indices = torch.randperm(batch_size)
+
+                if global_step/ROLLOUT_STEPS > 200:
+                    entropy_coef *= 0.999
+                    entropy_coef = max(entropy_coef, 0.002)
 
                 for _ in range(PPO_EPOCHS):
                     for start in range(0, batch_size, MINIBATCH_SIZE):
@@ -303,9 +397,14 @@ def main():
                         # ============================================================
                         # VALUE LOSS (CRITIC TRAINING)
                         # ============================================================
+                        # value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
+                        # # IMPORTANT: detach targets, not predictions
+                        # value_error = (value_pred - value_target[mb_idx].detach()) ** 2
+                        # value_loss = (value_error * mb_alive).sum() / mask_sum
+
                         value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
-                        # IMPORTANT: detach targets, not predictions
-                        value_error = (value_pred - value_target[mb_idx].detach()) ** 2
+                        # detach targets, not predictions
+                        value_error = (value_pred - returns[mb_idx].detach()) ** 2
                         value_loss = (value_error * mb_alive).sum() / mask_sum
 
                         # ============================================================
@@ -314,18 +413,32 @@ def main():
                         # Action saturation penalty (actor-only!)
                         saturation = (a.abs() > 0.95).float().mean()
 
+                        # Penalize large pre-tanh actions
+                        u = u_batch[mb_idx]
+                        pre_tanh_penalty = (u ** 2).mean()
+
+                        # ============================================================
+                        # MEAN ACTION REGULARIZATION
+                        # ============================================================
+                        # IMPORTANT:
+                        # - Use PRE-TANH policy_mean
+                        # - This anchors the swarm and prevents global drift
+                        mean_action_penalty = MEAN_REG_COEF * (mean_new ** 2).mean()
+
                         # ============================================================
                         # ACTOR UPDATE
                         # ============================================================
                         policy_optimizer.zero_grad()
 
                         if global_step < FREEZE_LEARNING_STEPS:
-                            actor_loss = -ENTROPY_COEF * entropy_bonus
+                            actor_loss = -entropy_coef * entropy_bonus
                         else:
                             actor_loss = (
                                 policy_loss
-                                - ENTROPY_COEF * entropy_bonus
+                                - entropy_coef * entropy_bonus
                                 + SAT_COEF * saturation
+                                + PRE_TANH_PENALTY_COEF * pre_tanh_penalty
+                                + mean_action_penalty
                             )
 
                         actor_loss.backward()

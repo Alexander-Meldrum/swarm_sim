@@ -37,6 +37,7 @@ pub struct ArenaConfig {
 #[derive(Debug, Deserialize)]
 pub struct TargetConfig {
 
+    pub enabled: bool,
     pub position: [f32; 3],
     pub radius: f32,
 

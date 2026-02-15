@@ -47,19 +47,7 @@ impl SwarmProtoService for SimServer {
 
         // Extract protobuf message
         let request = request.into_inner();
-
-        // Prepare Log for the Episode
-        world.episode += 1;
-        let mut state_log = None;
-        let mut event_log = None; 
-        if config.logging.enabled {
-            world.state_log = Some(open_new_log("states", world.episode));
-            world.event_log = Some(open_new_log("events", world.episode));
-            // move out log safely from Option<>
-            state_log = world.state_log.take();
-            event_log = world.event_log.take(); 
-        } 
-
+        
         // Read request
         let num_drones_team_0 = request.num_drones_team_0 as usize;
         let num_drones_team_1 = request.num_drones_team_1 as usize;
@@ -69,9 +57,31 @@ impl SwarmProtoService for SimServer {
         let max_steps= request.max_steps;
         let seed = request.seed;
 
+        // Prepare Log for the Episode
+        world.episode += 1;
+        // let mut state_log = None;
+        // let mut event_log = None; 
+        // if config.logging.enabled {
+        //     world.state_log = Some(open_new_log("states", world.episode));
+        //     world.event_log = Some(open_new_log("events", world.episode));
+        //     // move out log safely from Option<>
+        //     state_log = world.state_log.take();
+        //     event_log = world.event_log.take(); 
+        // } 
+
         
         // Reset world state, replace the World inside the mutex
-        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode, state_log, event_log);
+        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode); // , state_log, event_log
+
+        // let mut state_log = None;
+        // let mut event_log = None; 
+        if config.logging.enabled {
+            world.state_log = Some(open_new_log("states", world, config.clone()));
+            world.event_log = Some(open_new_log("events", world, config.clone()));
+            // move out log safely from Option<>
+            // state_log = world.state_log.take();
+            // event_log = world.event_log.take(); 
+        } 
 
         // Initialize observation buffer once per episode
         *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);

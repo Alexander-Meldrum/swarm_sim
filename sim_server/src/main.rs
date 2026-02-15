@@ -31,23 +31,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let config = Arc::new(config);
     println!("[simulator] ✅ Loaded config from {}", args.config);
 
-    // let simulator = Simulator {
-    //     world: Mutex::new(World::dummy()),
-    //     obs_buf: ObservationBuffer::new(0,0),
-    // };
-    // let server = SimServer {
-    //     // Clone the Arc, does not copy the config data
-    //     config: config.clone(),
-    //     // World will be setup afte reset gRPC call
-
-    //     sim: Mutex<simulator,
-    //     // tokio::sync::Mutex<Simulator>,
-    //     // world: Mutex::new(World::dummy()),
-
-    //     // obs_buf: ObservationBuffer::new(0,0),
-    // };
-    // let config =  config: config.clone(),
-
     let server = SimServer {
         config: config.clone(),
         sim: Mutex::new(Simulator {

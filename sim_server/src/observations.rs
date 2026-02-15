@@ -32,7 +32,7 @@ impl ObservationBuffer {
             let (team0_neighbors, team1_neighbors) =
             find_k_nearest_per_team::<K_NEIGHBORS>(&world, i, max_radius);
             
-            let mut nn_input = [0.0f32; 12 * K_NEIGHBORS]; // 6 fields per team: dx, dy, dz, dvx, dvy, dvz, present flag
+            let mut nn_input = [0.0f32; 12 * K_NEIGHBORS]; // 6 fields per team: dx, dy, dz, dvx, dvy, dvz
 
             // ----------------------------
             // Team 0 neighbors, dx, dy, dz, dvx, dvy, dvz

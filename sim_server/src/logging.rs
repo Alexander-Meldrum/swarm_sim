@@ -2,24 +2,65 @@ use std::fs::{File, create_dir_all};
 use std::io::{BufWriter, Write};
 use crate::world::{World};
 use crate::learning::{Rewards};
+use std::sync::Arc;
+use crate::config::SimConfig;
 
 use serde::{Serialize, Deserialize};
 
+
+pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) -> BufWriter<File> {
+    create_dir_all("logs").unwrap();
+    let path = format!("logs/{:05}_{}.bin", world.episode, type_of_log);
+    println!("[Simulator] Log file ({}): {}", type_of_log, path);
+    // BufWriter::new(File::create(path).unwrap())
+
+    let mut file = BufWriter::new(File::create(path).unwrap());
+
+    let metadata = LogMetadata {
+    episode: world.episode,
+    dt: config.physics.dt,
+    num_drones_team_0: world.num_drones_team_0 as u32,
+    num_drones_team_1: world.num_drones_team_1 as u32,
+    stationary_target_exists: config.target.enabled as u8,
+    stationary_target_pos: [config.target.position[0], config.target.position[1], config.target.position[2]],
+    stationary_target_radius: config.target.radius,
+    schema_version: 1,
+    };
+
+    // Write metadata at the beginning
+    metadata.write_to(&mut file).unwrap();
+
+    file
+}
+
+
 #[derive(Serialize, Deserialize)]
 pub struct LogMetadata {
-    pub max_distance: f32,
-    pub max_velocity: f32,
+    pub episode: u64,
     pub dt: f32,
     pub num_drones_team_0: u32,
     pub num_drones_team_1: u32,
+    pub stationary_target_exists: u8,
+    pub stationary_target_pos: [f32; 3],
+    pub stationary_target_radius: f32,
     pub schema_version: u16,
 }
 
-pub fn open_new_log(type_of_log: &str, episode: u64) -> BufWriter<File> {
-    create_dir_all("logs").unwrap();
-    let path = format!("logs/{:05}_{}.bin", episode, type_of_log);
-    println!("[Simulator] Log file ({}): {}", type_of_log, path);
-    BufWriter::new(File::create(path).unwrap())
+impl LogMetadata {
+    /// Write the metadata in binary form
+    pub fn write_to<W: Write>(&self, writer: &mut W) -> std::io::Result<()> {
+        writer.write_all(&self.episode.to_le_bytes())?;
+        writer.write_all(&self.dt.to_le_bytes())?;
+        writer.write_all(&self.num_drones_team_0.to_le_bytes())?;
+        writer.write_all(&self.num_drones_team_1.to_le_bytes())?;
+        writer.write_all(&self.stationary_target_exists.to_le_bytes())?;
+        writer.write_all(&self.stationary_target_pos[0].to_le_bytes())?;
+        writer.write_all(&self.stationary_target_pos[1].to_le_bytes())?;
+        writer.write_all(&self.stationary_target_pos[2].to_le_bytes())?;
+        writer.write_all(&self.stationary_target_radius.to_le_bytes())?;
+        writer.write_all(&self.schema_version.to_le_bytes())?;
+        Ok(())
+    }
 }
 
 // When updating logging, tools/bin_reader.py might need edits.
@@ -30,7 +71,7 @@ pub fn log_world(
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&(world.num_drones as u32).to_le_bytes())?;
+    log.write_all(&(world.num_drones as u32).to_le_bytes())?;  // TODO, remove this logging?
     
 
     for i in 0..world.num_drones_team_0 as usize {

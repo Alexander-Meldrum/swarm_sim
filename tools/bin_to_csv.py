@@ -7,7 +7,7 @@ parser.add_argument("path", help="Relative path to file")
 args = parser.parse_args()
 
 # ---- load binary log ----
-state_log = read_swarm_state_log(args.path + "_states.bin")
+_, state_log = read_swarm_state_log(args.path + "_states.bin")
 
 with open(str(args.path) + "_states.csv", "w", newline="") as out:
     writer = csv.writer(out)
@@ -28,7 +28,7 @@ with open(str(args.path) + "_states.csv", "w", newline="") as out:
                 state_log.rewards[t, i],
             ])
 
-event_log = read_swarm_event_log(args.path + "_events.bin")
+_, event_log = read_swarm_event_log(args.path + "_events.bin")
 
 with open(str(args.path) + "_events.csv", "w", newline="") as out:
     writer = csv.writer(out)

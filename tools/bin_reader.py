@@ -1,6 +1,23 @@
 import struct
 import numpy as np
 
+# *******************************************************
+# Binary schema for log metadata (written once at file start)
+# *******************************************************
+# episode: u64
+# dt: f32
+# num_drones_team_0: u32
+# num_drones_team_1: u32
+# stationary_target_exists: u8
+# stationary_target_pos: 3 * f32
+# stationary_target_radius: f32
+# schema_version: u16
+
+METADATA_FMT = "<Q f I I B fff f H"
+METADATA_SIZE = struct.calcsize(METADATA_FMT)
+# METADATA_SIZE == 39
+
+
 # Binary schema for swarm state log
 # *******************************************************
 # ---- step header ----
@@ -26,6 +43,28 @@ EVENT_SIZE = struct.calcsize(EVENT_FMT)
 NONE_U32 = 0xFFFFFFFF
 # *******************************************************
 
+
+class LogMetadata:
+    def __init__(
+        self,
+        episode,
+        dt,
+        num_drones_team_0,
+        num_drones_team_1,
+        stationary_target_exists,
+        stationary_target_pos,
+        stationary_target_radius,
+        schema_version,
+    ):
+        self.episode = episode
+        self.dt = dt
+        self.num_drones_team_0 = num_drones_team_0
+        self.num_drones_team_1 = num_drones_team_1
+        self.stationary_target_exists = stationary_target_exists
+        self.stationary_target_pos = stationary_target_pos
+        self.stationary_target_radius = stationary_target_radius
+        self.schema_version = schema_version
+
 class SwarmStateLog:
     def __init__(self, steps, rewards, pos, vel):
         self.steps = steps      # (T,)
@@ -43,6 +82,25 @@ class SwarmEventLog:
         self.drone_b_position = drone_b_position
         self.target_id = target_id
 
+def read_log_metadata(f) -> LogMetadata:
+    data = f.read(METADATA_SIZE)
+    if len(data) != METADATA_SIZE:
+        raise ValueError(
+            f"Incomplete metadata: expected {METADATA_SIZE} bytes, got {len(data)}"
+        )
+
+    unpacked = struct.unpack(METADATA_FMT, data)
+
+    return LogMetadata(
+        episode=unpacked[0],
+        dt=unpacked[1],
+        num_drones_team_0=unpacked[2],
+        num_drones_team_1=unpacked[3],
+        stationary_target_exists=bool(unpacked[4]),
+        stationary_target_pos=np.asarray(unpacked[5:8], dtype=np.float32),
+        stationary_target_radius=unpacked[8],
+        schema_version=unpacked[9],
+    )
 
 def read_swarm_state_log(path: str) -> SwarmStateLog:
     """
@@ -63,8 +121,10 @@ def read_swarm_state_log(path: str) -> SwarmStateLog:
     rewards = []
 
     with open(path, "rb") as f:
+        metadata = read_log_metadata(f)
         while True:
-            # ---- read step header ----
+            # ---- read step header ---- 
+            # The file cursor is now positioned immediately after the metadata
             header = f.read(STEP_HEADER_SIZE)
             if not header:
                 # End of file reached
@@ -112,7 +172,7 @@ def read_swarm_state_log(path: str) -> SwarmStateLog:
             rewards.append(arr[:, 6]) # rewards
 
     # Convert lists into numpy arrays
-    return SwarmStateLog(
+    return metadata, SwarmStateLog(
         steps=np.asarray(steps, dtype=np.uint64),                 # shape (T,)
         pos=np.stack(positions) if positions else np.empty((0,0,3)),    # shape (T, N, 3)
         vel=np.stack(velocities) if velocities else np.empty((0,0,3)),  # shape (T, N, 3)
@@ -138,6 +198,7 @@ def read_swarm_event_log(path: str) -> SwarmEventLog:
     drone_b_positions = []
     target_ids = []
     with open(path, "rb") as f:
+        metadata = read_log_metadata(f)
         while True:
             data = f.read(EVENT_SIZE)
             # print(data)
@@ -168,7 +229,7 @@ def read_swarm_event_log(path: str) -> SwarmEventLog:
             drone_b_positions.append(drone_b_pos)
             target_ids.append(target_id)
 
-    return SwarmEventLog(
+    return metadata, SwarmEventLog(
         steps=np.asarray(steps, dtype=np.uint64),
         kind=np.asarray(kinds, dtype=np.uint8),
         drone_a=np.asarray(drone_a_list, dtype=np.uint32),

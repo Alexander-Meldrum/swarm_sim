@@ -28,14 +28,17 @@ class SwarmPolicy(nn.Module):
             nn.Linear(128, act_dim)  # UNBOUNDED
         )
 
-        self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
+        # self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
+        self.log_std = nn.Parameter(torch.ones(act_dim) * -0.5)  # Init with lower std
 
         # Global log-std (shared across all drones)
         # self.log_std = nn.Parameter(torch.zeros(act_dim))
 
         # Reasonable bounds for exploration
-        self.LOG_STD_MIN = -1.0   # std ≈ 0.37
-        self.LOG_STD_MAX = 0.5    # std ≈ 1.65
+        # self.LOG_STD_MIN = -1.0   # std ≈ 0.37
+        # self.LOG_STD_MAX = 0.5    # std ≈ 1.65
+        self.LOG_STD_MIN = -1.5   # std ≈ 0.22
+        self.LOG_STD_MAX = 0.0    # std = 1.0
 
     def forward(self, obs):
         """
@@ -45,8 +48,18 @@ class SwarmPolicy(nn.Module):
             std:  (N, act_dim)
         """
 
-        mean = self.net(obs)           # ← no squash here
+        # mean = self.net(obs)           # ← no squash here
+
+        raw_mean = self.net(obs)
+
+        # NEW: prevent runaway mean
+        raw_mean = torch.clamp(raw_mean, -5.0, 5.0)
+
+        mean = torch.tanh(raw_mean)
+
+
         std = self.log_std.exp()
+        std = torch.clamp(std, min=0.1)  # prevent collapse
         std = std.unsqueeze(0).expand_as(mean)
         return mean, std
 
