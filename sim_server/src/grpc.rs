@@ -110,7 +110,7 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] episode:           {}", world.episode);
         println!("[simulator] num_drones_team_0: {}", world.num_drones_team_0);
         println!("[simulator] num_drones_team_1: {}", world.num_drones_team_1);
-        println!("[simulator] cell_size:  {}", world.cell_size);
+        // println!("[simulator] cell_size:        {}", world.cell_size);
         println!("[simulator] max_steps:         {}", world.max_steps);
         // println!("[simulator] step:       {}", world.step);
         // println!("[simulator] dt:         {}", world.dt);

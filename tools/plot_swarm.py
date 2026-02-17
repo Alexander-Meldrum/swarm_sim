@@ -272,7 +272,7 @@ def update(frame_idx):
         arr = np.asarray(collision_hits_team_1, dtype=np.float32)
         collision_team_1_scat._offsets3d = (arr[:,0], arr[:,1], arr[:,2])
 
-    ax.set_title(f"Step: {steps[curr_step_idx]}, " f"Time: {steps[curr_step_idx] * metadata.dt:.3f}s")
+    ax.set_title(f"Episode: {metadata.episode}, Step: {steps[curr_step_idx]}, " f"Time: {steps[curr_step_idx] * metadata.dt:.3f}s")
 
     artists = [
         scat_team_0,

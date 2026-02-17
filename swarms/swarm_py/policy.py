@@ -28,11 +28,8 @@ class SwarmPolicy(nn.Module):
             nn.Linear(128, act_dim)  # UNBOUNDED
         )
 
-        # self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
-        self.log_std = nn.Parameter(torch.ones(act_dim) * -0.5)  # Init with lower std
-
-        # Global log-std (shared across all drones)
-        # self.log_std = nn.Parameter(torch.zeros(act_dim))
+        self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
+        # self.log_std = nn.Parameter(torch.ones(act_dim) * -0.5)  # Init with lower std
 
         # Reasonable bounds for exploration
         # self.LOG_STD_MIN = -1.0   # std ≈ 0.37
@@ -47,45 +44,15 @@ class SwarmPolicy(nn.Module):
             mean: (N, act_dim)
             std:  (N, act_dim)
         """
-
-        # mean = self.net(obs)           # ← no squash here
-
         raw_mean = self.net(obs)
-
-        # NEW: prevent runaway mean
+        # prevent runaway mean
         raw_mean = torch.clamp(raw_mean, -5.0, 5.0)
-
         mean = torch.tanh(raw_mean)
-
 
         std = self.log_std.exp()
         std = torch.clamp(std, min=0.1)  # prevent collapse
         std = std.unsqueeze(0).expand_as(mean)
         return mean, std
-
-        # # ----------------------------------
-        # # Mean (state-dependent)
-        # # ----------------------------------
-        # raw_mean = self.net(obs)
-
-        # # Bound the mean to avoid tanh saturation downstream
-        # mean = 0.5 * torch.tanh(raw_mean)
-
-        # # ----------------------------------
-        # # Std (state-independent, shared)
-        # # ----------------------------------
-        # log_std = torch.clamp(
-        #     self.log_std,
-        #     self.LOG_STD_MIN,
-        #     self.LOG_STD_MAX
-        # )
-
-        # std = log_std.exp()
-
-        # # Expand std to match batch shape
-        # std = std.unsqueeze(0).expand_as(mean)
-
-        # return mean, std
 
 class ValueNet(nn.Module):
     def __init__(self, obs_dim):

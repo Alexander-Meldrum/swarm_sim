@@ -282,6 +282,18 @@ impl World {
 
             self.position[i] = pos;
         }
+
+        for i in 0..self.num_drones_team_1 {
+            let idx = i + self.num_drones_team_0;
+            if !self.alive[idx] {
+            continue;
+            }
+
+            self.position[idx].x += 10.0;
+        }
+
+
+
     }
 }
 
