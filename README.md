@@ -54,6 +54,7 @@ PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the 
   - Collision events
 - Reward calculation module for RL 
 - Yaml config file configurable (World & drone physical settings), the controllers set amount of drones etc. on gRPC reset request.
+- Profiling (flamegraph)
 
 This component is the authoritative simulation source used by all controllers.
 
@@ -240,11 +241,9 @@ python tools/bin_to_csv.py logs/00001
 
 ## Roadmap
 - Default simulator controllers for dummy swarms (targets)
-- Add observations for relative pos vel to target and friends 
 - Save weights after training in Python controller
 - Update C++ controller to use saved weights
 - Addition of GAE to PPO algorithm
-- Enable 3d animation to show intended collisions as green triangles.
 
 ---
 

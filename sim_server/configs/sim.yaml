@@ -36,7 +36,7 @@ physics:
   # Fixed simulation timestep (seconds)
   dt: 0.02
   # Maximum allowed velocity magnitude
-  max_velocity: 5.0
+  max_velocity: 10.0
 
 # -------------------------------
 # Sensing

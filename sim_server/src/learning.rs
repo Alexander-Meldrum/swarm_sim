@@ -74,53 +74,88 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
 
     let eps: f32 = 1e-6;
     let dist = rel_pos.norm() + eps;
+    let dir_to_target = rel_pos / dist;
     let vel = world.velocity[i];
     let vel_norm = vel.norm() + eps;
+    let vel_dir = vel / vel_norm;
+    let acc_norm = world.acceleration[i].norm() + eps;
 
     // ----------------------------
-    // 1. Distance reduction (progress reward)
+    // Distance reduction (progress reward)
     // ----------------------------
-    let dist_prev = (rel_pos + (world.position[i] - world.previous_position[i])).norm();
-    let dist_reward = 2.0 * (dist_prev - dist); // positive when getting closer
+    // let dist_prev = (rel_pos + (world.position[i] - world.previous_position[i])).norm();
+    // let dist_reward = 1.0 * (dist_prev - dist); // positive when getting closer
 
-    // // ----------------------------
-    // // 2. Alignment reward (pointing roughly toward target)
-    // // ----------------------------
-    // let drone_dir = vel / vel_norm;
-    // let target_dir = rel_pos / dist;
-    // let alignment_reward = 0.25 * drone_dir.dot(&target_dir).clamp(-1.0, 1.0);
+    let shaping_reward = 0.03 / (0.1 + dist);
 
     // ----------------------------
-    // 3. Predictive closing reward (future interception)
+    // Acceleration direction reward
     // ----------------------------
-    let closing_reward = (0.1 * (-rel_pos.dot(&rel_vel) / dist)).clamp(-8.0, 8.0); // positive if approaching, predicts future
-    let closing_reward = 0.8 * closing_reward.clamp(-5.0, 5.0);
+    let accel_dir = world.acceleration[i]/acc_norm;
+    let accel_alignment = accel_dir.dot(&dir_to_target);
+    let accel_reward = 0.1 * accel_alignment;
+
     // ----------------------------
-    // 4. Optional speed penalty to avoid runaway
+    // Predictive closing reward (future interception)
     // ----------------------------
-    let speed_penalty = -0.02 * vel_norm; // keeps velocity reasonable
+    let raw_closing = -rel_pos.dot(&rel_vel) / dist; // positive if approaching, predicts future
+    // Rational scaling to keep under 1.0 & weaken near intercept
+    let closing_reward = 0.3 * raw_closing / (1.0 + raw_closing.abs()) * (dist / (dist + 1.0));
 
-    
-    // let reward = dist_reward + alignment_reward + closing_reward + speed_penalty;
+    // ----------------------------
+    // Optional speed penalty to avoid runaway
+    // ----------------------------
+    let speed_penalty = -0.01 * vel_norm; // keeps velocity reasonable
 
-    // println!("Episode {}. dist_reward, alignment_reward, closing_reward, speed_penalty, tot_reward: {} {} {} {} {}", world.episode, dist_reward, alignment_reward, closing_reward, speed_penalty, reward);
+    // ----------------------------
+    // Velocity alignment penalty
+    // Penalizes movement AWAY from target
+    // ----------------------------
+    let alignment = vel_dir.dot(&dir_to_target);  // [-1 , +1]
+    // let alignment_penalty = 0.1 * alignment.min(0.0);  // Only penalize moving away
+    let alignment_reward = 0.05 * alignment;
 
-    // let progress_reward = 5.0 * (dist_prev - dist);
+    // ----------------------------
+    // Penalize velocity perpendicular to target direction
+    // ----------------------------
+    let forward_speed = vel.dot(&dir_to_target);
+    let speed_sq = vel.dot(&vel);
+    let lateral_speed_sq = speed_sq - forward_speed * forward_speed;
+    let lateral_speed = lateral_speed_sq.max(0.0).sqrt();
+    let lateral_penalty = -0.15 * lateral_speed;
 
-    let shaping_reward = 1.0 / (0.1 + dist);
-
+    // ----------------------------
+    // Keep away from friendlies
+    // ----------------------------
     let mut friendly_prox_penalty = 0.0;
-
     if !no_neighbor {
-        friendly_prox_penalty = -0.2 / friendly_rel_pos.norm();
+        let d = friendly_rel_pos.norm();
+        friendly_prox_penalty = -0.2 / (0.2 + d * d);
     }
 
     // ----------------------------
-    // 5. Total reward
+    // Miss-Distance Prediction Reward
     // ----------------------------
-    let reward = dist_reward + shaping_reward + closing_reward + speed_penalty + friendly_prox_penalty;
+    let closing_speed = vel.dot(&dir_to_target);
+    let intercept_reward = if closing_speed > 0.0 {
+        let t = dist / (closing_speed + 0.1);
+        let predicted_offset =
+            rel_pos + rel_vel * t;
+        let miss_distance =
+            predicted_offset.norm();
+        0.4 / (1.0 + miss_distance)
+    } else {
+        0.0
+    };
 
-    println!("Episode {}. dist_reward, shaping_reward, closing_reward, speed_penalty, prox_penalty, tot_reward: {} {} {} {} {} {}", world.episode, dist_reward, shaping_reward, closing_reward, speed_penalty, friendly_prox_penalty, reward);
+    // ----------------------------
+    // Total reward
+    // ----------------------------
+    // let reward: f32 = shaping_reward + accel_reward+ closing_reward + speed_penalty + alignment_reward + friendly_prox_penalty + lateral_penalty+intercept_reward;
+    let reward: f32 = shaping_reward + closing_reward + intercept_reward + lateral_penalty ;
+
+    // println!("Episode {}. shaping, accel, closing, speed, alignment, prox, lateral, intercept, tot: {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3}", world.episode, shaping_reward, accel_reward, closing_reward, speed_penalty, alignment_reward, friendly_prox_penalty, lateral_penalty,intercept_reward, reward);
+    println!("Episode {}. shaping, closing, intercept, lateral, tot: {:.3} {:.3} {:.3} {:.3} {:.3} ", world.episode, shaping_reward, closing_reward, intercept_reward, lateral_penalty, reward);
 
     return reward;
 }

@@ -34,8 +34,8 @@ class SwarmPolicy(nn.Module):
         # Reasonable bounds for exploration
         # self.LOG_STD_MIN = -1.0   # std ≈ 0.37
         # self.LOG_STD_MAX = 0.5    # std ≈ 1.65
-        self.LOG_STD_MIN = -1.5   # std ≈ 0.22
-        self.LOG_STD_MAX = 0.0    # std = 1.0
+        # self.LOG_STD_MIN = -1.5   # std ≈ 0.22
+        # self.LOG_STD_MAX = 0.0    # std = 1.0
 
     def forward(self, obs):
         """
@@ -50,7 +50,7 @@ class SwarmPolicy(nn.Module):
         mean = torch.tanh(raw_mean)
 
         std = self.log_std.exp()
-        std = torch.clamp(std, min=0.1)  # prevent collapse
+        std = torch.clamp(std, min=0.3, max=1.5)  # prevent collapse & runaway
         std = std.unsqueeze(0).expand_as(mean)
         return mean, std
 

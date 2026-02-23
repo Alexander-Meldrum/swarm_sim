@@ -7,7 +7,7 @@ use pprof::ProfilerGuard;
 // use crate::learning::{Rewards};
 use crate::config::SimConfig;
 
-use std::ops::{Add, Sub, Div};
+use std::ops::{Add, Sub, Mul, Div};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vec3 { pub x: f32, pub y: f32, pub z: f32 }
@@ -55,6 +55,19 @@ impl Sub for Vec3 {
     }
 }
 
+impl Mul<f32> for Vec3 {
+    type Output = Vec3;
+
+    #[inline(always)]
+    fn mul(self, rhs: f32) -> Vec3 {
+        Vec3 {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
+    }
+}
+
 impl Div<f32> for Vec3 {
     type Output = Vec3;
 
@@ -66,6 +79,7 @@ impl Div<f32> for Vec3 {
         }
     }
 }
+
 
 pub const K_NEIGHBORS: usize = 1;
 
@@ -289,7 +303,7 @@ impl World {
             continue;
             }
 
-            self.position[idx].x += 10.0;
+            self.position[idx].x += 16.0;
         }
 
 

@@ -18,63 +18,48 @@ from torch.distributions import Normal
 from swarm_env import SwarmEnv
 from policy import SwarmPolicy, ValueNet
 
-
 # ============================================================
 # ENVIRONMENT / OBSERVATION CONFIG
 # ============================================================
-
-OBS_DIM = 4 + 6*2          # Observation dimension (self state + neighbors etc.)
+OBS_DIM = 4 + 9*2          # Observation dimension (self state + neighbors etc.)
 ACTION_DIM = 3            # Acceleration in 3D
-ALIVE_IDX = OBS_DIM - 1   # Index of "alive flag" inside observation
-
+ALIVE_IDX = 3   # Index of "alive flag" inside observation
 
 # ============================================================
 # TRAINING CONFIG
 # ============================================================
-
-EPISODE_COUNT = 1000
+EPISODE_COUNT = 3000
 MAX_STEPS = 500
 SEED = 0
-
 NUM_DRONES_TEAM_0 = 15
 NUM_DRONES_TEAM_1 = 30
-
 
 # ============================================================
 # OPTIMIZER SETTINGS
 # ============================================================
-
-POLICY_LEARNING_RATE = 5e-4
+POLICY_LEARNING_RATE = 1e-4
 VALUE_LEARNING_RATE = 5e-5
-
 
 # ============================================================
 # PPO HYPERPARAMETERS
 # ============================================================
-
 GAMMA = 0.99              # Discount factor
 VALUE_COEF = 0.1          # Critic loss weight
 ENTROPY_COEF = 0.03       # Exploration strength
 CLIP = 0.3                # PPO clipping epsilon
 
-
 # ============================================================
 # ROLLOUT CONFIG
 # ============================================================
-
-ROLLOUT_STEPS = 248       # Number of steps before PPO update
-PPO_EPOCHS = 2            # How many times to iterate over collected data
+ROLLOUT_STEPS = 256       # Number of steps before PPO update
+PPO_EPOCHS = 4            # How many times to iterate over collected data
 MINIBATCH_SIZE = int(0.15 * (ROLLOUT_STEPS * NUM_DRONES_TEAM_0))
-
 
 # ============================================================
 # ACTION / NORMALIZATION CONSTANTS
 # ============================================================
-
 EPS = 1e-6
 MAX_ACC = 10      # Max acceleration magnitude applied in simulation
-MAX_DISTANCE = 10  # Used to normalize positional observations
-MAX_VELOCITY = 5   # Used to normalize velocity observations
 
 
 def main():
@@ -120,12 +105,12 @@ def main():
             "reward": [],
             "value": [],
             "alive": [],
+            "next_alive": [],
         }
 
         # ============================================================
         # INTERACTION LOOP
         # ============================================================
-
         while not done:
 
             # Alive mask (1 if drone alive, 0 if dead)
@@ -134,7 +119,6 @@ def main():
             # ------------------------------------------------------------
             # POLICY FORWARD PASS
             # ------------------------------------------------------------
-
             mean, std = policy(obs)        # Gaussian parameters
             dist = Normal(mean, std)
 
@@ -157,13 +141,11 @@ def main():
             # ------------------------------------------------------------
             # VALUE PREDICTION
             # ------------------------------------------------------------
-
             value = value_net(obs).squeeze(-1)
 
             # ------------------------------------------------------------
             # ENVIRONMENT STEP
             # ------------------------------------------------------------
-
             next_obs, reward, done = env.step(action)
 
             # If all drones dead → force termination
@@ -171,16 +153,32 @@ def main():
             if not next_alive.any():
                 done = True
 
+
+            # DEBUG
+            # Check which drones reached terminal state
+            # Only check terminal rewards if we have at least one step stored
+            # print(next_obs)
+            # print(next_alive)
+            # if len(rollout["alive"]) > 0:
+            #     alive_last_step = rollout["alive"][-1]
+            #     terminal_mask = (next_alive == 0) & (alive_last_step == 1)
+            #     if terminal_mask.any():
+            #         dead_indices = terminal_mask.nonzero(as_tuple=True)[0].cpu().numpy()
+            #         print(
+            #             f"[Episode {episode} | Step {step_count}] Terminal reward applied for drones {dead_indices} "
+            #             f"-> reward: {reward[terminal_mask].detach().cpu().numpy()}"
+            #         )
+
             # ------------------------------------------------------------
             # STORE TRANSITION
             # ------------------------------------------------------------
-
             rollout["obs"].append(obs.detach())
             rollout["u"].append(u.detach())
             rollout["log_prob_old"].append(log_prob_old)
             rollout["reward"].append(reward.detach())
             rollout["value"].append(value.detach())
             rollout["alive"].append(alive.detach())
+            rollout["next_alive"].append(next_alive.detach())
 
             obs = next_obs
             step_count += 1
@@ -198,6 +196,7 @@ def main():
                 reward_batch = torch.cat(rollout["reward"])
                 value_batch = torch.cat(rollout["value"])
                 alive_batch = torch.cat(rollout["alive"])
+                next_alive_batch = torch.cat(rollout["next_alive"])
 
                 # Determine rollout length T
                 total_samples = reward_batch.shape[0]
@@ -205,8 +204,9 @@ def main():
 
                 # Reshape to [T, N]
                 reward_batch = reward_batch.view(T, NUM_DRONES_TEAM_0)
-                value_batch_2d = value_batch.view(T, NUM_DRONES_TEAM_0)
-                alive_batch_2d = alive_batch.view(T, NUM_DRONES_TEAM_0)
+                # value_batch_2d = value_batch.view(T, NUM_DRONES_TEAM_0)
+                # alive_batch_2d = alive_batch.view(T, NUM_DRONES_TEAM_0)
+                next_alive_batch_2d = next_alive_batch.view(T, NUM_DRONES_TEAM_0)
 
                 # ============================================================
                 # ROLLOUT RETURNS (DISCOUNTED SUM)
@@ -214,15 +214,21 @@ def main():
 
                 # Bootstrap from last state value
                 with torch.no_grad():
-                    next_value_last = value_net(obs).squeeze(-1)
+                    # next_value_last = value_net(obs).squeeze(-1)
+                    # End bootstrapping on true terminal
+                    if done:
+                        next_value_last = torch.zeros(NUM_DRONES_TEAM_0, device=device)
+                    else:
+                        next_value_last = value_net(obs).squeeze(-1)
 
                 returns = torch.zeros_like(reward_batch)
                 R = next_value_last
-
+                    
                 # Backward recursion:
                 # R_t = r_t + gamma * R_{t+1}
                 for t in reversed(range(T)):
-                    R = reward_batch[t] + GAMMA * R * alive_batch_2d[t]
+                    # R = reward_batch[t] + GAMMA * R * alive_batch_2d[t]
+                    R = reward_batch[t] + GAMMA * R * next_alive_batch_2d[t]
                     returns[t] = R
 
                 returns = returns.view(-1)
@@ -230,10 +236,8 @@ def main():
                 # ============================================================
                 # ADVANTAGE ESTIMATION
                 # ============================================================
-
                 # A = R - V(s)
                 advantage = returns - value_batch.detach()
-
                 advantage = advantage.view(T, NUM_DRONES_TEAM_0)
 
                 # # Remove swarm-wide bias per timestep
@@ -247,18 +251,17 @@ def main():
                 for i in range(NUM_DRONES_TEAM_0):
                     a = advantage[:, i]
                     
-                    std = a.std(unbiased=False)
-                    if std < 1e-6:
+                    a_std = a.std(unbiased=False)
+                    if a_std < 1e-6:
                         advantage[:, i] = 0.0
                     else:
-                        advantage[:, i] = (a - a.mean()) / (std + 1e-8)
+                        advantage[:, i] = (a - a.mean()) / (a_std + 1e-8)
 
                 advantage = advantage.view(-1)
 
                 # ============================================================
                 # PPO OPTIMIZATION LOOP
                 # ============================================================
-
                 batch_size = obs_batch.size(0)
                 indices = torch.randperm(batch_size)
 
@@ -329,8 +332,6 @@ def main():
                 # ============================================================
                 # DEBUG PRINTS (TRAINING HEALTH CHECK)
                 # ============================================================
-
-                print("mean std across drones:", mean.std(dim=0))
                 print("action std across drones:", action.std(dim=0))
                 print("obs std across drones:", obs.std(dim=0).mean())
                 print("mean |action|:", action.abs().mean().item())
@@ -346,7 +347,8 @@ def main():
                 print(
                     "policy mean mean:", mean.mean().item(),
                     "policy mean std :", mean.std().item(),
-                    "policy std mean :", std.mean().item()
+                    "policy std mean :", std.mean().item(),
+                    "policy std std  :", std.std().item(),
                 )
 
                 print(

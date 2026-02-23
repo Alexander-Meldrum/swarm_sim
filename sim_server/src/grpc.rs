@@ -57,30 +57,16 @@ impl SwarmProtoService for SimServer {
         let max_steps= request.max_steps;
         let seed = request.seed;
 
-        // Prepare Log for the Episode
         world.episode += 1;
-        // let mut state_log = None;
-        // let mut event_log = None; 
-        // if config.logging.enabled {
-        //     world.state_log = Some(open_new_log("states", world.episode));
-        //     world.event_log = Some(open_new_log("events", world.episode));
-        //     // move out log safely from Option<>
-        //     state_log = world.state_log.take();
-        //     event_log = world.event_log.take(); 
-        // } 
 
-        
         // Reset world state, replace the World inside the mutex
         *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode); // , state_log, event_log
 
-        // let mut state_log = None;
-        // let mut event_log = None; 
         if config.logging.enabled {
+            // Prepare Log for the Episode
             world.state_log = Some(open_new_log("states", world, config.clone()));
             world.event_log = Some(open_new_log("events", world, config.clone()));
-            // move out log safely from Option<>
-            // state_log = world.state_log.take();
-            // event_log = world.event_log.take(); 
+
         } 
 
         // Initialize observation buffer once per episode
@@ -96,7 +82,7 @@ impl SwarmProtoService for SimServer {
         rebuild_grid(world);
 
         // build flattened observations, zero copy move, obs_buf.obs set to empty vec
-        obs_buf.build(&world, config.sensing.max_sensing);
+        obs_buf.build(&world, config.clone());
         let obs = std::mem::take(&mut obs_buf.obs);
 
         // Log World, braces ensure the log lock is released quickly.
@@ -110,11 +96,7 @@ impl SwarmProtoService for SimServer {
         println!("[simulator] episode:           {}", world.episode);
         println!("[simulator] num_drones_team_0: {}", world.num_drones_team_0);
         println!("[simulator] num_drones_team_1: {}", world.num_drones_team_1);
-        // println!("[simulator] cell_size:        {}", world.cell_size);
         println!("[simulator] max_steps:         {}", world.max_steps);
-        // println!("[simulator] step:       {}", world.step);
-        // println!("[simulator] dt:         {}", world.dt);
-        // println!("[simulator] done:       {}", world.done);
         println!("[simulator] **********************");
 
         Ok(Response::new(ResetResponse {
@@ -183,7 +165,7 @@ impl SwarmProtoService for SimServer {
 
         // println!("[simulator] Epidsode: {}, Step: {}, Time: {}", world.episode, world.step, (world.step as f32) * world.dt);
         // println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
-        // Check if simulation done
+        // ----- 4. Check if simulation done ------ 
         if world.step >= world.max_steps {
             world.done = true;
             if self.config.logging.enabled {
@@ -193,7 +175,10 @@ impl SwarmProtoService for SimServer {
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
             println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
+            println!("[simulator] Actions (drone 1) From Controller: ax = {}, ay = {}, az = {}", actions[1].x, actions[1].y, actions[1].z);
+            println!("[simulator] Actions (drone 2) From Controller: ax = {}, ay = {}, az = {}", actions[2].x, actions[2].y, actions[2].z);
             println!("[simulator] State of (drone 0): x = {}, y = {}, z = {}", world.position[0].x, world.position[0].y, world.position[0].z);
+            
 
             if self.config.logging.profiling_enabled {
                 // Finish profiling
@@ -212,10 +197,10 @@ impl SwarmProtoService for SimServer {
 
         }
         // build flattened observations, zero copy move, obs_buf.obs set to empty vec
-        obs_buf.build(&world, config.sensing.max_sensing);
+        obs_buf.build(&world, config.clone());
         let obs = std::mem::take(&mut obs_buf.obs);
-        // panic!("something went wrong");
-        // ----- 4. Output ------ 
+
+        // ----- 5. Output ------ 
         Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.rewards, global_reward: rewards.global_reward}))
     }
 }

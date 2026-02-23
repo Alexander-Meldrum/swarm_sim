@@ -29,10 +29,21 @@ pub fn step(world: &mut World, actions: &[Vec3], max_velocity: f32) {
         // world.velocity[i].y += world.acceleration[i].y * world.dt;
         // world.velocity[i].z += world.acceleration[i].z * world.dt;
 
-        let theta = world.episode as f32 * 1.9416;   // Golden angle
-        world.velocity[idx].x = theta.cos();
-        world.velocity[idx].y = theta.cos();
-        world.velocity[idx].z = theta.cos();
+        // let theta = world.episode as f32 * 1.9416;   // Golden angle
+        // world.velocity[idx].x = theta.cos();
+        // world.velocity[idx].y = theta.sin();
+        // world.velocity[idx].z = theta.cos();
+        // Use three different “irrational” multipliers for x, y, z
+        let x = (world.episode as f32 * 1.3247).cos();
+        let y = (world.episode as f32 * 2.4563).cos();
+        let z = (world.episode as f32 * 3.5671).cos();
+
+        // Normalize to make it a unit vector
+        let mag = (x*x + y*y + z*z).sqrt();
+
+        world.velocity[idx].x = x / mag;
+        world.velocity[idx].y = y / mag;
+        world.velocity[idx].z = z / mag;
         // world.velocity[idx].x = 0.0;
         // world.velocity[idx].y = 0.0;
         // world.velocity[idx].z = 0.0;
