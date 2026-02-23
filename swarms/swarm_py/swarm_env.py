@@ -124,7 +124,6 @@ class SwarmEnv:
         self.step_count = response.step
         obs_team_0 = self._extract_team0_obs(response.observations)
         rewards = torch.tensor(response.rewards, device=self.device)
-        # global_reward = torch.tensor(response.global_reward, device=self.device)
         done = response.done
 
         return obs_team_0, rewards,  done # global_reward,
@@ -139,8 +138,6 @@ class SwarmEnv:
         Returns:
             Tensor of shape [num_team0, obs_dim]
         """
-
-        # from train import MAX_DISTANCE, MAX_VELOCITY
 
         # Assume obs already flat, reshape only, Convert to torch tensor on desired device
         obs = torch.tensor(observations, dtype=torch.float32, device=self.device)
