@@ -20,6 +20,8 @@ pub fn calc_rewards(world: &World) -> Rewards {
         rewards.rewards.fill(0.0);
         rewards.global_reward = 0.0 as f32;
 
+
+        // Calculate terminal rewards when collisions occurs
         for event in &world.events {
             if event.kind == EventKind::DroneCollision {
                 // punish two controlled drones colliding
@@ -43,12 +45,12 @@ pub fn calc_rewards(world: &World) -> Rewards {
         }
 
         for i in 0..world.num_drones_team_0 {
-            if !world.alive[i] { continue; }  // Note no other rewards for step when collision occurs.
+            if !world.alive[i] { continue; }  // Only terminal rewards for step when collision occurs.
 
             // rewards.rewards[i] += calc_reward_for_hitting_stationary_target(world, i);
             rewards.rewards[i] += calc_reward_for_hitting_dynamic_target(world, i);
         }
-        // println!("rewards: {:?}", rewards.rewards);
+
         rewards
 
 }
@@ -63,7 +65,7 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     };
 
     let mut no_neighbor = false;
-    let (friendly_rel_pos, friendly_rel_vel) =
+    let (friendly_rel_pos, _friendly_rel_vel) =
         if let Some((pos, vel)) = world.team0_neighbors[i][0] {
             (pos, vel)
         } else {
@@ -76,9 +78,9 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     let dist = rel_pos.norm() + eps;
     let dir_to_target = rel_pos / dist;
     let vel = world.velocity[i];
-    let vel_norm = vel.norm() + eps;
-    let vel_dir = vel / vel_norm;
-    let acc_norm = world.acceleration[i].norm() + eps;
+    // let vel_norm = vel.norm() + eps;
+    // let vel_dir = vel / vel_norm;
+    // let acc_norm = world.acceleration[i].norm() + eps;
 
     // ----------------------------
     // Distance reduction (progress reward)
@@ -91,9 +93,9 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     // ----------------------------
     // Acceleration direction reward
     // ----------------------------
-    let accel_dir = world.acceleration[i]/acc_norm;
-    let accel_alignment = accel_dir.dot(&dir_to_target);
-    let accel_reward = 0.1 * accel_alignment;
+    // let accel_dir = world.acceleration[i]/acc_norm;
+    // let accel_alignment = accel_dir.dot(&dir_to_target);
+    // let accel_reward = 0.1 * accel_alignment;
 
     // ----------------------------
     // Predictive closing reward (future interception)
@@ -105,15 +107,14 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     // ----------------------------
     // Optional speed penalty to avoid runaway
     // ----------------------------
-    let speed_penalty = -0.01 * vel_norm; // keeps velocity reasonable
+    // let speed_penalty = -0.01 * vel_norm; // keeps velocity reasonable
 
     // ----------------------------
     // Velocity alignment penalty
     // Penalizes movement AWAY from target
     // ----------------------------
-    let alignment = vel_dir.dot(&dir_to_target);  // [-1 , +1]
-    // let alignment_penalty = 0.1 * alignment.min(0.0);  // Only penalize moving away
-    let alignment_reward = 0.05 * alignment;
+    // let alignment = vel_dir.dot(&dir_to_target);  // [-1 , +1]
+    // let alignment_reward = 0.05 * alignment;
 
     // ----------------------------
     // Penalize velocity perpendicular to target direction
@@ -125,16 +126,7 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     let lateral_penalty = -0.15 * lateral_speed;
 
     // ----------------------------
-    // Keep away from friendlies
-    // ----------------------------
-    let mut friendly_prox_penalty = 0.0;
-    if !no_neighbor {
-        let d = friendly_rel_pos.norm();
-        friendly_prox_penalty = -0.2 / (0.2 + d * d);
-    }
-
-    // ----------------------------
-    // Miss-Distance Prediction Reward
+    // Miss-Distance Prediction, intercept_reward
     // ----------------------------
     let closing_speed = vel.dot(&dir_to_target);
     let intercept_reward = if closing_speed > 0.0 {
@@ -149,13 +141,22 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     };
 
     // ----------------------------
+    // Keep away from friendlies, friendly_prox_penalty
+    // ----------------------------
+    let mut friendly_prox_penalty = 0.0;
+    if !no_neighbor {
+        let d = friendly_rel_pos.norm();
+        friendly_prox_penalty = -0.05 / (0.2 + d * d);
+    }
+
+    // ----------------------------
     // Total reward
     // ----------------------------
     // let reward: f32 = shaping_reward + accel_reward+ closing_reward + speed_penalty + alignment_reward + friendly_prox_penalty + lateral_penalty+intercept_reward;
-    let reward: f32 = shaping_reward + closing_reward + intercept_reward + lateral_penalty ;
+    let reward: f32 = shaping_reward + closing_reward + intercept_reward + lateral_penalty + friendly_prox_penalty;
 
     // println!("Episode {}. shaping, accel, closing, speed, alignment, prox, lateral, intercept, tot: {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} {:.3}", world.episode, shaping_reward, accel_reward, closing_reward, speed_penalty, alignment_reward, friendly_prox_penalty, lateral_penalty,intercept_reward, reward);
-    println!("Episode {}. shaping, closing, intercept, lateral, tot: {:.3} {:.3} {:.3} {:.3} {:.3} ", world.episode, shaping_reward, closing_reward, intercept_reward, lateral_penalty, reward);
+    println!("Episode {}. shaping, closing, intercept, lateral, friendly_prox_penalty, tot: {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} ", world.episode, shaping_reward, closing_reward, intercept_reward, lateral_penalty, friendly_prox_penalty, reward);
 
     return reward;
 }

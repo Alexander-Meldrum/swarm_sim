@@ -5,6 +5,13 @@ from matplotlib.animation import FuncAnimation
 
 from bin_reader import read_swarm_state_log, read_swarm_event_log
 
+# --------------------------------------------------
+# Config
+AUTO_ROTATE = True   # <-- Set to False to disable rotation
+ROTATE_SPEED = 0.5   # degrees per frame
+STEP_STRIDE = 5   # try 5, 10, 20
+# --------------------------------------------------
+
 parser = argparse.ArgumentParser()
 parser.add_argument("path", help="Relative path to file")
 args = parser.parse_args()
@@ -17,14 +24,13 @@ N0 = metadata.num_drones_team_0
 N1 = metadata.num_drones_team_1
 assert N0 + N1 == state_log.pos.shape[1]
 
-pos = state_log.pos          # (T, N, 3)
+pos = state_log.pos                  # (T, N, 3)
 pos_team_0 = pos[:, :N0, :]          # (T, N0, 3)
 pos_team_1 = pos[:, N0:N0+N1, :]     # (T, N1, 3)
 steps = state_log.steps
 rewards = state_log.rewards
 T, N, _ = pos.shape
 
-STEP_STRIDE = 5   # try 5, 10, 20
 frame_steps = np.arange(0, T, STEP_STRIDE)
 
 event_steps = event_log.steps
@@ -160,14 +166,12 @@ collision_team_1_scat = ax.scatter(
     label="Collision (Team 1)",
 )
 
-
 # --------------------------------------------------
 # Accumulators (persist during animation)
 # --------------------------------------------------
 all_target_hits = []
 collision_hits_team_0 = []
 collision_hits_team_1 = []
-
 
 # --------------------------------------------------
 # Update function
@@ -272,6 +276,16 @@ def update(frame_idx):
         arr = np.asarray(collision_hits_team_1, dtype=np.float32)
         collision_team_1_scat._offsets3d = (arr[:,0], arr[:,1], arr[:,2])
 
+    # -----------------------------
+    # Auto-rotate view
+    # -----------------------------
+    if AUTO_ROTATE:
+        azim = (ax.azim + ROTATE_SPEED) % 360
+        ax.view_init(elev=ax.elev, azim=azim)
+
+    # -----------------------------
+    # Update title, header
+    # -----------------------------
     ax.set_title(f"Episode: {metadata.episode}, Step: {steps[curr_step_idx]}, " f"Time: {steps[curr_step_idx] * metadata.dt:.3f}s")
 
     artists = [

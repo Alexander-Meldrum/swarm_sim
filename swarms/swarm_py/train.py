@@ -204,8 +204,6 @@ def main():
 
                 # Reshape to [T, N]
                 reward_batch = reward_batch.view(T, NUM_DRONES_TEAM_0)
-                # value_batch_2d = value_batch.view(T, NUM_DRONES_TEAM_0)
-                # alive_batch_2d = alive_batch.view(T, NUM_DRONES_TEAM_0)
                 next_alive_batch_2d = next_alive_batch.view(T, NUM_DRONES_TEAM_0)
 
                 # ============================================================
@@ -214,7 +212,6 @@ def main():
 
                 # Bootstrap from last state value
                 with torch.no_grad():
-                    # next_value_last = value_net(obs).squeeze(-1)
                     # End bootstrapping on true terminal
                     if done:
                         next_value_last = torch.zeros(NUM_DRONES_TEAM_0, device=device)
@@ -227,7 +224,6 @@ def main():
                 # Backward recursion:
                 # R_t = r_t + gamma * R_{t+1}
                 for t in reversed(range(T)):
-                    # R = reward_batch[t] + GAMMA * R * alive_batch_2d[t]
                     R = reward_batch[t] + GAMMA * R * next_alive_batch_2d[t]
                     returns[t] = R
 
@@ -240,14 +236,7 @@ def main():
                 advantage = returns - value_batch.detach()
                 advantage = advantage.view(T, NUM_DRONES_TEAM_0)
 
-                # # Remove swarm-wide bias per timestep
-                # # (prevents global directional collapse)
-                # advantage = advantage - advantage.mean(dim=1, keepdim=True)
-
-                # # Normalize globally (improves PPO stability)
-                # advantage = (advantage - advantage.mean()) / (advantage.std() + 1e-8)
-
-                # Normalize per drone across time
+                # Normalize per drone across time, aim to prevent global directional collapse
                 for i in range(NUM_DRONES_TEAM_0):
                     a = advantage[:, i]
                     
@@ -310,9 +299,7 @@ def main():
                         policy_optimizer.step()
 
                         # ---------------- CRITIC UPDATE ----------------
-
                         value_pred = value_net(obs_batch[mb_idx]).squeeze(-1)
-
                         value_pred_clipped = value_batch[mb_idx] + \
                             (value_pred - value_batch[mb_idx]).clamp(-0.5, 0.5)    # PPO2-style value clipping
 
@@ -336,21 +323,17 @@ def main():
                 print("obs std across drones:", obs.std(dim=0).mean())
                 print("mean |action|:", action.abs().mean().item())
                 print("mean action norm:", action.norm(dim=1).mean().item())
-
                 print(
                     "action mean:", action.mean(dim=0).detach().cpu().numpy(),
                     "action std :", action.std(dim=0).detach().cpu().numpy()
                 )
-
                 print("per-drone action norm std:", action.norm(dim=1).std().item())
-
                 print(
                     "policy mean mean:", mean.mean().item(),
                     "policy mean std :", mean.std().item(),
                     "policy std mean :", std.mean().item(),
                     "policy std std  :", std.std().item(),
                 )
-
                 print(
                     "ratio mean:", ratio.mean().item(),
                     "ratio std :", ratio.std().item(),
@@ -358,26 +341,21 @@ def main():
                     ratio.min().item(),
                     ratio.max().item()
                 )
-
                 print(
                     "adv mean:", advantage.mean().item(),
                     "adv std :", advantage.std().item()
                 )
-
                 print(
                     "dist mean:", obs[:, 0:3].norm(dim=1).mean().item(),
                     "reward mean:", reward.mean().item()
                 )
-
                 with torch.no_grad():
                     v = value_net(obs).squeeze(-1)
-
                 print(
                     "value mean:", v.mean().item(),
                     "value std :", v.std().item(),
                     "reward mean:", reward.mean().item()
                 )
-
                 mean_dir = action.mean(dim=0)
                 print(
                     "mean action direction:",

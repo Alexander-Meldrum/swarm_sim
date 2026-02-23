@@ -242,14 +242,17 @@ python tools/bin_to_csv.py logs/00001
 ## Roadmap
 - Default simulator controllers for dummy swarms (targets)
 - Save weights after training in Python controller
+- Run Python controller with saved weights
 - Update C++ controller to use saved weights
-- Addition of GAE to PPO algorithm
+- Cleanup: Result folder, TODOs, Readme HowTo (Do the rewards and obs yourself) & dependencies
+
 
 ---
 
-## Future Work
+## Possible Future Work
 
 - Move over to shared memory instead of gRPC communication
+- Addition of GAE to PPO algorithm
 
 ---
 
