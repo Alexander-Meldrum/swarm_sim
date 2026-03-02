@@ -102,8 +102,8 @@ StepResponse SwarmController::step() {
     step_ = response.step();
 
     if (response.done()) {
-        // TODO
-        std::cout <<"[swarm] World Simulator Done" << std::endl;
+        // 
+TODO        std::cout <<"[swarm] World Simulator Done" << std::endl;
         // Stop stepping immediately
         // Log episode return
         return response;

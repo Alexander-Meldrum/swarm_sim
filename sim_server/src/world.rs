@@ -4,7 +4,6 @@ use std::sync::Arc;
 use rand::rngs::SmallRng;
 use rand::{SeedableRng, Rng};
 use pprof::ProfilerGuard;
-// use crate::learning::{Rewards};
 use crate::config::SimConfig;
 
 use std::ops::{Add, Sub, Mul, Div};
@@ -79,7 +78,6 @@ impl Div<f32> for Vec3 {
         }
     }
 }
-
 
 pub const K_NEIGHBORS: usize = 1;
 
@@ -203,8 +201,6 @@ impl World {
             team0_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             team1_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             episode: episode,
-            // state_log: state_log,
-            // event_log: event_log,
             state_log: None, // Initiated after creation of world
             event_log: None,
             // Pre-allocate per-drone state (SoA layout)
@@ -224,7 +220,6 @@ impl World {
             grid_dim: (nx, ny, nz),
             // Pre-allocate spatial grid. Each cell holds drone indices
             grid: vec![Vec::new(); num_cells],
-            // rewards: Rewards::new(num_drones),
             done: false,
         }
     }
@@ -261,7 +256,6 @@ impl World {
             grid_dim: (0, 0, 0),
             // Pre-allocate spatial grid. Each cell holds drone indices
             grid: Vec::new(),
-            // rewards: Rewards::new(0),
             done: false,
         }
     }
@@ -303,6 +297,7 @@ impl World {
             continue;
             }
 
+            // TODO
             self.position[idx].x += 16.0;
         }
 
@@ -331,7 +326,6 @@ const NEIGHBORS: [(isize, isize, isize); 27] = [
 // fn grid_index(world: &mut World, p: Vec3) -> Option<usize> {
 fn grid_index(arena_min: &Vec3, cell_size: &f32, grid_dim: &(usize, usize, usize), p: &Vec3) -> Option<usize> {
     // Convert continuous position into discrete grid coordinates
-    // TODO precalculate inverse cell_size
     let ix = ((p.x - arena_min.x) / cell_size) as isize;
     let iy = ((p.y - arena_min.y) / cell_size) as isize;
     let iz = ((p.z - arena_min.z) / cell_size) as isize;
@@ -502,9 +496,6 @@ pub fn detect_target_hits(world: &mut World, drone_radius: f32) {
                     // Apply hit consequences
                     // target.alive = false;
                     world.alive[drone_id] = false;
-
-                    // One hit per target # TODO, flag?
-                    // break;
                 }
             }
 

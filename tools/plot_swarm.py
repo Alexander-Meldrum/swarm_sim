@@ -7,9 +7,10 @@ from bin_reader import read_swarm_state_log, read_swarm_event_log
 
 # --------------------------------------------------
 # Config
-AUTO_ROTATE = True   # <-- Set to False to disable rotation
+AUTO_ROTATE = True   # Set to False to disable rotation
 ROTATE_SPEED = 0.5   # degrees per frame
-STEP_STRIDE = 5   # try 5, 10, 20
+STEP_STRIDE = 10  # try 5, 10, 20
+SAVE_AS_GIF = False
 # --------------------------------------------------
 
 parser = argparse.ArgumentParser()
@@ -73,12 +74,42 @@ for step in target_hits_by_step:
 max_abs = np.max(np.abs(pos))
 L = max_abs
 
-fig = plt.figure(figsize=(8, 8))
+fig = plt.figure(figsize=(6, 6))
 ax = fig.add_subplot(111, projection="3d")
 
-ax.set_xlim(-L, L)
-ax.set_ylim(-L, L)
-ax.set_zlim(-L, L)
+# ax.set_xlim(-L, L)
+# ax.set_ylim(-L, L)
+# ax.set_zlim(-L, L)
+
+mins = np.min(pos, axis=(0,1))
+maxs = np.max(pos, axis=(0,1))
+
+xmin, ymin, zmin = mins
+xmax, ymax, zmax = maxs
+
+# Compute full 3D span
+span = max(xmax-xmin, ymax-ymin, zmax-zmin)
+
+# Centers
+x_center = 0.5 * (xmin + xmax)
+y_center = 0.5 * (ymin + ymax)
+z_center = 0.5 * (zmin + zmax)
+
+# Apply same span to all axes
+xmin = x_center - span/2
+xmax = x_center + span/2
+
+ymin = y_center - span/2
+ymax = y_center + span/2
+
+zmin = z_center - span/2
+zmax = z_center + span/2
+
+ax.set_xlim(xmin, xmax)
+ax.set_ylim(ymin, ymax)
+ax.set_zlim(zmin, zmax)
+
+ax.set_box_aspect([1, 1, 1]) # Isometric view
 
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
@@ -341,4 +372,13 @@ if target_scat is not None:
 
 ax.legend(legend_artists, legend_labels)
 
+plt.tight_layout(rect=[0, 0, 1, 0.98])  # leaves 5% space at the top for the title.
 plt.show()
+
+# --------------------------------------------------
+# Save as GIF
+# --------------------------------------------------
+if SAVE_AS_GIF:
+    from matplotlib.animation import FuncAnimation, PillowWriter
+    print("SAVE_AS_GIF: True, Saving animation as gif file...")
+    ani.save(f"results/animation_{metadata.episode}.gif", writer=PillowWriter(fps=12), dpi=90)

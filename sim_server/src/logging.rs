@@ -71,8 +71,7 @@ pub fn log_world(
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&(world.num_drones as u32).to_le_bytes())?;  // TODO, remove this logging?
-    
+    log.write_all(&(world.num_drones as u32).to_le_bytes())?;  // TODO, remove this logging
 
     for i in 0..world.num_drones_team_0 as usize {
         let p = &world.position[i];
@@ -81,11 +80,9 @@ pub fn log_world(
         log.write_all(&p.x.to_le_bytes())?;
         log.write_all(&p.y.to_le_bytes())?;
         log.write_all(&p.z.to_le_bytes())?;
-
         log.write_all(&v.x.to_le_bytes())?;
         log.write_all(&v.y.to_le_bytes())?;
         log.write_all(&v.z.to_le_bytes())?;
-
         log.write_all(&rewards.rewards[i].to_le_bytes())?;
     }
 
@@ -96,11 +93,9 @@ pub fn log_world(
         log.write_all(&p.x.to_le_bytes())?;
         log.write_all(&p.y.to_le_bytes())?;
         log.write_all(&p.z.to_le_bytes())?;
-
         log.write_all(&v.x.to_le_bytes())?;
         log.write_all(&v.y.to_le_bytes())?;
         log.write_all(&v.z.to_le_bytes())?;
-
         log.write_all(&0.0f32.to_le_bytes())?; // No rewards to team 1
     }
 

@@ -6,10 +6,11 @@ This project provides a high-performance, deterministic physics simulator (Rust)
 Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
-  <img src="results/PPO_DL_Controller.gif" width="500" />
+  <img src="results/python_rl_controller/swarm_intercept_ppo_rl/3000_episode_training.gif" width="800" />
 </p>
 
-PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator.
+PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
+Learned policy: Collision-aware decentralized intercept logic using only local observations.
 
 ---
 
@@ -46,13 +47,13 @@ PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the 
 
 ## Simulator Server (Rust)
 
-- Deterministic physics simulator designed for swarm control research/development
+- Deterministic physics simulator designed for swarm control research/development (Simplified Physics, modify for your needs)
 - ECS-based architecture for cache efficiency and scalability
 - Spatial grid optimization for high performance collision detection (Drone - Drone, Drone - Target)
 - Binary logging of:
   - Drone state
   - Collision events
-- Reward calculation module for RL 
+- Reward & observation calculation modules for RL (Modify these) 
 - Yaml config file configurable (World & drone physical settings), the controllers set amount of drones etc. on gRPC reset request.
 - Profiling (flamegraph)
 
@@ -70,7 +71,8 @@ This component is intended for:
 ### PPO Implementation Overview
 This project implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
 It is intentionally designed as a **scaffold for experimentation**, not a full-featured RL framework.
-PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
+<br>PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. 
+It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
 
 - **Actor–critic architecture** with separate policy and value networks.
 - **Multi-drone friendly**:
@@ -244,8 +246,7 @@ python tools/bin_to_csv.py logs/00001
 - Save weights after training in Python controller
 - Run Python controller with saved weights
 - Update C++ controller to use saved weights
-- Cleanup: Result folder, TODOs, Readme HowTo (Do the rewards and obs yourself) & dependencies
-
+- Cleanup: Result folder git ignore?, remove all webm &  Readme dependencies
 
 ---
 
