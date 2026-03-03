@@ -52,8 +52,6 @@ pub struct PhysicsConfig {
     pub dt: f32,
     // /// Maximum allowed velocity magnitude
     pub max_velocity: f32,
-    // /// Linear drag coefficient
-    // pub drag: f32,
 }
 
 // ===============================
@@ -63,7 +61,6 @@ pub struct PhysicsConfig {
 pub struct SensingConfig {
     /// Max sensing distance, has to be smaller than 2*cell_size
     pub max_sensing: f32,
-    // pub nr_of_neighbors: u32  // Hard coded for performance
 }
 
 // ===============================
@@ -102,19 +99,7 @@ pub struct CollisionConfig {
 pub struct LoggingConfig {
     /// Enable episode logging
     pub enabled: bool,
-    // /// Output directory for logs
-    // pub output_dir: String,
     /// Enable profiling of simulator
     pub profiling_enabled: bool,
     pub profiling_frequency: i32,
 }
-
-// ===============================
-// Debug / Development Options
-// ===============================
-//
-// #[derive(Debug, Deserialize)]
-// pub struct DebugConfig {
-//     /// Print simulator events to stdout
-//     pub verbose: bool,
-// }

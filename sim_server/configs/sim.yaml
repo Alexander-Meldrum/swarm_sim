@@ -59,14 +59,12 @@ collisions:
 # -------------------------------
 # Built-in Rule-Based Controllers
 # -------------------------------
-controllers:
-  rule_based:
-    # Enable simulator-owned drones
-    enabled: true
-    # Team ID controlled by simulator logic (e.g. opponent team)
-    team_id: 1
-    # Behavior name (mapped internally in Rust)
-    behavior: "straight_flying"
+team_1_controller:
+  # Enable simulator-owned drones
+  enabled: true
+  # Behavior name (mapped internally in simulator)
+  behavior: "straight_flying"
+  
 
 # -------------------------------
 # Logging Configuration
@@ -77,10 +75,3 @@ logging:
   # Enable profiling
   profiling_enabled: false
   profiling_frequency: 1000 # Hz
-
-# -------------------------------
-# Debug / Development Options, TODO
-# -------------------------------
-debug:
-  # Print simulator events to stdout
-  verbose: true

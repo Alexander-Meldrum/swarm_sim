@@ -1,4 +1,4 @@
-# Swarm Simulator
+# Swarm Sim
 
 **Deterministic swarm simulation framework for developing, testing, and deploying swarm control algorithms.**
 
@@ -9,7 +9,7 @@ Enabling reproducible experiments for reinforcement learning, control research, 
   <img src="results/python_rl_controller/swarm_intercept_ppo_rl/3000_episode_training.gif" width="800" />
 </p>
 
-PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
+Above: PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
 Learned policy: Collision-aware decentralized intercept logic using only local observations.
 
 ---
@@ -47,13 +47,13 @@ Learned policy: Collision-aware decentralized intercept logic using only local o
 
 ## Simulator Server (Rust)
 
-- Deterministic physics simulator designed for swarm control research/development (Simplified Physics, modify for your needs)
+- Deterministic physics simulator designed for swarm control research/development <br>(Simplified Physics, modify for your needs)
 - ECS-based architecture for cache efficiency and scalability
 - Spatial grid optimization for high performance collision detection (Drone - Drone, Drone - Target)
 - Binary logging of:
   - Drone state
   - Collision events
-- Reward & observation calculation modules for RL (Modify these) 
+- Reward & observation calculation modules for RL (Modify for your needs) 
 - Yaml config file configurable (World & drone physical settings), the controllers set amount of drones etc. on gRPC reset request.
 - Profiling (flamegraph)
 

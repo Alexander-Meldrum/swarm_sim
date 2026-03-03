@@ -24,7 +24,7 @@ pub struct Simulator {
 }
 
 pub struct SimServer {
-    /// Immutable configuration (arena, physics, rules)
+    /// Immutable configuration (arena, physics, rules etc.)
     pub config: Arc<SimConfig>,
     /// Simulator is a tokio async Mutex, to not block async gRPC tokio thread (reset/step from multiple controllers). Standard Mutex would block.
     pub sim: Mutex<Simulator>,
@@ -60,7 +60,7 @@ impl SwarmProtoService for SimServer {
         world.episode += 1;
 
         // Reset world state, replace the World inside the mutex
-        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode); // , state_log, event_log
+        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode);
 
         if config.logging.enabled {
             // Prepare Log for the Episode
@@ -163,8 +163,6 @@ impl SwarmProtoService for SimServer {
             log_events(world).unwrap();
         }
 
-        // println!("[simulator] Epidsode: {}, Step: {}, Time: {}", world.episode, world.step, (world.step as f32) * world.dt);
-        // println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
         // ----- 4. Check if simulation done ------ 
         if world.step >= world.max_steps {
             world.done = true;
@@ -174,11 +172,6 @@ impl SwarmProtoService for SimServer {
             }
             
             println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
-            println!("[simulator] Actions (drone 0) From Controller: ax = {}, ay = {}, az = {}", actions[0].x, actions[0].y, actions[0].z);
-            println!("[simulator] Actions (drone 1) From Controller: ax = {}, ay = {}, az = {}", actions[1].x, actions[1].y, actions[1].z);
-            println!("[simulator] Actions (drone 2) From Controller: ax = {}, ay = {}, az = {}", actions[2].x, actions[2].y, actions[2].z);
-            println!("[simulator] State of (drone 0): x = {}, y = {}, z = {}", world.position[0].x, world.position[0].y, world.position[0].z);
-            
 
             if self.config.logging.profiling_enabled {
                 // Finish profiling
