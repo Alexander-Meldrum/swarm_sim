@@ -55,7 +55,7 @@ compile_commands.json
 # *_pb2_grpc.py
 
 ############################
-# Python (if used for RL later)
+# Python & RL
 ############################
 __pycache__/
 *.pyc
@@ -64,6 +64,7 @@ __pycache__/
 .env
 .venv/
 venv/
+swarms/swarm_py/saved_policies/
 
 ############################
 # Logs / runtime output

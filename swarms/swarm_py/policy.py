@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 
+
 class SwarmPolicy(nn.Module):
     """
     Policy network for continuous-action PPO.
@@ -19,13 +20,13 @@ class SwarmPolicy(nn.Module):
         super().__init__()
 
         # Simple MLP
-        # Tanh here keeps hidden activations bounded → stable means
+        # Tanh keeps hidden activations bounded which leads to stable means
         self.net = nn.Sequential(
             nn.Linear(obs_dim, 128),
-            nn.Tanh(),          # OK
+            nn.Tanh(),
             nn.Linear(128, 128),
-            nn.Tanh(),          # OK
-            nn.Linear(128, act_dim)  # UNBOUNDED
+            nn.Tanh(),
+            nn.Linear(128, act_dim),  # Unbounded
         )
 
         self.log_std = nn.Parameter(torch.ones(act_dim) * 0.5)
@@ -54,6 +55,7 @@ class SwarmPolicy(nn.Module):
         std = std.unsqueeze(0).expand_as(mean)
         return mean, std
 
+
 class ValueNet(nn.Module):
     def __init__(self, obs_dim):
         super().__init__()
@@ -69,7 +71,7 @@ class ValueNet(nn.Module):
             nn.ReLU(),
             nn.Linear(128, 128),
             nn.ReLU(),
-            nn.Linear(128, 1)   # <-- one value per drone
+            nn.Linear(128, 1),  # one value per drone
         )
 
     def forward(self, obs):

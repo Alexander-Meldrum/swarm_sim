@@ -1,35 +1,34 @@
-mod world;
-mod physics;
-mod grpc;
 mod config;
-mod logging;
+mod grpc;
 mod learning;
-mod utils;
+mod logging;
 mod observations;
+mod physics;
+mod utils;
+mod world;
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
-use world::World;
-use tokio::sync::Mutex;
-use std::sync::Arc;
-use utils::{Args};
-use utils::load_config;
-use observations::{ObservationBuffer};
 use clap::Parser;
+use observations::ObservationBuffer;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use utils::load_config;
+use utils::Args;
+use world::World;
 
+use crate::grpc::swarm_proto::swarm_proto_service_server::SwarmProtoServiceServer;
 use grpc::{SimServer, Simulator};
-use crate::grpc::swarm_proto::swarm_proto_service_server::{SwarmProtoServiceServer};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Parse CLI arguments
     let args = Args::parse();
     println!("{:#?}", args);
-    // println!("[simulator] Starting simulator with args: {}", args);
-    // Load config ONCE
+    // Load config once
     let config = load_config(&args.config)?;
     let config = Arc::new(config);
-    println!("[simulator] ✅ Loaded config from {}", args.config);
+    println!("[simulator] Loaded config from {}", args.config);
 
     let server = SimServer {
         config: config.clone(),
@@ -39,7 +38,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }),
     };
 
-    let addr = "[::1]:50051".parse()?;
+    let addr = args.bind.parse()?;
     println!("[simulator] Sim server running and listening for StepRequests on localhost:50051");
 
     tonic::transport::Server::builder()

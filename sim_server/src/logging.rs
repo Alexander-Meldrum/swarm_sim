@@ -1,12 +1,11 @@
-use std::fs::{File, create_dir_all};
-use std::io::{BufWriter, Write};
-use crate::world::{World};
-use crate::learning::{Rewards};
-use std::sync::Arc;
 use crate::config::SimConfig;
+use crate::learning::Rewards;
+use crate::world::World;
+use std::fs::{create_dir_all, File};
+use std::io::{BufWriter, Write};
+use std::sync::Arc;
 
-use serde::{Serialize, Deserialize};
-
+use serde::{Deserialize, Serialize};
 
 pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) -> BufWriter<File> {
     create_dir_all("logs").unwrap();
@@ -17,14 +16,18 @@ pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) ->
     let mut file = BufWriter::new(File::create(path).unwrap());
 
     let metadata = LogMetadata {
-    episode: world.episode,
-    dt: config.physics.dt,
-    num_drones_team_0: world.num_drones_team_0 as u32,
-    num_drones_team_1: world.num_drones_team_1 as u32,
-    stationary_target_exists: config.target.enabled as u8,
-    stationary_target_pos: [config.target.position[0], config.target.position[1], config.target.position[2]],
-    stationary_target_radius: config.target.radius,
-    schema_version: 1,
+        episode: world.episode,
+        dt: config.physics.dt,
+        num_drones_team_0: world.num_drones_team_0 as u32,
+        num_drones_team_1: world.num_drones_team_1 as u32,
+        stationary_target_exists: config.target.enabled as u8,
+        stationary_target_pos: [
+            config.target.position[0],
+            config.target.position[1],
+            config.target.position[2],
+        ],
+        stationary_target_radius: config.target.radius,
+        schema_version: 1,
     };
 
     // Write metadata at the beginning
@@ -32,7 +35,6 @@ pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) ->
 
     file
 }
-
 
 #[derive(Serialize, Deserialize)]
 pub struct LogMetadata {
@@ -64,14 +66,11 @@ impl LogMetadata {
 }
 
 // When updating logging, tools/bin_reader.py might need edits.
-pub fn log_world(
-    world: &mut World, rewards: &Rewards
-) -> std::io::Result<()> {
-
+pub fn log_world(world: &mut World, rewards: &Rewards) -> std::io::Result<()> {
     let log = world.state_log.as_mut().expect("state log not initialized");
 
     log.write_all(&world.step.to_le_bytes())?;
-    log.write_all(&(world.num_drones as u32).to_le_bytes())?;  // TODO, remove this logging
+    log.write_all(&(world.num_drones as u32).to_le_bytes())?; // TODO, remove this logging
 
     for i in 0..world.num_drones_team_0 as usize {
         let p = &world.position[i];
@@ -87,8 +86,8 @@ pub fn log_world(
     }
 
     for i in 0..world.num_drones_team_1 as usize {
-        let p = &world.position[world.num_drones_team_0+i];
-        let v = &world.velocity[world.num_drones_team_0+i];
+        let p = &world.position[world.num_drones_team_0 + i];
+        let v = &world.velocity[world.num_drones_team_0 + i];
 
         log.write_all(&p.x.to_le_bytes())?;
         log.write_all(&p.y.to_le_bytes())?;
@@ -100,7 +99,7 @@ pub fn log_world(
     }
 
     log.flush()?; // flush once at the end for efficiency
-    
+
     Ok(())
 }
 

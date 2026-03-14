@@ -10,24 +10,25 @@ pub struct SimConfig {
     pub physics: PhysicsConfig,
     pub sensing: SensingConfig,
     pub collisions: CollisionConfig,
-    // pub controllers: ControllersConfig,
+    pub team_1_controller: Team1ControllerConfig,
     pub logging: LoggingConfig,
-    // pub debug: DebugConfig,
 }
-
 
 // ===============================
 // Arena / World Geometry
 // ===============================
 #[derive(Debug, Deserialize)]
 pub struct ArenaConfig {
-    /// Minimum corner of the arena (x, y, z)
+    /// Minimum corner of the arena (x, y, z) [m]
     pub min: [f32; 3],
-    /// Maximum corner of the arena (x, y, z)
+    /// Maximum corner of the arena (x, y, z) [m]
     pub max: [f32; 3],
-    /// Minimum distance between drones when randomizing start pos.
+    /// Minimum distance between drones when randomizing start pos. [m]
     pub min_dist: f32,
+    /// Flad to randomize init positions of all drones
     pub randomize_init_pos: bool,
+    /// Cell size for the grid used for collision detection, nearest neighbor etc. [m]
+    /// Try to keep cell_size close to "interaction_radius". cell_size affects performance a lot
     pub cell_size: f32,
 }
 
@@ -36,11 +37,9 @@ pub struct ArenaConfig {
 // ===============================
 #[derive(Debug, Deserialize)]
 pub struct TargetConfig {
-
     pub enabled: bool,
-    pub position: [f32; 3],
-    pub radius: f32,
-
+    pub position: [f32; 3], // [m]
+    pub radius: f32,        // [m]
 }
 
 // ===============================
@@ -48,9 +47,9 @@ pub struct TargetConfig {
 // ===============================
 #[derive(Debug, Deserialize)]
 pub struct PhysicsConfig {
-    /// Fixed simulation timestep (seconds)
+    /// Fixed simulation timestep [seconds]
     pub dt: f32,
-    // /// Maximum allowed velocity magnitude
+    /// Maximum possible velocity magnitude [m/s]
     pub max_velocity: f32,
 }
 
@@ -59,7 +58,7 @@ pub struct PhysicsConfig {
 // ===============================
 #[derive(Debug, Deserialize)]
 pub struct SensingConfig {
-    /// Max sensing distance, has to be smaller than 2*cell_size
+    /// Max sensing distance, has to be smaller than 2*cell_size. [m]
     pub max_sensing: f32,
 }
 
@@ -68,29 +67,22 @@ pub struct SensingConfig {
 // ===============================
 #[derive(Debug, Deserialize)]
 pub struct CollisionConfig {
-    /// Collision radius per drone
+    /// Collision radius per drone [m]
     pub radius: f32,
-    // /// Disable drone immediately after collision
-    // pub disable_on_hit: bool,
 }
 
 // ===============================
-// Built-in Controllers
+// team_1_controller, Built-in Controllers
 // ===============================
-// #[derive(Debug, Deserialize)]
-// pub struct ControllersConfig {
-//     pub rule_based: RuleBasedControllerConfig,
-// }
-
-// #[derive(Debug, Deserialize)]
-// pub struct RuleBasedControllerConfig {
-//     /// Enable simulator-owned rule-based drones
-//     pub enabled: bool,
-//     /// Team ID controlled by simulator logic
-//     pub team_id: u8,
-//     /// Behavior name ("patrol", "seek", etc.)
-//     pub behavior: String,
-// }
+#[derive(Debug, Deserialize)]
+pub struct Team1ControllerConfig {
+    /// Enable simulator-owned rule-based drones
+    pub enabled: bool,
+    /// Behavior name ("straight_flying" etc.)
+    pub behavior: String,
+    /// init position of team 1 swarm center, positions randomized around this point [m]
+    pub init_pos_center: [f32; 3],
+}
 
 // ===============================
 // Logging Configuration

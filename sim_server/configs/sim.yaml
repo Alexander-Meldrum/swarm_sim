@@ -1,13 +1,9 @@
 # ===============================
 # Swarm Simulator Configuration
+# See: sim_server/src/config.rs for full schema
 # ===============================
 
-# -------------------------------
-# Arena / World Geometry
-# -------------------------------
 arena:
-  # # arena size (m)
-  # arena_size: 50
   # Minimum corner of the arena (x, y, z)
   min: [-10.0, -10.0, -10.0]
   # Maximum corner of the arena (x, y, z)
@@ -15,60 +11,35 @@ arena:
   # Minimum distance between drones when randomizing start pos. [m]
   min_dist: 2
   randomize_init_pos: true
-  # Cell size for the grid used for collision detection, nearest neighbor etc. [m]
-  # Try to keep cell_size close to "interaction_radius". cell_size affects performance a lot
   cell_size: 20
 
-
-# -------------------------------
-# Target
-# -------------------------------
 target:
   enabled: false
   position: [0.0, 0.0, 0.0]
   radius: 0.1
 
-
-# -------------------------------
-# Physics Parameters
-# -------------------------------
 physics:
-  # Fixed simulation timestep (seconds)
+  # Fixed simulation timestep [seconds]
   dt: 0.02
   # Maximum allowed velocity magnitude
   max_velocity: 10.0
 
-# -------------------------------
-# Sensing
-# -------------------------------
 sensing:
   # Max sensing distance, has to be smaller than 2*cell_size
   max_sensing: 50.0
-  # nr_of_neighbors: 2  # Hard Coded for performance
 
 
-# -------------------------------
-# Collision Handling
-# -------------------------------
 collisions:
   # Collision radius per drone
   radius: 0.5
-  # Disable drone immediately after collision
-  # disable_on_hit: true
 
-# -------------------------------
-# Built-in Rule-Based Controllers
-# -------------------------------
 team_1_controller:
-  # Enable simulator-owned drones
+  # Enable simulator-owned drones, only used if there are team 1 drones
   enabled: true
   # Behavior name (mapped internally in simulator)
   behavior: "straight_flying"
+  init_pos_center: [16.0, 0.0, 0.0]
   
-
-# -------------------------------
-# Logging Configuration
-# -------------------------------
 logging:
   # Enable episode logging
   enabled: true

@@ -1,22 +1,22 @@
-use tokio::sync::Mutex;
-use tonic::{Request, Response, Status};
-use std::sync::Arc;
-use std::io::{Write};
+use crate::config::SimConfig;
+use crate::learning::{calc_rewards, Rewards};
+use crate::logging::{log_events, log_world, open_new_log};
+use crate::observations::{ObservationBuffer, OBS_DIM};
+use crate::physics;
+use crate::world::{
+    detect_collisions, detect_target_hits, find_k_nearest_drones, rebuild_grid, Vec3, World,
+};
 use pprof::ProfilerGuard;
 use std::fs::{self, File};
-use crate::world::{Vec3, World, rebuild_grid, detect_collisions, detect_target_hits, find_k_nearest_drones};
-use crate::physics;
-use crate::config::SimConfig;
-use crate::learning::{Rewards, calc_rewards};
-use crate::logging::{open_new_log, log_world, log_events};
-use crate::observations::{ObservationBuffer, OBS_DIM};
+use std::io::Write;
+use std::sync::Arc;
+use tokio::sync::Mutex;
+use tonic::{Request, Response, Status};
 pub mod swarm_proto {
     tonic::include_proto!("swarm_proto");
 }
-use swarm_proto::swarm_proto_service_server::{
-    SwarmProtoService,
-};
-use swarm_proto::{StepRequest, StepResponse, ResetRequest, ResetResponse};
+use swarm_proto::swarm_proto_service_server::SwarmProtoService;
+use swarm_proto::{ResetRequest, ResetResponse, StepRequest, StepResponse};
 
 pub struct Simulator {
     pub world: World,
@@ -47,35 +47,47 @@ impl SwarmProtoService for SimServer {
 
         // Extract protobuf message
         let request = request.into_inner();
-        
+
         // Read request
         let num_drones_team_0 = request.num_drones_team_0 as usize;
         let num_drones_team_1 = request.num_drones_team_1 as usize;
         if num_drones_team_0 == 0 {
-            return Err(Status::invalid_argument("[simulator] num_drones_team_0 must be > 0"));
+            return Err(Status::invalid_argument(
+                "[simulator] num_drones_team_0 must be > 0",
+            ));
         }
-        let max_steps= request.max_steps;
+        let max_steps = request.max_steps;
         let seed = request.seed;
 
         world.episode += 1;
 
         // Reset world state, replace the World inside the mutex
-        *world = World::new(config.clone(), num_drones_team_0, num_drones_team_1, max_steps, world.episode);
+        *world = World::new(
+            config.clone(),
+            num_drones_team_0,
+            num_drones_team_1,
+            max_steps,
+            world.episode,
+        );
 
         if config.logging.enabled {
             // Prepare Log for the Episode
             world.state_log = Some(open_new_log("states", world, config.clone()));
             world.event_log = Some(open_new_log("events", world, config.clone()));
-
-        } 
+        }
 
         // Initialize observation buffer once per episode
         *obs_buf = ObservationBuffer::new(world.num_drones, OBS_DIM);
 
         // Start profiling after creating new world
         if config.logging.profiling_enabled {
-            world.profiler = Some(ProfilerGuard::new(config.logging.profiling_frequency).expect("failed to start profiler")); // Unit: Hz
+            world.profiler = Some(
+                ProfilerGuard::new(config.logging.profiling_frequency)
+                    .expect("failed to start profiler"),
+            ); // Unit: Hz
         }
+
+        // Init team 0 & 1 positions
         world.init_drones(Some(seed), config.clone());
 
         // Build spatial index
@@ -108,23 +120,19 @@ impl SwarmProtoService for SimServer {
             observations: obs,
         }))
     }
-    
-    async fn step(
-        &self,
-        request: Request<StepRequest>,
-    ) -> Result<Response<StepResponse>, Status> {
+
+    async fn step(&self, request: Request<StepRequest>) -> Result<Response<StepResponse>, Status> {
         let mut sim = self.sim.lock().await;
         // destructure with a single borrow
         let Simulator { world, obs_buf } = &mut *sim;
         let config = self.config.clone();
 
-        // ----- 1. Handle Inputs ------ 
+        // ----- 1. Handle Inputs ------
         // Reject stepping after done
         if world.done {
-            return Err(Status::failed_precondition(
-                "episode is done, call reset()",
-            ));}
-        
+            return Err(Status::failed_precondition("episode is done, call reset()"));
+        }
+
         // Consume step request
         let req = request.into_inner();
 
@@ -134,16 +142,23 @@ impl SwarmProtoService for SimServer {
                 "Out-of-order step: req.step={}, world.step={}",
                 req.step, world.step
             )));
-        }       
+        }
 
-        let actions: Vec<Vec3> = req.actions.into_iter()
-            .map(|a| Vec3{x: a.ax, y: a.ay, z: a.az}).collect();
-        
+        let actions: Vec<Vec3> = req
+            .actions
+            .into_iter()
+            .map(|a| Vec3 {
+                x: a.ax,
+                y: a.ay,
+                z: a.az,
+            })
+            .collect();
+
         // ----- 2. Calculate World & Rewards ------
         // Clear per-step events
         world.events.clear();
 
-        physics::step(world, &actions, self.config.physics.max_velocity);
+        physics::step(world, &actions, config.clone());
 
         // Build spatial index
         rebuild_grid(world);
@@ -156,25 +171,32 @@ impl SwarmProtoService for SimServer {
         // Calculate Rewards
         let rewards: Rewards = calc_rewards(&world);
 
-        // ----- 3. Log ------ 
+        // ----- 3. Log ------
         // Log World, braces ensure the log lock is released quickly.
         if self.config.logging.enabled {
             log_world(world, &rewards).unwrap();
             log_events(world).unwrap();
         }
 
-        // ----- 4. Check if simulation done ------ 
+        // ----- 4. Check if simulation done ------
         if world.step >= world.max_steps {
             world.done = true;
             if self.config.logging.enabled {
                 // Flush log writing
-                world.state_log.as_mut().expect("log file not initialized before flush").flush()?;
+                world
+                    .state_log
+                    .as_mut()
+                    .expect("log file not initialized before flush")
+                    .flush()?;
             }
-            
-            println!("[Simulator] Episode {} Done, reached max_steps!", world.episode);
+
+            println!(
+                "[Simulator] Episode {} Done, reached max_steps!",
+                world.episode
+            );
 
             if self.config.logging.profiling_enabled {
-                // Finish profiling
+                // Finish profiling if done
                 if let Some(guard) = world.profiler.take() {
                     let report = guard.report().build().unwrap();
                     let mut dir = std::env::current_dir().unwrap();
@@ -184,16 +206,21 @@ impl SwarmProtoService for SimServer {
                     let path = dir.join(filename);
                     let file = File::create(&path).unwrap();
                     report.flamegraph(file).unwrap();
-                    println!("🔥 Flamegraph written to: {}", path.display());                
+                    println!("Flamegraph profiling result written to: {}", path.display());
                 }
             }
-
         }
-        // build flattened observations, zero copy move, obs_buf.obs set to empty vec
+        // ----- 5. build flattened observations ------
         obs_buf.build(&world, config.clone());
         let obs = std::mem::take(&mut obs_buf.obs);
 
-        // ----- 5. Output ------ 
-        Ok(Response::new(StepResponse{ step: world.step, observations: obs, done: world.done, rewards: rewards.rewards, global_reward: rewards.global_reward}))
+        // ----- 6. Output ------
+        Ok(Response::new(StepResponse {
+            step: world.step,
+            observations: obs,
+            done: world.done,
+            rewards: rewards.rewards,
+            global_reward: rewards.global_reward,
+        }))
     }
 }

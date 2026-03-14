@@ -14,400 +14,351 @@
 #include <google/protobuf/wire_format.h>
 // @@protoc_insertion_point(includes)
 #include <google/protobuf/port_def.inc>
-
-PROTOBUF_PRAGMA_INIT_SEG
-
-namespace _pb = ::PROTOBUF_NAMESPACE_ID;
-namespace _pbi = _pb::internal;
-
+extern PROTOBUF_INTERNAL_EXPORT_swarm_2eproto ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_DroneAction_swarm_2eproto;
 namespace swarm_proto {
-PROTOBUF_CONSTEXPR DroneAction::DroneAction(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.ax_)*/0
-  , /*decltype(_impl_.ay_)*/0
-  , /*decltype(_impl_.az_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct DroneActionDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR DroneActionDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~DroneActionDefaultTypeInternal() {}
-  union {
-    DroneAction _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DroneActionDefaultTypeInternal _DroneAction_default_instance_;
-PROTOBUF_CONSTEXPR DroneObservation::DroneObservation(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.ox_)*/0
-  , /*decltype(_impl_.oy_)*/0
-  , /*decltype(_impl_.oz_)*/0
-  , /*decltype(_impl_.collisions_desired_)*/0u
-  , /*decltype(_impl_.collisions_undesired_)*/0u
-  , /*decltype(_impl_.alive_)*/false
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct DroneObservationDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR DroneObservationDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~DroneObservationDefaultTypeInternal() {}
-  union {
-    DroneObservation _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DroneObservationDefaultTypeInternal _DroneObservation_default_instance_;
-PROTOBUF_CONSTEXPR StepRequest::StepRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.actions_)*/{}
-  , /*decltype(_impl_.step_)*/uint64_t{0u}
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct StepRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR StepRequestDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~StepRequestDefaultTypeInternal() {}
-  union {
-    StepRequest _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StepRequestDefaultTypeInternal _StepRequest_default_instance_;
-PROTOBUF_CONSTEXPR StepResponse::StepResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.observations_)*/{}
-  , /*decltype(_impl_.step_)*/uint64_t{0u}
-  , /*decltype(_impl_.global_reward_)*/0
-  , /*decltype(_impl_.done_)*/false
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct StepResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR StepResponseDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~StepResponseDefaultTypeInternal() {}
-  union {
-    StepResponse _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 StepResponseDefaultTypeInternal _StepResponse_default_instance_;
-PROTOBUF_CONSTEXPR ResetRequest::ResetRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.seed_)*/uint64_t{0u}
-  , /*decltype(_impl_.max_steps_)*/uint64_t{0u}
-  , /*decltype(_impl_.num_drones_)*/0u
-  , /*decltype(_impl_.dt_)*/0
-  , /*decltype(_impl_.randomize_init_pos_)*/false
-  , /*decltype(_impl_.arena_size_)*/0
-  , /*decltype(_impl_.min_dist_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ResetRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ResetRequestDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ResetRequestDefaultTypeInternal() {}
-  union {
-    ResetRequest _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResetRequestDefaultTypeInternal _ResetRequest_default_instance_;
-PROTOBUF_CONSTEXPR ResetResponse::ResetResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.observations_)*/{}
-  , /*decltype(_impl_.step_)*/uint64_t{0u}
-  , /*decltype(_impl_.max_steps_)*/uint64_t{0u}
-  , /*decltype(_impl_.num_drones_)*/0u
-  , /*decltype(_impl_.dt_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ResetResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ResetResponseDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ResetResponseDefaultTypeInternal() {}
-  union {
-    ResetResponse _instance;
-  };
-};
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ResetResponseDefaultTypeInternal _ResetResponse_default_instance_;
+class DroneActionDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<DroneAction> _instance;
+} _DroneAction_default_instance_;
+class StepRequestDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StepRequest> _instance;
+} _StepRequest_default_instance_;
+class StepResponseDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<StepResponse> _instance;
+} _StepResponse_default_instance_;
+class ResetRequestDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<ResetRequest> _instance;
+} _ResetRequest_default_instance_;
+class ResetResponseDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<ResetResponse> _instance;
+} _ResetResponse_default_instance_;
 }  // namespace swarm_proto
-static ::_pb::Metadata file_level_metadata_swarm_2eproto[6];
-static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_swarm_2eproto = nullptr;
-static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_swarm_2eproto = nullptr;
+static void InitDefaultsscc_info_DroneAction_swarm_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-const uint32_t TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  {
+    void* ptr = &::swarm_proto::_DroneAction_default_instance_;
+    new (ptr) ::swarm_proto::DroneAction();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::swarm_proto::DroneAction::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_DroneAction_swarm_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_DroneAction_swarm_2eproto}, {}};
+
+static void InitDefaultsscc_info_ResetRequest_swarm_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::swarm_proto::_ResetRequest_default_instance_;
+    new (ptr) ::swarm_proto::ResetRequest();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::swarm_proto::ResetRequest::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ResetRequest_swarm_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_ResetRequest_swarm_2eproto}, {}};
+
+static void InitDefaultsscc_info_ResetResponse_swarm_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::swarm_proto::_ResetResponse_default_instance_;
+    new (ptr) ::swarm_proto::ResetResponse();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::swarm_proto::ResetResponse::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_ResetResponse_swarm_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_ResetResponse_swarm_2eproto}, {}};
+
+static void InitDefaultsscc_info_StepRequest_swarm_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::swarm_proto::_StepRequest_default_instance_;
+    new (ptr) ::swarm_proto::StepRequest();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::swarm_proto::StepRequest::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<1> scc_info_StepRequest_swarm_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 1, 0, InitDefaultsscc_info_StepRequest_swarm_2eproto}, {
+      &scc_info_DroneAction_swarm_2eproto.base,}};
+
+static void InitDefaultsscc_info_StepResponse_swarm_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::swarm_proto::_StepResponse_default_instance_;
+    new (ptr) ::swarm_proto::StepResponse();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::swarm_proto::StepResponse::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_StepResponse_swarm_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_StepResponse_swarm_2eproto}, {}};
+
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_swarm_2eproto[5];
+static constexpr ::PROTOBUF_NAMESPACE_ID::EnumDescriptor const** file_level_enum_descriptors_swarm_2eproto = nullptr;
+static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_swarm_2eproto = nullptr;
+
+const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_swarm_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, _impl_.ax_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, _impl_.ay_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, _impl_.az_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.ox_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.oy_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.oz_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.collisions_desired_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.collisions_undesired_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneObservation, _impl_.alive_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, ax_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, ay_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::DroneAction, az_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, _impl_.step_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, _impl_.actions_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, team_id_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, step_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepRequest, actions_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.step_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.observations_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.global_reward_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, _impl_.done_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, step_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, observations_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, rewards_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, global_reward_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::StepResponse, done_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.seed_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.num_drones_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.max_steps_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.dt_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.randomize_init_pos_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.arena_size_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, _impl_.min_dist_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, seed_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, num_drones_team_0_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, num_drones_team_1_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetRequest, max_steps_),
   ~0u,  // no _has_bits_
   PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _internal_metadata_),
   ~0u,  // no _extensions_
   ~0u,  // no _oneof_case_
   ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.step_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.num_drones_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.max_steps_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.dt_),
-  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, _impl_.observations_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, step_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, num_drones_team_0_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, num_drones_team_1_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, max_steps_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, dt_),
+  PROTOBUF_FIELD_OFFSET(::swarm_proto::ResetResponse, observations_),
 };
-static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::swarm_proto::DroneAction)},
-  { 9, -1, -1, sizeof(::swarm_proto::DroneObservation)},
-  { 21, -1, -1, sizeof(::swarm_proto::StepRequest)},
-  { 29, -1, -1, sizeof(::swarm_proto::StepResponse)},
-  { 39, -1, -1, sizeof(::swarm_proto::ResetRequest)},
-  { 52, -1, -1, sizeof(::swarm_proto::ResetResponse)},
+static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+  { 0, -1, sizeof(::swarm_proto::DroneAction)},
+  { 8, -1, sizeof(::swarm_proto::StepRequest)},
+  { 16, -1, sizeof(::swarm_proto::StepResponse)},
+  { 26, -1, sizeof(::swarm_proto::ResetRequest)},
+  { 35, -1, sizeof(::swarm_proto::ResetResponse)},
 };
 
-static const ::_pb::Message* const file_default_instances[] = {
-  &::swarm_proto::_DroneAction_default_instance_._instance,
-  &::swarm_proto::_DroneObservation_default_instance_._instance,
-  &::swarm_proto::_StepRequest_default_instance_._instance,
-  &::swarm_proto::_StepResponse_default_instance_._instance,
-  &::swarm_proto::_ResetRequest_default_instance_._instance,
-  &::swarm_proto::_ResetResponse_default_instance_._instance,
+static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::swarm_proto::_DroneAction_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::swarm_proto::_StepRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::swarm_proto::_StepResponse_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::swarm_proto::_ResetRequest_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::swarm_proto::_ResetResponse_default_instance_),
 };
 
 const char descriptor_table_protodef_swarm_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\013swarm.proto\022\013swarm_proto\"1\n\013DroneActio"
-  "n\022\n\n\002ax\030\001 \001(\002\022\n\n\002ay\030\002 \001(\002\022\n\n\002az\030\003 \001(\002\"\177\n"
-  "\020DroneObservation\022\n\n\002ox\030\001 \001(\002\022\n\n\002oy\030\002 \001("
-  "\002\022\n\n\002oz\030\003 \001(\002\022\032\n\022collisions_desired\030\004 \001("
-  "\r\022\034\n\024collisions_undesired\030\005 \001(\r\022\r\n\005alive"
-  "\030\006 \001(\010\"F\n\013StepRequest\022\014\n\004step\030\001 \001(\004\022)\n\007a"
-  "ctions\030\002 \003(\0132\030.swarm_proto.DroneAction\"v"
-  "\n\014StepResponse\022\014\n\004step\030\001 \001(\004\0223\n\014observat"
-  "ions\030\002 \003(\0132\035.swarm_proto.DroneObservatio"
-  "n\022\025\n\rglobal_reward\030\003 \001(\002\022\014\n\004done\030\004 \001(\010\"\221"
-  "\001\n\014ResetRequest\022\014\n\004seed\030\001 \001(\004\022\022\n\nnum_dro"
-  "nes\030\002 \001(\r\022\021\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002"
-  "\022\032\n\022randomize_init_pos\030\005 \001(\010\022\022\n\narena_si"
-  "ze\030\006 \001(\002\022\020\n\010min_dist\030\007 \001(\002\"\205\001\n\rResetResp"
-  "onse\022\014\n\004step\030\001 \001(\004\022\022\n\nnum_drones\030\002 \001(\r\022\021"
-  "\n\tmax_steps\030\003 \001(\004\022\n\n\002dt\030\004 \001(\002\0223\n\014observa"
-  "tions\030\005 \003(\0132\035.swarm_proto.DroneObservati"
-  "on2\222\001\n\023swarm_proto_service\022;\n\004Step\022\030.swa"
-  "rm_proto.StepRequest\032\031.swarm_proto.StepR"
-  "esponse\022>\n\005Reset\022\031.swarm_proto.ResetRequ"
-  "est\032\032.swarm_proto.ResetResponseb\006proto3"
+  "n\022\n\n\002ax\030\001 \001(\002\022\n\n\002ay\030\002 \001(\002\022\n\n\002az\030\003 \001(\002\"W\n"
+  "\013StepRequest\022\017\n\007team_id\030\001 \001(\r\022\014\n\004step\030\002 "
+  "\001(\004\022)\n\007actions\030\003 \003(\0132\030.swarm_proto.Drone"
+  "Action\"h\n\014StepResponse\022\014\n\004step\030\001 \001(\004\022\024\n\014"
+  "observations\030\002 \003(\002\022\017\n\007rewards\030\003 \003(\002\022\025\n\rg"
+  "lobal_reward\030\004 \001(\002\022\014\n\004done\030\005 \001(\010\"e\n\014Rese"
+  "tRequest\022\014\n\004seed\030\001 \001(\004\022\031\n\021num_drones_tea"
+  "m_0\030\002 \001(\r\022\031\n\021num_drones_team_1\030\003 \001(\r\022\021\n\t"
+  "max_steps\030\004 \001(\004\"\210\001\n\rResetResponse\022\014\n\004ste"
+  "p\030\001 \001(\004\022\031\n\021num_drones_team_0\030\002 \001(\r\022\031\n\021nu"
+  "m_drones_team_1\030\003 \001(\r\022\021\n\tmax_steps\030\004 \001(\004"
+  "\022\n\n\002dt\030\005 \001(\002\022\024\n\014observations\030\006 \003(\0022\222\001\n\023s"
+  "warm_proto_service\022;\n\004Step\022\030.swarm_proto"
+  ".StepRequest\032\031.swarm_proto.StepResponse\022"
+  ">\n\005Reset\022\031.swarm_proto.ResetRequest\032\032.sw"
+  "arm_proto.ResetResponseb\006proto3"
   ;
-static ::_pbi::once_flag descriptor_table_swarm_2eproto_once;
-const ::_pbi::DescriptorTable descriptor_table_swarm_2eproto = {
-    false, false, 839, descriptor_table_protodef_swarm_2eproto,
-    "swarm.proto",
-    &descriptor_table_swarm_2eproto_once, nullptr, 0, 6,
-    schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
-    file_level_metadata_swarm_2eproto, file_level_enum_descriptors_swarm_2eproto,
-    file_level_service_descriptors_swarm_2eproto,
+static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_swarm_2eproto_deps[1] = {
 };
-PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_swarm_2eproto_getter() {
-  return &descriptor_table_swarm_2eproto;
-}
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_swarm_2eproto_sccs[5] = {
+  &scc_info_DroneAction_swarm_2eproto.base,
+  &scc_info_ResetRequest_swarm_2eproto.base,
+  &scc_info_ResetResponse_swarm_2eproto.base,
+  &scc_info_StepRequest_swarm_2eproto.base,
+  &scc_info_StepResponse_swarm_2eproto.base,
+};
+static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_swarm_2eproto_once;
+const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_swarm_2eproto = {
+  false, false, descriptor_table_protodef_swarm_2eproto, "swarm.proto", 671,
+  &descriptor_table_swarm_2eproto_once, descriptor_table_swarm_2eproto_sccs, descriptor_table_swarm_2eproto_deps, 5, 0,
+  schemas, file_default_instances, TableStruct_swarm_2eproto::offsets,
+  file_level_metadata_swarm_2eproto, 5, file_level_enum_descriptors_swarm_2eproto, file_level_service_descriptors_swarm_2eproto,
+};
 
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_swarm_2eproto(&descriptor_table_swarm_2eproto);
+static bool dynamic_init_dummy_swarm_2eproto = (static_cast<void>(::PROTOBUF_NAMESPACE_ID::internal::AddDescriptors(&descriptor_table_swarm_2eproto)), true);
 namespace swarm_proto {
 
 // ===================================================================
 
+void DroneAction::InitAsDefaultInstance() {
+}
 class DroneAction::_Internal {
  public:
 };
 
-DroneAction::DroneAction(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+DroneAction::DroneAction(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:swarm_proto.DroneAction)
 }
 DroneAction::DroneAction(const DroneAction& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  DroneAction* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.ax_){}
-    , decltype(_impl_.ay_){}
-    , decltype(_impl_.az_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.ax_, &from._impl_.ax_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.az_) -
-    reinterpret_cast<char*>(&_impl_.ax_)) + sizeof(_impl_.az_));
+  ::memcpy(&ax_, &from.ax_,
+    static_cast<size_t>(reinterpret_cast<char*>(&az_) -
+    reinterpret_cast<char*>(&ax_)) + sizeof(az_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.DroneAction)
 }
 
-inline void DroneAction::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.ax_){0}
-    , decltype(_impl_.ay_){0}
-    , decltype(_impl_.az_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
+void DroneAction::SharedCtor() {
+  ::memset(&ax_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&az_) -
+      reinterpret_cast<char*>(&ax_)) + sizeof(az_));
 }
 
 DroneAction::~DroneAction() {
   // @@protoc_insertion_point(destructor:swarm_proto.DroneAction)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void DroneAction::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+void DroneAction::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
 }
 
+void DroneAction::ArenaDtor(void* object) {
+  DroneAction* _this = reinterpret_cast< DroneAction* >(object);
+  (void)_this;
+}
+void DroneAction::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void DroneAction::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
+  _cached_size_.Set(size);
 }
+const DroneAction& DroneAction::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_DroneAction_swarm_2eproto.base);
+  return *internal_default_instance();
+}
+
 
 void DroneAction::Clear() {
 // @@protoc_insertion_point(message_clear_start:swarm_proto.DroneAction)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&_impl_.ax_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.az_) -
-      reinterpret_cast<char*>(&_impl_.ax_)) + sizeof(_impl_.az_));
+  ::memset(&ax_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&az_) -
+      reinterpret_cast<char*>(&ax_)) + sizeof(az_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* DroneAction::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* DroneAction::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
       // float ax = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 13)) {
-          _impl_.ax_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 13)) {
+          ax_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
       // float ay = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 21)) {
-          _impl_.ay_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
+          ay_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
       // float az = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
-          _impl_.az_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29)) {
+          az_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      default:
-        goto handle_unusual;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
     }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
   }  // while
-message_done:
+success:
   return ptr;
 failure:
   ptr = nullptr;
-  goto message_done;
+  goto success;
 #undef CHK_
 }
 
-uint8_t* DroneAction::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::PROTOBUF_NAMESPACE_ID::uint8* DroneAction::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.DroneAction)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   // float ax = 1;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ax = this->_internal_ax();
-  uint32_t raw_ax;
-  memcpy(&raw_ax, &tmp_ax, sizeof(tmp_ax));
-  if (raw_ax != 0) {
+  if (!(this->ax() <= 0 && this->ax() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(1, this->_internal_ax(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(1, this->_internal_ax(), target);
   }
 
   // float ay = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ay = this->_internal_ay();
-  uint32_t raw_ay;
-  memcpy(&raw_ay, &tmp_ay, sizeof(tmp_ay));
-  if (raw_ay != 0) {
+  if (!(this->ay() <= 0 && this->ay() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(2, this->_internal_ay(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_ay(), target);
   }
 
   // float az = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_az = this->_internal_az();
-  uint32_t raw_az;
-  memcpy(&raw_az, &tmp_az, sizeof(tmp_az));
-  if (raw_az != 0) {
+  if (!(this->az() <= 0 && this->az() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_az(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(3, this->_internal_az(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.DroneAction)
@@ -418,77 +369,72 @@ size_t DroneAction::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:swarm_proto.DroneAction)
   size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // float ax = 1;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ax = this->_internal_ax();
-  uint32_t raw_ax;
-  memcpy(&raw_ax, &tmp_ax, sizeof(tmp_ax));
-  if (raw_ax != 0) {
+  if (!(this->ax() <= 0 && this->ax() >= 0)) {
     total_size += 1 + 4;
   }
 
   // float ay = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ay = this->_internal_ay();
-  uint32_t raw_ay;
-  memcpy(&raw_ay, &tmp_ay, sizeof(tmp_ay));
-  if (raw_ay != 0) {
+  if (!(this->ay() <= 0 && this->ay() >= 0)) {
     total_size += 1 + 4;
   }
 
   // float az = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_az = this->_internal_az();
-  uint32_t raw_az;
-  memcpy(&raw_az, &tmp_az, sizeof(tmp_az));
-  if (raw_az != 0) {
+  if (!(this->az() <= 0 && this->az() >= 0)) {
     total_size += 1 + 4;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DroneAction::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    DroneAction::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DroneAction::GetClassData() const { return &_class_data_; }
+void DroneAction::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:swarm_proto.DroneAction)
+  GOOGLE_DCHECK_NE(&from, this);
+  const DroneAction* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<DroneAction>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:swarm_proto.DroneAction)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:swarm_proto.DroneAction)
+    MergeFrom(*source);
+  }
+}
 
-
-void DroneAction::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<DroneAction*>(&to_msg);
-  auto& from = static_cast<const DroneAction&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.DroneAction)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+void DroneAction::MergeFrom(const DroneAction& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.DroneAction)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ax = from._internal_ax();
-  uint32_t raw_ax;
-  memcpy(&raw_ax, &tmp_ax, sizeof(tmp_ax));
-  if (raw_ax != 0) {
-    _this->_internal_set_ax(from._internal_ax());
+  if (!(from.ax() <= 0 && from.ax() >= 0)) {
+    _internal_set_ax(from._internal_ax());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ay = from._internal_ay();
-  uint32_t raw_ay;
-  memcpy(&raw_ay, &tmp_ay, sizeof(tmp_ay));
-  if (raw_ay != 0) {
-    _this->_internal_set_ay(from._internal_ay());
+  if (!(from.ay() <= 0 && from.ay() >= 0)) {
+    _internal_set_ay(from._internal_ay());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_az = from._internal_az();
-  uint32_t raw_az;
-  memcpy(&raw_az, &tmp_az, sizeof(tmp_az));
-  if (raw_az != 0) {
-    _this->_internal_set_az(from._internal_az());
+  if (!(from.az() <= 0 && from.az() >= 0)) {
+    _internal_set_az(from._internal_az());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void DroneAction::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:swarm_proto.DroneAction)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
 }
 
 void DroneAction::CopyFrom(const DroneAction& from) {
@@ -504,501 +450,174 @@ bool DroneAction::IsInitialized() const {
 
 void DroneAction::InternalSwap(DroneAction* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(DroneAction, _impl_.az_)
-      + sizeof(DroneAction::_impl_.az_)
-      - PROTOBUF_FIELD_OFFSET(DroneAction, _impl_.ax_)>(
-          reinterpret_cast<char*>(&_impl_.ax_),
-          reinterpret_cast<char*>(&other->_impl_.ax_));
+      PROTOBUF_FIELD_OFFSET(DroneAction, az_)
+      + sizeof(DroneAction::az_)
+      - PROTOBUF_FIELD_OFFSET(DroneAction, ax_)>(
+          reinterpret_cast<char*>(&ax_),
+          reinterpret_cast<char*>(&other->ax_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DroneAction::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[0]);
+  return GetMetadataStatic();
 }
+
 
 // ===================================================================
 
-class DroneObservation::_Internal {
- public:
-};
-
-DroneObservation::DroneObservation(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
-  // @@protoc_insertion_point(arena_constructor:swarm_proto.DroneObservation)
+void StepRequest::InitAsDefaultInstance() {
 }
-DroneObservation::DroneObservation(const DroneObservation& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  DroneObservation* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.ox_){}
-    , decltype(_impl_.oy_){}
-    , decltype(_impl_.oz_){}
-    , decltype(_impl_.collisions_desired_){}
-    , decltype(_impl_.collisions_undesired_){}
-    , decltype(_impl_.alive_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.ox_, &from._impl_.ox_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.alive_) -
-    reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.alive_));
-  // @@protoc_insertion_point(copy_constructor:swarm_proto.DroneObservation)
-}
-
-inline void DroneObservation::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.ox_){0}
-    , decltype(_impl_.oy_){0}
-    , decltype(_impl_.oz_){0}
-    , decltype(_impl_.collisions_desired_){0u}
-    , decltype(_impl_.collisions_undesired_){0u}
-    , decltype(_impl_.alive_){false}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-}
-
-DroneObservation::~DroneObservation() {
-  // @@protoc_insertion_point(destructor:swarm_proto.DroneObservation)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void DroneObservation::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-}
-
-void DroneObservation::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void DroneObservation::Clear() {
-// @@protoc_insertion_point(message_clear_start:swarm_proto.DroneObservation)
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  ::memset(&_impl_.ox_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.alive_) -
-      reinterpret_cast<char*>(&_impl_.ox_)) + sizeof(_impl_.alive_));
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* DroneObservation::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // float ox = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 13)) {
-          _impl_.ox_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      // float oy = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 21)) {
-          _impl_.oy_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      // float oz = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
-          _impl_.oz_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      // uint32 collisions_desired = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _impl_.collisions_desired_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // uint32 collisions_undesired = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          _impl_.collisions_undesired_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool alive = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 48)) {
-          _impl_.alive_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-uint8_t* DroneObservation::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.DroneObservation)
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // float ox = 1;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ox = this->_internal_ox();
-  uint32_t raw_ox;
-  memcpy(&raw_ox, &tmp_ox, sizeof(tmp_ox));
-  if (raw_ox != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(1, this->_internal_ox(), target);
-  }
-
-  // float oy = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oy = this->_internal_oy();
-  uint32_t raw_oy;
-  memcpy(&raw_oy, &tmp_oy, sizeof(tmp_oy));
-  if (raw_oy != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(2, this->_internal_oy(), target);
-  }
-
-  // float oz = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oz = this->_internal_oz();
-  uint32_t raw_oz;
-  memcpy(&raw_oz, &tmp_oz, sizeof(tmp_oz));
-  if (raw_oz != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_oz(), target);
-  }
-
-  // uint32 collisions_desired = 4;
-  if (this->_internal_collisions_desired() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(4, this->_internal_collisions_desired(), target);
-  }
-
-  // uint32 collisions_undesired = 5;
-  if (this->_internal_collisions_undesired() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(5, this->_internal_collisions_undesired(), target);
-  }
-
-  // bool alive = 6;
-  if (this->_internal_alive() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(6, this->_internal_alive(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.DroneObservation)
-  return target;
-}
-
-size_t DroneObservation::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:swarm_proto.DroneObservation)
-  size_t total_size = 0;
-
-  uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // float ox = 1;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ox = this->_internal_ox();
-  uint32_t raw_ox;
-  memcpy(&raw_ox, &tmp_ox, sizeof(tmp_ox));
-  if (raw_ox != 0) {
-    total_size += 1 + 4;
-  }
-
-  // float oy = 2;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oy = this->_internal_oy();
-  uint32_t raw_oy;
-  memcpy(&raw_oy, &tmp_oy, sizeof(tmp_oy));
-  if (raw_oy != 0) {
-    total_size += 1 + 4;
-  }
-
-  // float oz = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oz = this->_internal_oz();
-  uint32_t raw_oz;
-  memcpy(&raw_oz, &tmp_oz, sizeof(tmp_oz));
-  if (raw_oz != 0) {
-    total_size += 1 + 4;
-  }
-
-  // uint32 collisions_desired = 4;
-  if (this->_internal_collisions_desired() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_collisions_desired());
-  }
-
-  // uint32 collisions_undesired = 5;
-  if (this->_internal_collisions_undesired() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_collisions_undesired());
-  }
-
-  // bool alive = 6;
-  if (this->_internal_alive() != 0) {
-    total_size += 1 + 1;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DroneObservation::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    DroneObservation::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DroneObservation::GetClassData() const { return &_class_data_; }
-
-
-void DroneObservation::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<DroneObservation*>(&to_msg);
-  auto& from = static_cast<const DroneObservation&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.DroneObservation)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_ox = from._internal_ox();
-  uint32_t raw_ox;
-  memcpy(&raw_ox, &tmp_ox, sizeof(tmp_ox));
-  if (raw_ox != 0) {
-    _this->_internal_set_ox(from._internal_ox());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oy = from._internal_oy();
-  uint32_t raw_oy;
-  memcpy(&raw_oy, &tmp_oy, sizeof(tmp_oy));
-  if (raw_oy != 0) {
-    _this->_internal_set_oy(from._internal_oy());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_oz = from._internal_oz();
-  uint32_t raw_oz;
-  memcpy(&raw_oz, &tmp_oz, sizeof(tmp_oz));
-  if (raw_oz != 0) {
-    _this->_internal_set_oz(from._internal_oz());
-  }
-  if (from._internal_collisions_desired() != 0) {
-    _this->_internal_set_collisions_desired(from._internal_collisions_desired());
-  }
-  if (from._internal_collisions_undesired() != 0) {
-    _this->_internal_set_collisions_undesired(from._internal_collisions_undesired());
-  }
-  if (from._internal_alive() != 0) {
-    _this->_internal_set_alive(from._internal_alive());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void DroneObservation::CopyFrom(const DroneObservation& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:swarm_proto.DroneObservation)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool DroneObservation::IsInitialized() const {
-  return true;
-}
-
-void DroneObservation::InternalSwap(DroneObservation* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(DroneObservation, _impl_.alive_)
-      + sizeof(DroneObservation::_impl_.alive_)
-      - PROTOBUF_FIELD_OFFSET(DroneObservation, _impl_.ox_)>(
-          reinterpret_cast<char*>(&_impl_.ox_),
-          reinterpret_cast<char*>(&other->_impl_.ox_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata DroneObservation::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[1]);
-}
-
-// ===================================================================
-
 class StepRequest::_Internal {
  public:
 };
 
-StepRequest::StepRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+StepRequest::StepRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
+  actions_(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:swarm_proto.StepRequest)
 }
 StepRequest::StepRequest(const StepRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  StepRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.actions_){from._impl_.actions_}
-    , decltype(_impl_.step_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      actions_(from.actions_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.step_ = from._impl_.step_;
+  ::memcpy(&step_, &from.step_,
+    static_cast<size_t>(reinterpret_cast<char*>(&team_id_) -
+    reinterpret_cast<char*>(&step_)) + sizeof(team_id_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.StepRequest)
 }
 
-inline void StepRequest::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.actions_){arena}
-    , decltype(_impl_.step_){uint64_t{0u}}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
+void StepRequest::SharedCtor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&scc_info_StepRequest_swarm_2eproto.base);
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&team_id_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(team_id_));
 }
 
 StepRequest::~StepRequest() {
   // @@protoc_insertion_point(destructor:swarm_proto.StepRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void StepRequest::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.actions_.~RepeatedPtrField();
+void StepRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
 }
 
+void StepRequest::ArenaDtor(void* object) {
+  StepRequest* _this = reinterpret_cast< StepRequest* >(object);
+  (void)_this;
+}
+void StepRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void StepRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
+  _cached_size_.Set(size);
 }
+const StepRequest& StepRequest::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_StepRequest_swarm_2eproto.base);
+  return *internal_default_instance();
+}
+
 
 void StepRequest::Clear() {
 // @@protoc_insertion_point(message_clear_start:swarm_proto.StepRequest)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.actions_.Clear();
-  _impl_.step_ = uint64_t{0u};
+  actions_.Clear();
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&team_id_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(team_id_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* StepRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* StepRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
-      // uint64 step = 1;
+      // uint32 team_id = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          team_id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // repeated .swarm_proto.DroneAction actions = 2;
+      // uint64 step = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // repeated .swarm_proto.DroneAction actions = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
           ptr -= 1;
           do {
             ptr += 1;
             ptr = ctx->ParseMessage(_internal_add_actions(), ptr);
             CHK_(ptr);
             if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
-          goto handle_unusual;
+          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<26>(ptr));
+        } else goto handle_unusual;
         continue;
-      default:
-        goto handle_unusual;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
     }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
   }  // while
-message_done:
+success:
   return ptr;
 failure:
   ptr = nullptr;
-  goto message_done;
+  goto success;
 #undef CHK_
 }
 
-uint8_t* StepRequest::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::PROTOBUF_NAMESPACE_ID::uint8* StepRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.StepRequest)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // uint64 step = 1;
-  if (this->_internal_step() != 0) {
+  // uint32 team_id = 1;
+  if (this->team_id() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(1, this->_internal_team_id(), target);
   }
 
-  // repeated .swarm_proto.DroneAction actions = 2;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_actions_size()); i < n; i++) {
-    const auto& repfield = this->_internal_actions(i);
+  // uint64 step = 2;
+  if (this->step() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(2, this->_internal_step(), target);
+  }
+
+  // repeated .swarm_proto.DroneAction actions = 3;
+  for (unsigned int i = 0,
+      n = static_cast<unsigned int>(this->_internal_actions_size()); i < n; i++) {
+    target = stream->EnsureSpace(target);
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+      InternalWriteMessage(3, this->_internal_actions(i), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.StepRequest)
@@ -1009,45 +628,76 @@ size_t StepRequest::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:swarm_proto.StepRequest)
   size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .swarm_proto.DroneAction actions = 2;
+  // repeated .swarm_proto.DroneAction actions = 3;
   total_size += 1UL * this->_internal_actions_size();
-  for (const auto& msg : this->_impl_.actions_) {
+  for (const auto& msg : this->actions_) {
     total_size +=
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
   }
 
-  // uint64 step = 1;
-  if (this->_internal_step() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_step());
+  // uint64 step = 2;
+  if (this->step() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_step());
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+  // uint32 team_id = 1;
+  if (this->team_id() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_team_id());
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData StepRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    StepRequest::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*StepRequest::GetClassData() const { return &_class_data_; }
+void StepRequest::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:swarm_proto.StepRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  const StepRequest* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<StepRequest>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:swarm_proto.StepRequest)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:swarm_proto.StepRequest)
+    MergeFrom(*source);
+  }
+}
 
-
-void StepRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<StepRequest*>(&to_msg);
-  auto& from = static_cast<const StepRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.StepRequest)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+void StepRequest::MergeFrom(const StepRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.StepRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.actions_.MergeFrom(from._impl_.actions_);
-  if (from._internal_step() != 0) {
-    _this->_internal_set_step(from._internal_step());
+  actions_.MergeFrom(from.actions_);
+  if (from.step() != 0) {
+    _internal_set_step(from._internal_step());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (from.team_id() != 0) {
+    _internal_set_team_id(from._internal_team_id());
+  }
+}
+
+void StepRequest::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:swarm_proto.StepRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
 }
 
 void StepRequest::CopyFrom(const StepRequest& from) {
@@ -1063,194 +713,200 @@ bool StepRequest::IsInitialized() const {
 
 void StepRequest::InternalSwap(StepRequest* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.actions_.InternalSwap(&other->_impl_.actions_);
-  swap(_impl_.step_, other->_impl_.step_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  actions_.InternalSwap(&other->actions_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(StepRequest, team_id_)
+      + sizeof(StepRequest::team_id_)
+      - PROTOBUF_FIELD_OFFSET(StepRequest, step_)>(
+          reinterpret_cast<char*>(&step_),
+          reinterpret_cast<char*>(&other->step_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StepRequest::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[2]);
+  return GetMetadataStatic();
 }
+
 
 // ===================================================================
 
+void StepResponse::InitAsDefaultInstance() {
+}
 class StepResponse::_Internal {
  public:
 };
 
-StepResponse::StepResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+StepResponse::StepResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
+  observations_(arena),
+  rewards_(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:swarm_proto.StepResponse)
 }
 StepResponse::StepResponse(const StepResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  StepResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.observations_){from._impl_.observations_}
-    , decltype(_impl_.step_){}
-    , decltype(_impl_.global_reward_){}
-    , decltype(_impl_.done_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      observations_(from.observations_),
+      rewards_(from.rewards_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.step_, &from._impl_.step_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.done_) -
-    reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.done_));
+  ::memcpy(&step_, &from.step_,
+    static_cast<size_t>(reinterpret_cast<char*>(&done_) -
+    reinterpret_cast<char*>(&step_)) + sizeof(done_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.StepResponse)
 }
 
-inline void StepResponse::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.observations_){arena}
-    , decltype(_impl_.step_){uint64_t{0u}}
-    , decltype(_impl_.global_reward_){0}
-    , decltype(_impl_.done_){false}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
+void StepResponse::SharedCtor() {
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&done_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(done_));
 }
 
 StepResponse::~StepResponse() {
   // @@protoc_insertion_point(destructor:swarm_proto.StepResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void StepResponse::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.observations_.~RepeatedPtrField();
+void StepResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
 }
 
+void StepResponse::ArenaDtor(void* object) {
+  StepResponse* _this = reinterpret_cast< StepResponse* >(object);
+  (void)_this;
+}
+void StepResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void StepResponse::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
+  _cached_size_.Set(size);
 }
+const StepResponse& StepResponse::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_StepResponse_swarm_2eproto.base);
+  return *internal_default_instance();
+}
+
 
 void StepResponse::Clear() {
 // @@protoc_insertion_point(message_clear_start:swarm_proto.StepResponse)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.observations_.Clear();
-  ::memset(&_impl_.step_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.done_) -
-      reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.done_));
+  observations_.Clear();
+  rewards_.Clear();
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&done_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(done_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* StepResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* StepResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
       // uint64 step = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // repeated .swarm_proto.DroneObservation observations = 2;
+      // repeated float observations = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 18)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_observations(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<18>(ptr));
-        } else
-          goto handle_unusual;
-        continue;
-      // float global_reward = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 29)) {
-          _impl_.global_reward_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool done = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 32)) {
-          _impl_.done_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 18)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_observations(), ptr, ctx);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21) {
+          _internal_add_observations(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
+          ptr += sizeof(float);
+        } else goto handle_unusual;
         continue;
-      default:
-        goto handle_unusual;
+      // repeated float rewards = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 26)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_rewards(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 29) {
+          _internal_add_rewards(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      // float global_reward = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 37)) {
+          global_reward_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      // bool done = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 40)) {
+          done_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
     }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
   }  // while
-message_done:
+success:
   return ptr;
 failure:
   ptr = nullptr;
-  goto message_done;
+  goto success;
 #undef CHK_
 }
 
-uint8_t* StepResponse::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::PROTOBUF_NAMESPACE_ID::uint8* StepResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.StepResponse)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   // uint64 step = 1;
-  if (this->_internal_step() != 0) {
+  if (this->step() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
   }
 
-  // repeated .swarm_proto.DroneObservation observations = 2;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_observations_size()); i < n; i++) {
-    const auto& repfield = this->_internal_observations(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(2, repfield, repfield.GetCachedSize(), target, stream);
+  // repeated float observations = 2;
+  if (this->_internal_observations_size() > 0) {
+    target = stream->WriteFixedPacked(2, _internal_observations(), target);
   }
 
-  // float global_reward = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_global_reward = this->_internal_global_reward();
-  uint32_t raw_global_reward;
-  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
-  if (raw_global_reward != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(3, this->_internal_global_reward(), target);
+  // repeated float rewards = 3;
+  if (this->_internal_rewards_size() > 0) {
+    target = stream->WriteFixedPacked(3, _internal_rewards(), target);
   }
 
-  // bool done = 4;
-  if (this->_internal_done() != 0) {
+  // float global_reward = 4;
+  if (!(this->global_reward() <= 0 && this->global_reward() >= 0)) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(4, this->_internal_done(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(4, this->_internal_global_reward(), target);
+  }
+
+  // bool done = 5;
+  if (this->done() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteBoolToArray(5, this->_internal_done(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.StepResponse)
@@ -1261,69 +917,106 @@ size_t StepResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:swarm_proto.StepResponse)
   size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .swarm_proto.DroneObservation observations = 2;
-  total_size += 1UL * this->_internal_observations_size();
-  for (const auto& msg : this->_impl_.observations_) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  // repeated float observations = 2;
+  {
+    unsigned int count = static_cast<unsigned int>(this->_internal_observations_size());
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _observations_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
+  }
+
+  // repeated float rewards = 3;
+  {
+    unsigned int count = static_cast<unsigned int>(this->_internal_rewards_size());
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _rewards_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // uint64 step = 1;
-  if (this->_internal_step() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_step());
+  if (this->step() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_step());
   }
 
-  // float global_reward = 3;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_global_reward = this->_internal_global_reward();
-  uint32_t raw_global_reward;
-  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
-  if (raw_global_reward != 0) {
+  // float global_reward = 4;
+  if (!(this->global_reward() <= 0 && this->global_reward() >= 0)) {
     total_size += 1 + 4;
   }
 
-  // bool done = 4;
-  if (this->_internal_done() != 0) {
+  // bool done = 5;
+  if (this->done() != 0) {
     total_size += 1 + 1;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData StepResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    StepResponse::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*StepResponse::GetClassData() const { return &_class_data_; }
+void StepResponse::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:swarm_proto.StepResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  const StepResponse* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<StepResponse>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:swarm_proto.StepResponse)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:swarm_proto.StepResponse)
+    MergeFrom(*source);
+  }
+}
 
-
-void StepResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<StepResponse*>(&to_msg);
-  auto& from = static_cast<const StepResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.StepResponse)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+void StepResponse::MergeFrom(const StepResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.StepResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.observations_.MergeFrom(from._impl_.observations_);
-  if (from._internal_step() != 0) {
-    _this->_internal_set_step(from._internal_step());
+  observations_.MergeFrom(from.observations_);
+  rewards_.MergeFrom(from.rewards_);
+  if (from.step() != 0) {
+    _internal_set_step(from._internal_step());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_global_reward = from._internal_global_reward();
-  uint32_t raw_global_reward;
-  memcpy(&raw_global_reward, &tmp_global_reward, sizeof(tmp_global_reward));
-  if (raw_global_reward != 0) {
-    _this->_internal_set_global_reward(from._internal_global_reward());
+  if (!(from.global_reward() <= 0 && from.global_reward() >= 0)) {
+    _internal_set_global_reward(from._internal_global_reward());
   }
-  if (from._internal_done() != 0) {
-    _this->_internal_set_done(from._internal_done());
+  if (from.done() != 0) {
+    _internal_set_done(from._internal_done());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void StepResponse::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:swarm_proto.StepResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
 }
 
 void StepResponse::CopyFrom(const StepResponse& from) {
@@ -1339,246 +1032,178 @@ bool StepResponse::IsInitialized() const {
 
 void StepResponse::InternalSwap(StepResponse* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.observations_.InternalSwap(&other->_impl_.observations_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  observations_.InternalSwap(&other->observations_);
+  rewards_.InternalSwap(&other->rewards_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(StepResponse, _impl_.done_)
-      + sizeof(StepResponse::_impl_.done_)
-      - PROTOBUF_FIELD_OFFSET(StepResponse, _impl_.step_)>(
-          reinterpret_cast<char*>(&_impl_.step_),
-          reinterpret_cast<char*>(&other->_impl_.step_));
+      PROTOBUF_FIELD_OFFSET(StepResponse, done_)
+      + sizeof(StepResponse::done_)
+      - PROTOBUF_FIELD_OFFSET(StepResponse, step_)>(
+          reinterpret_cast<char*>(&step_),
+          reinterpret_cast<char*>(&other->step_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata StepResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[3]);
+  return GetMetadataStatic();
 }
+
 
 // ===================================================================
 
+void ResetRequest::InitAsDefaultInstance() {
+}
 class ResetRequest::_Internal {
  public:
 };
 
-ResetRequest::ResetRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+ResetRequest::ResetRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:swarm_proto.ResetRequest)
 }
 ResetRequest::ResetRequest(const ResetRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ResetRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.seed_){}
-    , decltype(_impl_.max_steps_){}
-    , decltype(_impl_.num_drones_){}
-    , decltype(_impl_.dt_){}
-    , decltype(_impl_.randomize_init_pos_){}
-    , decltype(_impl_.arena_size_){}
-    , decltype(_impl_.min_dist_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.seed_, &from._impl_.seed_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.min_dist_) -
-    reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.min_dist_));
+  ::memcpy(&seed_, &from.seed_,
+    static_cast<size_t>(reinterpret_cast<char*>(&max_steps_) -
+    reinterpret_cast<char*>(&seed_)) + sizeof(max_steps_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.ResetRequest)
 }
 
-inline void ResetRequest::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.seed_){uint64_t{0u}}
-    , decltype(_impl_.max_steps_){uint64_t{0u}}
-    , decltype(_impl_.num_drones_){0u}
-    , decltype(_impl_.dt_){0}
-    , decltype(_impl_.randomize_init_pos_){false}
-    , decltype(_impl_.arena_size_){0}
-    , decltype(_impl_.min_dist_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
+void ResetRequest::SharedCtor() {
+  ::memset(&seed_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&max_steps_) -
+      reinterpret_cast<char*>(&seed_)) + sizeof(max_steps_));
 }
 
 ResetRequest::~ResetRequest() {
   // @@protoc_insertion_point(destructor:swarm_proto.ResetRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void ResetRequest::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+void ResetRequest::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
 }
 
+void ResetRequest::ArenaDtor(void* object) {
+  ResetRequest* _this = reinterpret_cast< ResetRequest* >(object);
+  (void)_this;
+}
+void ResetRequest::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ResetRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
+  _cached_size_.Set(size);
 }
+const ResetRequest& ResetRequest::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_ResetRequest_swarm_2eproto.base);
+  return *internal_default_instance();
+}
+
 
 void ResetRequest::Clear() {
 // @@protoc_insertion_point(message_clear_start:swarm_proto.ResetRequest)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  ::memset(&_impl_.seed_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.min_dist_) -
-      reinterpret_cast<char*>(&_impl_.seed_)) + sizeof(_impl_.min_dist_));
+  ::memset(&seed_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&max_steps_) -
+      reinterpret_cast<char*>(&seed_)) + sizeof(max_steps_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ResetRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* ResetRequest::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
       // uint64 seed = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.seed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          seed_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // uint32 num_drones = 2;
+      // uint32 num_drones_team_0 = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.num_drones_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          num_drones_team_0_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // uint64 max_steps = 3;
+      // uint32 num_drones_team_1 = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          num_drones_team_1_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // float dt = 4;
+      // uint64 max_steps = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
-          _impl_.dt_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      // bool randomize_init_pos = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 40)) {
-          _impl_.randomize_init_pos_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // float arena_size = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 53)) {
-          _impl_.arena_size_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
         continue;
-      // float min_dist = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 61)) {
-          _impl_.min_dist_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
+      }
     }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
   }  // while
-message_done:
+success:
   return ptr;
 failure:
   ptr = nullptr;
-  goto message_done;
+  goto success;
 #undef CHK_
 }
 
-uint8_t* ResetRequest::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::PROTOBUF_NAMESPACE_ID::uint8* ResetRequest::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.ResetRequest)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   // uint64 seed = 1;
-  if (this->_internal_seed() != 0) {
+  if (this->seed() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_seed(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_seed(), target);
   }
 
-  // uint32 num_drones = 2;
-  if (this->_internal_num_drones() != 0) {
+  // uint32 num_drones_team_0 = 2;
+  if (this->num_drones_team_0() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones_team_0(), target);
   }
 
-  // uint64 max_steps = 3;
-  if (this->_internal_max_steps() != 0) {
+  // uint32 num_drones_team_1 = 3;
+  if (this->num_drones_team_1() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_max_steps(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_num_drones_team_1(), target);
   }
 
-  // float dt = 4;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = this->_internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
+  // uint64 max_steps = 4;
+  if (this->max_steps() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_dt(), target);
-  }
-
-  // bool randomize_init_pos = 5;
-  if (this->_internal_randomize_init_pos() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(5, this->_internal_randomize_init_pos(), target);
-  }
-
-  // float arena_size = 6;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_arena_size = this->_internal_arena_size();
-  uint32_t raw_arena_size;
-  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
-  if (raw_arena_size != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(6, this->_internal_arena_size(), target);
-  }
-
-  // float min_dist = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_min_dist = this->_internal_min_dist();
-  uint32_t raw_min_dist;
-  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
-  if (raw_min_dist != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(7, this->_internal_min_dist(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_max_steps(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.ResetRequest)
@@ -1589,109 +1214,88 @@ size_t ResetRequest::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:swarm_proto.ResetRequest)
   size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // uint64 seed = 1;
-  if (this->_internal_seed() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_seed());
+  if (this->seed() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_seed());
   }
 
-  // uint64 max_steps = 3;
-  if (this->_internal_max_steps() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_max_steps());
+  // uint32 num_drones_team_0 = 2;
+  if (this->num_drones_team_0() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_num_drones_team_0());
   }
 
-  // uint32 num_drones = 2;
-  if (this->_internal_num_drones() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_num_drones());
+  // uint32 num_drones_team_1 = 3;
+  if (this->num_drones_team_1() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_num_drones_team_1());
   }
 
-  // float dt = 4;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = this->_internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
-    total_size += 1 + 4;
+  // uint64 max_steps = 4;
+  if (this->max_steps() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_max_steps());
   }
 
-  // bool randomize_init_pos = 5;
-  if (this->_internal_randomize_init_pos() != 0) {
-    total_size += 1 + 1;
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
   }
-
-  // float arena_size = 6;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_arena_size = this->_internal_arena_size();
-  uint32_t raw_arena_size;
-  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
-  if (raw_arena_size != 0) {
-    total_size += 1 + 4;
-  }
-
-  // float min_dist = 7;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_min_dist = this->_internal_min_dist();
-  uint32_t raw_min_dist;
-  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
-  if (raw_min_dist != 0) {
-    total_size += 1 + 4;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ResetRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ResetRequest::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResetRequest::GetClassData() const { return &_class_data_; }
+void ResetRequest::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:swarm_proto.ResetRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ResetRequest* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<ResetRequest>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:swarm_proto.ResetRequest)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:swarm_proto.ResetRequest)
+    MergeFrom(*source);
+  }
+}
 
-
-void ResetRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ResetRequest*>(&to_msg);
-  auto& from = static_cast<const ResetRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.ResetRequest)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+void ResetRequest::MergeFrom(const ResetRequest& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.ResetRequest)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (from._internal_seed() != 0) {
-    _this->_internal_set_seed(from._internal_seed());
+  if (from.seed() != 0) {
+    _internal_set_seed(from._internal_seed());
   }
-  if (from._internal_max_steps() != 0) {
-    _this->_internal_set_max_steps(from._internal_max_steps());
+  if (from.num_drones_team_0() != 0) {
+    _internal_set_num_drones_team_0(from._internal_num_drones_team_0());
   }
-  if (from._internal_num_drones() != 0) {
-    _this->_internal_set_num_drones(from._internal_num_drones());
+  if (from.num_drones_team_1() != 0) {
+    _internal_set_num_drones_team_1(from._internal_num_drones_team_1());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = from._internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
-    _this->_internal_set_dt(from._internal_dt());
+  if (from.max_steps() != 0) {
+    _internal_set_max_steps(from._internal_max_steps());
   }
-  if (from._internal_randomize_init_pos() != 0) {
-    _this->_internal_set_randomize_init_pos(from._internal_randomize_init_pos());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_arena_size = from._internal_arena_size();
-  uint32_t raw_arena_size;
-  memcpy(&raw_arena_size, &tmp_arena_size, sizeof(tmp_arena_size));
-  if (raw_arena_size != 0) {
-    _this->_internal_set_arena_size(from._internal_arena_size());
-  }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_min_dist = from._internal_min_dist();
-  uint32_t raw_min_dist;
-  memcpy(&raw_min_dist, &tmp_min_dist, sizeof(tmp_min_dist));
-  if (raw_min_dist != 0) {
-    _this->_internal_set_min_dist(from._internal_min_dist());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void ResetRequest::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:swarm_proto.ResetRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
 }
 
 void ResetRequest::CopyFrom(const ResetRequest& from) {
@@ -1707,214 +1311,207 @@ bool ResetRequest::IsInitialized() const {
 
 void ResetRequest::InternalSwap(ResetRequest* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.min_dist_)
-      + sizeof(ResetRequest::_impl_.min_dist_)
-      - PROTOBUF_FIELD_OFFSET(ResetRequest, _impl_.seed_)>(
-          reinterpret_cast<char*>(&_impl_.seed_),
-          reinterpret_cast<char*>(&other->_impl_.seed_));
+      PROTOBUF_FIELD_OFFSET(ResetRequest, max_steps_)
+      + sizeof(ResetRequest::max_steps_)
+      - PROTOBUF_FIELD_OFFSET(ResetRequest, seed_)>(
+          reinterpret_cast<char*>(&seed_),
+          reinterpret_cast<char*>(&other->seed_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResetRequest::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[4]);
+  return GetMetadataStatic();
 }
+
 
 // ===================================================================
 
+void ResetResponse::InitAsDefaultInstance() {
+}
 class ResetResponse::_Internal {
  public:
 };
 
-ResetResponse::ResetResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+ResetResponse::ResetResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena),
+  observations_(arena) {
+  SharedCtor();
+  RegisterArenaDtor(arena);
   // @@protoc_insertion_point(arena_constructor:swarm_proto.ResetResponse)
 }
 ResetResponse::ResetResponse(const ResetResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ResetResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.observations_){from._impl_.observations_}
-    , decltype(_impl_.step_){}
-    , decltype(_impl_.max_steps_){}
-    , decltype(_impl_.num_drones_){}
-    , decltype(_impl_.dt_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      observations_(from.observations_) {
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  ::memcpy(&_impl_.step_, &from._impl_.step_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.dt_) -
-    reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.dt_));
+  ::memcpy(&step_, &from.step_,
+    static_cast<size_t>(reinterpret_cast<char*>(&dt_) -
+    reinterpret_cast<char*>(&step_)) + sizeof(dt_));
   // @@protoc_insertion_point(copy_constructor:swarm_proto.ResetResponse)
 }
 
-inline void ResetResponse::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
-  (void)arena;
-  (void)is_message_owned;
-  new (&_impl_) Impl_{
-      decltype(_impl_.observations_){arena}
-    , decltype(_impl_.step_){uint64_t{0u}}
-    , decltype(_impl_.max_steps_){uint64_t{0u}}
-    , decltype(_impl_.num_drones_){0u}
-    , decltype(_impl_.dt_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
+void ResetResponse::SharedCtor() {
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&dt_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(dt_));
 }
 
 ResetResponse::~ResetResponse() {
   // @@protoc_insertion_point(destructor:swarm_proto.ResetResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
   SharedDtor();
+  _internal_metadata_.Delete<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-inline void ResetResponse::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.observations_.~RepeatedPtrField();
+void ResetResponse::SharedDtor() {
+  GOOGLE_DCHECK(GetArena() == nullptr);
 }
 
+void ResetResponse::ArenaDtor(void* object) {
+  ResetResponse* _this = reinterpret_cast< ResetResponse* >(object);
+  (void)_this;
+}
+void ResetResponse::RegisterArenaDtor(::PROTOBUF_NAMESPACE_ID::Arena*) {
+}
 void ResetResponse::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
+  _cached_size_.Set(size);
 }
+const ResetResponse& ResetResponse::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_ResetResponse_swarm_2eproto.base);
+  return *internal_default_instance();
+}
+
 
 void ResetResponse::Clear() {
 // @@protoc_insertion_point(message_clear_start:swarm_proto.ResetResponse)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.observations_.Clear();
-  ::memset(&_impl_.step_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.dt_) -
-      reinterpret_cast<char*>(&_impl_.step_)) + sizeof(_impl_.dt_));
+  observations_.Clear();
+  ::memset(&step_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&dt_) -
+      reinterpret_cast<char*>(&step_)) + sizeof(dt_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* ResetResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* ResetResponse::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  ::PROTOBUF_NAMESPACE_ID::Arena* arena = GetArena(); (void)arena;
   while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
     switch (tag >> 3) {
       // uint64 step = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          _impl_.step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          step_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // uint32 num_drones = 2;
+      // uint32 num_drones_team_0 = 2;
       case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 16)) {
-          _impl_.num_drones_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 16)) {
+          num_drones_team_0_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // uint64 max_steps = 3;
+      // uint32 num_drones_team_1 = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
-          _impl_.max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          num_drones_team_1_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-        } else
-          goto handle_unusual;
+        } else goto handle_unusual;
         continue;
-      // float dt = 4;
+      // uint64 max_steps = 4;
       case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 37)) {
-          _impl_.dt_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
-          ptr += sizeof(float);
-        } else
-          goto handle_unusual;
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 32)) {
+          max_steps_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
         continue;
-      // repeated .swarm_proto.DroneObservation observations = 5;
+      // float dt = 5;
       case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 42)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_observations(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<42>(ptr));
-        } else
-          goto handle_unusual;
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 45)) {
+          dt_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else goto handle_unusual;
         continue;
-      default:
-        goto handle_unusual;
+      // repeated float observations = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 50)) {
+          ptr = ::PROTOBUF_NAMESPACE_ID::internal::PackedFloatParser(_internal_mutable_observations(), ptr, ctx);
+          CHK_(ptr);
+        } else if (static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 53) {
+          _internal_add_observations(::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr));
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag,
+            _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+            ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
     }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
   }  // while
-message_done:
+success:
   return ptr;
 failure:
   ptr = nullptr;
-  goto message_done;
+  goto success;
 #undef CHK_
 }
 
-uint8_t* ResetResponse::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+::PROTOBUF_NAMESPACE_ID::uint8* ResetResponse::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:swarm_proto.ResetResponse)
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
   // uint64 step = 1;
-  if (this->_internal_step() != 0) {
+  if (this->step() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(1, this->_internal_step(), target);
   }
 
-  // uint32 num_drones = 2;
-  if (this->_internal_num_drones() != 0) {
+  // uint32 num_drones_team_0 = 2;
+  if (this->num_drones_team_0() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(2, this->_internal_num_drones_team_0(), target);
   }
 
-  // uint64 max_steps = 3;
-  if (this->_internal_max_steps() != 0) {
+  // uint32 num_drones_team_1 = 3;
+  if (this->num_drones_team_1() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteUInt64ToArray(3, this->_internal_max_steps(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt32ToArray(3, this->_internal_num_drones_team_1(), target);
   }
 
-  // float dt = 4;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = this->_internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
+  // uint64 max_steps = 4;
+  if (this->max_steps() != 0) {
     target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteFloatToArray(4, this->_internal_dt(), target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteUInt64ToArray(4, this->_internal_max_steps(), target);
   }
 
-  // repeated .swarm_proto.DroneObservation observations = 5;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_observations_size()); i < n; i++) {
-    const auto& repfield = this->_internal_observations(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(5, repfield, repfield.GetCachedSize(), target, stream);
+  // float dt = 5;
+  if (!(this->dt() <= 0 && this->dt() >= 0)) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(5, this->_internal_dt(), target);
+  }
+
+  // repeated float observations = 6;
+  if (this->_internal_observations_size() > 0) {
+    target = stream->WriteFixedPacked(6, _internal_observations(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:swarm_proto.ResetResponse)
@@ -1925,77 +1522,112 @@ size_t ResetResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:swarm_proto.ResetResponse)
   size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .swarm_proto.DroneObservation observations = 5;
-  total_size += 1UL * this->_internal_observations_size();
-  for (const auto& msg : this->_impl_.observations_) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
+  // repeated float observations = 6;
+  {
+    unsigned int count = static_cast<unsigned int>(this->_internal_observations_size());
+    size_t data_size = 4UL * count;
+    if (data_size > 0) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+            static_cast<::PROTOBUF_NAMESPACE_ID::int32>(data_size));
+    }
+    int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(data_size);
+    _observations_cached_byte_size_.store(cached_size,
+                                    std::memory_order_relaxed);
+    total_size += data_size;
   }
 
   // uint64 step = 1;
-  if (this->_internal_step() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_step());
+  if (this->step() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_step());
   }
 
-  // uint64 max_steps = 3;
-  if (this->_internal_max_steps() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_max_steps());
+  // uint32 num_drones_team_0 = 2;
+  if (this->num_drones_team_0() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_num_drones_team_0());
   }
 
-  // uint32 num_drones = 2;
-  if (this->_internal_num_drones() != 0) {
-    total_size += ::_pbi::WireFormatLite::UInt32SizePlusOne(this->_internal_num_drones());
+  // uint32 num_drones_team_1 = 3;
+  if (this->num_drones_team_1() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt32Size(
+        this->_internal_num_drones_team_1());
   }
 
-  // float dt = 4;
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = this->_internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
+  // uint64 max_steps = 4;
+  if (this->max_steps() != 0) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::UInt64Size(
+        this->_internal_max_steps());
+  }
+
+  // float dt = 5;
+  if (!(this->dt() <= 0 && this->dt() >= 0)) {
     total_size += 1 + 4;
   }
 
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ResetResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ResetResponse::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ResetResponse::GetClassData() const { return &_class_data_; }
+void ResetResponse::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:swarm_proto.ResetResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  const ResetResponse* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<ResetResponse>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:swarm_proto.ResetResponse)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:swarm_proto.ResetResponse)
+    MergeFrom(*source);
+  }
+}
 
-
-void ResetResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ResetResponse*>(&to_msg);
-  auto& from = static_cast<const ResetResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.ResetResponse)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+void ResetResponse::MergeFrom(const ResetResponse& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:swarm_proto.ResetResponse)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
   (void) cached_has_bits;
 
-  _this->_impl_.observations_.MergeFrom(from._impl_.observations_);
-  if (from._internal_step() != 0) {
-    _this->_internal_set_step(from._internal_step());
+  observations_.MergeFrom(from.observations_);
+  if (from.step() != 0) {
+    _internal_set_step(from._internal_step());
   }
-  if (from._internal_max_steps() != 0) {
-    _this->_internal_set_max_steps(from._internal_max_steps());
+  if (from.num_drones_team_0() != 0) {
+    _internal_set_num_drones_team_0(from._internal_num_drones_team_0());
   }
-  if (from._internal_num_drones() != 0) {
-    _this->_internal_set_num_drones(from._internal_num_drones());
+  if (from.num_drones_team_1() != 0) {
+    _internal_set_num_drones_team_1(from._internal_num_drones_team_1());
   }
-  static_assert(sizeof(uint32_t) == sizeof(float), "Code assumes uint32_t and float are the same size.");
-  float tmp_dt = from._internal_dt();
-  uint32_t raw_dt;
-  memcpy(&raw_dt, &tmp_dt, sizeof(tmp_dt));
-  if (raw_dt != 0) {
-    _this->_internal_set_dt(from._internal_dt());
+  if (from.max_steps() != 0) {
+    _internal_set_max_steps(from._internal_max_steps());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  if (!(from.dt() <= 0 && from.dt() >= 0)) {
+    _internal_set_dt(from._internal_dt());
+  }
+}
+
+void ResetResponse::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:swarm_proto.ResetResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
 }
 
 void ResetResponse::CopyFrom(const ResetResponse& from) {
@@ -2011,47 +1643,37 @@ bool ResetResponse::IsInitialized() const {
 
 void ResetResponse::InternalSwap(ResetResponse* other) {
   using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _impl_.observations_.InternalSwap(&other->_impl_.observations_);
+  _internal_metadata_.Swap<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(&other->_internal_metadata_);
+  observations_.InternalSwap(&other->observations_);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(ResetResponse, _impl_.dt_)
-      + sizeof(ResetResponse::_impl_.dt_)
-      - PROTOBUF_FIELD_OFFSET(ResetResponse, _impl_.step_)>(
-          reinterpret_cast<char*>(&_impl_.step_),
-          reinterpret_cast<char*>(&other->_impl_.step_));
+      PROTOBUF_FIELD_OFFSET(ResetResponse, dt_)
+      + sizeof(ResetResponse::dt_)
+      - PROTOBUF_FIELD_OFFSET(ResetResponse, step_)>(
+          reinterpret_cast<char*>(&step_),
+          reinterpret_cast<char*>(&other->step_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ResetResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_swarm_2eproto_getter, &descriptor_table_swarm_2eproto_once,
-      file_level_metadata_swarm_2eproto[5]);
+  return GetMetadataStatic();
 }
+
 
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace swarm_proto
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::swarm_proto::DroneAction*
-Arena::CreateMaybeMessage< ::swarm_proto::DroneAction >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::swarm_proto::DroneAction* Arena::CreateMaybeMessage< ::swarm_proto::DroneAction >(Arena* arena) {
   return Arena::CreateMessageInternal< ::swarm_proto::DroneAction >(arena);
 }
-template<> PROTOBUF_NOINLINE ::swarm_proto::DroneObservation*
-Arena::CreateMaybeMessage< ::swarm_proto::DroneObservation >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::swarm_proto::DroneObservation >(arena);
-}
-template<> PROTOBUF_NOINLINE ::swarm_proto::StepRequest*
-Arena::CreateMaybeMessage< ::swarm_proto::StepRequest >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::swarm_proto::StepRequest* Arena::CreateMaybeMessage< ::swarm_proto::StepRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::swarm_proto::StepRequest >(arena);
 }
-template<> PROTOBUF_NOINLINE ::swarm_proto::StepResponse*
-Arena::CreateMaybeMessage< ::swarm_proto::StepResponse >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::swarm_proto::StepResponse* Arena::CreateMaybeMessage< ::swarm_proto::StepResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::swarm_proto::StepResponse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::swarm_proto::ResetRequest*
-Arena::CreateMaybeMessage< ::swarm_proto::ResetRequest >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::swarm_proto::ResetRequest* Arena::CreateMaybeMessage< ::swarm_proto::ResetRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::swarm_proto::ResetRequest >(arena);
 }
-template<> PROTOBUF_NOINLINE ::swarm_proto::ResetResponse*
-Arena::CreateMaybeMessage< ::swarm_proto::ResetResponse >(Arena* arena) {
+template<> PROTOBUF_NOINLINE ::swarm_proto::ResetResponse* Arena::CreateMaybeMessage< ::swarm_proto::ResetResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::swarm_proto::ResetResponse >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE

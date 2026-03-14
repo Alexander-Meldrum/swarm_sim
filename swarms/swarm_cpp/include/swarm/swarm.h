@@ -3,55 +3,73 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <span>
 #include <grpcpp/grpcpp.h>
-#include <swarm.pb.h> // in build folder
-#include <swarm.grpc.pb.h> // in build folder
-#include <random>
+#include <torch/script.h>
+#include <swarm.pb.h>
+#include <swarm.grpc.pb.h>
 
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
 
-using swarm_proto::swarm_proto_service;
-using swarm_proto::StepRequest;
-using swarm_proto::StepResponse;
+using swarm_proto::DroneAction;
 using swarm_proto::ResetRequest;
 using swarm_proto::ResetResponse;
-using swarm_proto::DroneAction;
-using swarm_proto::DroneObservation;
+using swarm_proto::StepRequest;
+using swarm_proto::StepResponse;
+using swarm_proto::swarm_proto_service;
 
-namespace swarm {
+namespace swarm
+{
 
-class SwarmController {
-public:
-    explicit SwarmController(std::unique_ptr<swarm_proto_service::Stub> stub)
-        : stub_(std::move(stub)) {}
+    class SwarmController
+    {
+    public:
+        explicit SwarmController(std::unique_ptr<swarm_proto_service::Stub> stub);
 
-    ResetResponse reset(uint32_t num_drones, uint64_t max_steps, float dt, bool randomize_init_pos, float arena_size, float min_dist);
-    StepResponse step();
+        void loadPolicy(
+            const std::string &policy_path
+            // uint32_t num_drones,
+            // uint8_t num_obs_features,
+            // float max_acc = 10.0f
+        );
 
-    const std::vector<float>& observations() const {return obs_;}
-    uint64_t step_count() const {return step_;}
-    float dt() const {return dt_;}
-    
+        ResetResponse reset(uint64_t seed, uint32_t num_drones_team_0, uint32_t num_drones_team_1, uint64_t max_steps);
+        StepResponse step();
 
-private:
-    std::unique_ptr<swarm_proto_service::Stub> stub_;
-    uint32_t num_drones_{0};
-    uint64_t step_{0};
-    float dt_{0.0};
-    // std::vector<swarm_proto::DroneObservation> obs_;
-    // Flat observation vector
-    std::vector<float> obs_;
-    uint8_t num_observation_features_ = 3;
+        // std::vector<float> computeActions(
+        //     const google::protobuf::RepeatedField<float>* obs_flat);
 
-    // Random with fixed seed
-    std::mt19937 rng{12345};
-    std::uniform_real_distribution<float> dist{-1.0f, 1.0f};
+        std::vector<float> computeActions(std::span<const float> obs_flat);
 
-    // Called internally by reset() and step()
-    void consume_observations_from_proto(const google::protobuf::RepeatedPtrField<swarm_proto::DroneObservation>& observations);
+        std::span<const float> obs_;
 
-};
+    private:
+        std::unique_ptr<swarm_proto_service::Stub> stub_;
 
-} // namespace swarm
+        torch::jit::script::Module policy_;
+
+        uint32_t num_drones_team_0_{0};
+        uint32_t num_drones_team_1_{0};
+
+        uint64_t max_steps_{0};
+        uint64_t step_{0};
+
+        float dt_{0.0};
+
+        // const google::protobuf::RepeatedField<float>* obs_ = nullptr;
+
+        ResetResponse reset_response_; // owns observation memory
+        StepResponse step_response_;   // owns observation memory
+        
+
+        // std::vector<float> obs_;
+
+        size_t num_observation_features_{22}; // TODO
+        uint8_t action_dim_{3};               // TODO
+
+        float max_acc_{10.0f}; // TODO
+    };
+
+}

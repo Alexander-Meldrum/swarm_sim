@@ -11,7 +11,6 @@ Responsibilities:
 
 import grpc
 import torch
-import numpy as np
 
 # Generated from swarm.proto using grpc_tools.protoc
 import swarm_pb2
@@ -27,7 +26,9 @@ class SwarmEnv:
     - team 1: controlled by rule-based logic inside simulator
     """
 
-    def __init__(self, address="localhost:50051", device="cpu", obs_dim = 0, action_dim = 0):
+    def __init__(
+        self, address="localhost:50051", device="cpu", obs_dim=0, action_dim=0
+    ):
         # Open a gRPC channel to the simulator
         self.channel = grpc.insecure_channel(address)
 
@@ -40,8 +41,8 @@ class SwarmEnv:
         # Number of drones per team (set during reset)
         self.num_drones_team_0 = 0
         self.num_drones_team_1 = 0
-        self.num_drones        = 0
-        self.step_count        = 0
+        self.num_drones = 0
+        self.step_count = 0
 
         # Observation structure per drone:
         self.obs_dim = obs_dim
@@ -50,24 +51,26 @@ class SwarmEnv:
         # [ax, ay, az]
         self.action_dim = action_dim
 
-    def reset(self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int, seed: int):
+    def reset(
+        self, num_drones_team_0: int, num_drones_team_1: int, max_steps: int, seed: int
+    ):
         """
         Start a new episode in the simulator.
 
         Args:
             num_drones_team_0: number of RL-controlled drones
-            team1_drones: number of rule-based drones
+            num_drones_team_1: number of rule-based drones
             max_steps: maximum simulation steps for episode
+            seed: randomizing seed
 
         Returns:
             torch.Tensor of observations for team 0
         """
 
-        
         self.step_count = 0
 
         request = swarm_pb2.ResetRequest(
-            seed = seed,
+            seed=seed,
             num_drones_team_0=num_drones_team_0,
             num_drones_team_1=num_drones_team_1,
             max_steps=max_steps,
@@ -80,7 +83,6 @@ class SwarmEnv:
         self.num_drones_team_0 = response.num_drones_team_0
         self.num_drones_team_1 = response.num_drones_team_1
         self.num_drones = self.num_drones_team_0 + self.num_drones_team_1
-
 
         self.step_count = response.step
 
@@ -97,7 +99,6 @@ class SwarmEnv:
         Returns:
             obs: next observations (team 0)
             rewards: reward tensor [num_team0,]
-            global_reward: global reward tensor (scalar)
             done: episode termination flag
         """
 
@@ -108,9 +109,9 @@ class SwarmEnv:
         for i in range(self.num_drones_team_0):
             request.actions.append(
                 swarm_pb2.DroneAction(
-                    ax=float(actions[i, 0]),
-                    ay=float(actions[i, 1]),
-                    az=float(actions[i, 2]),
+                    ax=actions[i, 0].detach().item(),
+                    ay=actions[i, 1].detach().item(),
+                    az=actions[i, 2].detach().item(),
                 )
             )
 
@@ -126,7 +127,7 @@ class SwarmEnv:
         rewards = torch.tensor(response.rewards, device=self.device)
         done = response.done
 
-        return obs_team_0, rewards,  done # global_reward,
+        return obs_team_0, rewards, done
 
     def _extract_team0_obs(self, observations):
         """
@@ -143,6 +144,6 @@ class SwarmEnv:
         obs = torch.tensor(observations, dtype=torch.float32, device=self.device)
         obs = obs.view(self.num_drones_team_0, self.obs_dim)
         # Cut away team_1 observations if present
-        obs_team0 = obs[:self.num_drones_team_0]
+        obs_team0 = obs[: self.num_drones_team_0]
 
         return obs_team0

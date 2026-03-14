@@ -3,8 +3,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_server(true)
         .build_client(true)
         .compile(
-            &["../proto/swarm.proto"], // ← parent folder
-            &["../proto"],             // ← include path
+            &["../proto/swarm.proto"], // in a parent folder
+            &["../proto"],           // include path
         )?;
     Ok(())
 }

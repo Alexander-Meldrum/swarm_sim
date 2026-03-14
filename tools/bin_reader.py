@@ -15,8 +15,6 @@ import numpy as np
 
 METADATA_FMT = "<Q f I I B fff f H"
 METADATA_SIZE = struct.calcsize(METADATA_FMT)
-# METADATA_SIZE == 39
-
 
 # Binary schema for swarm state log
 # *******************************************************
@@ -28,7 +26,7 @@ STEP_HEADER_FMT = "<Q I"
 STEP_HEADER_SIZE = struct.calcsize(STEP_HEADER_FMT)
 
 # ---- per-drone data ----
-# px, py, pz, vx, vy, vz, rewards (all f32) # 
+# px, py, pz, vx, vy, vz, rewards (all f32) #
 # Note: Add "<" in dependant scripts afterwards to enable multiplying this value by num_drones
 DRONE_FMT_BASE = "f"
 DRONE_BASE_SIZE = struct.calcsize(DRONE_FMT_BASE)
@@ -65,22 +63,34 @@ class LogMetadata:
         self.stationary_target_radius = stationary_target_radius
         self.schema_version = schema_version
 
+
 class SwarmStateLog:
     def __init__(self, steps, rewards, pos, vel):
-        self.steps = steps      # (T,)
-        self.pos = pos          # (T, N, 3)
-        self.vel = vel          # (T, N, 3)
+        self.steps = steps  # (T,)
+        self.pos = pos  # (T, N, 3)
+        self.vel = vel  # (T, N, 3)
         self.rewards = rewards  # (T, N)
 
+
 class SwarmEventLog:
-    def __init__(self, steps, kind, drone_a, drone_a_position, drone_b, drone_b_position, target_id):
-        self.steps = steps      # (T,)
+    def __init__(
+        self,
+        steps,
+        kind,
+        drone_a,
+        drone_a_position,
+        drone_b,
+        drone_b_position,
+        target_id,
+    ):
+        self.steps = steps  # (T,)
         self.kind = kind
         self.drone_a = drone_a
         self.drone_a_position = drone_a_position
         self.drone_b = drone_b
         self.drone_b_position = drone_b_position
         self.target_id = target_id
+
 
 def read_log_metadata(f) -> LogMetadata:
     data = f.read(METADATA_SIZE)
@@ -101,6 +111,7 @@ def read_log_metadata(f) -> LogMetadata:
         stationary_target_radius=unpacked[8],
         schema_version=unpacked[9],
     )
+
 
 def read_swarm_state_log(path: str) -> SwarmStateLog:
     """
@@ -123,7 +134,7 @@ def read_swarm_state_log(path: str) -> SwarmStateLog:
     with open(path, "rb") as f:
         metadata = read_log_metadata(f)
         while True:
-            # ---- read step header ---- 
+            # ---- read step header ----
             # The file cursor is now positioned immediately after the metadata
             header = f.read(STEP_HEADER_SIZE)
             if not header:
@@ -167,20 +178,34 @@ def read_swarm_state_log(path: str) -> SwarmStateLog:
 
             # Append per-step data
             steps.append(step)
-            positions.append(arr[:, :3])         # px, py, pz
-            velocities.append(arr[:, 3:6])       # vx, vy, vz
-            rewards.append(arr[:, 6]) # rewards
+            positions.append(arr[:, :3])  # px, py, pz
+            velocities.append(arr[:, 3:6])  # vx, vy, vz
+            rewards.append(arr[:, 6])  # rewards
 
     # Convert lists into numpy arrays
     return metadata, SwarmStateLog(
-        steps=np.asarray(steps, dtype=np.uint64),                 # shape (T,)
-        pos=np.stack(positions) if positions else np.empty((0,0,3)),    # shape (T, N, 3)
-        vel=np.stack(velocities) if velocities else np.empty((0,0,3)),  # shape (T, N, 3)
-        rewards=np.stack(rewards) if rewards else np.empty((0,0))  # shape (T, N)
+        steps=np.asarray(steps, dtype=np.uint64),  # shape (T,)
+        pos=(
+            np.stack(positions) if positions else np.empty((0, 0, 3))
+        ),  # shape (T, N, 3)
+        vel=(
+            np.stack(velocities) if velocities else np.empty((0, 0, 3))
+        ),  # shape (T, N, 3)
+        rewards=np.stack(rewards) if rewards else np.empty((0, 0)),  # shape (T, N)
     )
 
+
 class SwarmEventLog:
-    def __init__(self, steps, kind, drone_a, drone_a_position, drone_b, drone_b_position, target_id):
+    def __init__(
+        self,
+        steps,
+        kind,
+        drone_a,
+        drone_a_position,
+        drone_b,
+        drone_b_position,
+        target_id,
+    ):
         self.steps = steps
         self.kind = kind
         self.drone_a = drone_a
@@ -188,6 +213,7 @@ class SwarmEventLog:
         self.drone_b = drone_b
         self.drone_b_position = drone_b_position
         self.target_id = target_id
+
 
 def read_swarm_event_log(path: str) -> SwarmEventLog:
     steps = []
@@ -217,7 +243,7 @@ def read_swarm_event_log(path: str) -> SwarmEventLog:
             kind = unpacked[1]
             drone_a = unpacked[2]
             drone_a_pos = unpacked[3:6]  # x, y, z
-            drone_b = unpacked[6]        # This is 0xFFFFFFFF for target hits
+            drone_b = unpacked[6]  # This is 0xFFFFFFFF for target hits
             drone_b_pos = unpacked[7:10]  # x, y, z, This is 0 0 0 for target hits
             target_id = unpacked[10]
 

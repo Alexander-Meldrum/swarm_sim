@@ -196,6 +196,8 @@ sudo apt install protobuf-compiler libgrpc++-dev
 sudo apt install protobuf-compiler-grpc
 ```
 
+Protoc version on local has to match libtorch's protoc version
+
 #### Updating Protobuf Bindings
 
 ```bash
@@ -242,18 +244,17 @@ python tools/bin_to_csv.py logs/00001
 ---
 
 ## Roadmap
-- Default simulator controllers for dummy swarms (targets)
-- Save weights after training in Python controller
-- Run Python controller with saved weights
 - Update C++ controller to use saved weights
 - Cleanup: Result folder git ignore?, remove all webm &  Readme dependencies
+- Readme update
 
 ---
 
 ## Possible Future Work
 
-- Move over to shared memory instead of gRPC communication
-- Addition of GAE to PPO algorithm
+- Simulator: Move over to shared memory instead of gRPC communication
+- Python PPO: Add GAE to PPO algorithm
+- Python PPO: Enable loading of previosly saved policies
 
 ---
 

@@ -34,19 +34,12 @@ message StepResponse {
 }
 
 /* --- Reset API --- */
-enum TeamControl {
-  EXTERNAL = 0;
-  RULE_BASED = 1;
-}
 
 message ResetRequest {
   uint64 seed = 1;
   uint32 num_drones_team_0 = 2;  // Number of drones in default team
   uint32 num_drones_team_1 = 3;  // Number of rule-based / opponent drones
-  TeamControl team_0_control = 4;
-  TeamControl team_1_control = 5;
-  uint64 max_steps = 6;
-  bool randomize_init_pos = 7;
+  uint64 max_steps = 4;
 }
 
 message ResetResponse {
