@@ -5,9 +5,14 @@
 
 arena:
   # Minimum corner of the arena (x, y, z)
-  min: [-10.0, -10.0, -10.0]
+  min: [-20.0, -20.0, -20.0]
   # Maximum corner of the arena (x, y, z)
-  max: [10.0, 10.0, 10.0]
+  max: [20.0, 20.0, 20.0]
+  # Minimum corner of the start area (x, y, z)
+  min_start_area: [-5.0, -5.0, -5.0]
+  # Maximum corner of the start area  (x, y, z)
+  max_start_area: [5.0, 5.0, 5.0]
+
   # Minimum distance between drones when randomizing start pos. [m]
   min_dist: 2
   randomize_init_pos: true
@@ -25,7 +30,7 @@ physics:
   max_velocity: 10.0
 
 sensing:
-  # Max sensing distance, has to be smaller than 2*cell_size
+  # Max sensing distance
   max_sensing: 50.0
 
 
@@ -38,7 +43,7 @@ team_1_controller:
   enabled: true
   # Behavior name (mapped internally in simulator)
   behavior: "straight_flying"
-  init_pos_center: [16.0, 0.0, 0.0]
+  init_pos_center: [20.0, 0.0, 15.0]
   
 logging:
   # Enable episode logging

@@ -381,7 +381,7 @@ plt.show()
 if SAVE_AS_GIF:
     from matplotlib.animation import FuncAnimation, PillowWriter
 
-    print("SAVE_AS_GIF: True, Saving animation as gif file...")
+    print(f"SAVE_AS_GIF: True, Saving animation as: results/animation_{metadata.episode}.gif.")
     ani.save(
         f"results/animation_{metadata.episode}.gif", writer=PillowWriter(fps=12), dpi=90
     )

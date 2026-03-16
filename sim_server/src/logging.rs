@@ -11,7 +11,6 @@ pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) ->
     create_dir_all("logs").unwrap();
     let path = format!("logs/{:05}_{}.bin", world.episode, type_of_log);
     println!("[Simulator] Log file ({}): {}", type_of_log, path);
-    // BufWriter::new(File::create(path).unwrap())
 
     let mut file = BufWriter::new(File::create(path).unwrap());
 
@@ -29,14 +28,15 @@ pub fn open_new_log(type_of_log: &str, world: &World, config: Arc<SimConfig>) ->
         stationary_target_radius: config.target.radius,
         schema_version: 1,
     };
-
+    
     // Write metadata at the beginning
     metadata.write_to(&mut file).unwrap();
+    file.flush().unwrap();
 
     file
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct LogMetadata {
     pub episode: u64,
     pub dt: f32,

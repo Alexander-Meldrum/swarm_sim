@@ -23,6 +23,10 @@ pub struct ArenaConfig {
     pub min: [f32; 3],
     /// Maximum corner of the arena (x, y, z) [m]
     pub max: [f32; 3],
+    /// Minimum corner of the start area (x, y, z) [m]
+    pub min_start_area: [f32; 3],
+    /// Maximum corner of the start area (x, y, z) [m]
+    pub max_start_area: [f32; 3],
     /// Minimum distance between drones when randomizing start pos. [m]
     pub min_dist: f32,
     /// Flad to randomize init positions of all drones

@@ -18,7 +18,7 @@ from policy import SwarmPolicy, ValueNet
 # ============================================================
 # TRAINING CONFIG
 # ============================================================
-EPISODE_COUNT = 50
+EPISODE_COUNT = 10000
 MAX_STEPS = 500
 SEED = 0
 NUM_DRONES_TEAM_0 = 15
@@ -63,7 +63,8 @@ MAX_ACC = 10  # Max acceleration magnitude applied in simulation
 
 def main():
     # Select device
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    # device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
 
     # Create environment
     env = SwarmEnv(device=device, obs_dim=OBS_DIM)
@@ -368,20 +369,22 @@ def main():
                         f"saved_policies/ppo_checkpoint_{episode}.pt",
                     )
                     print(f"Torch model saved: ppo_checkpoint_{episode}.pt")
+                    policy.eval()
+                    policy = policy.cpu()
+                    scripted = torch.jit.script(policy)
+                    scripted.save(f"saved_policies/policy_scripted_{episode}.pt")
+                    print(
+                        f"Exported TorchScript policy: saved_policies/policy_scripted_{episode}.pt"
+                    )
 
                 # Clear rollout buffer for next batch
                 for k in rollout:
                     rollout[k].clear()
 
     # ============================================================
-    # Export TorchScript Policy at end of training for use in C++ controllers etc.
+    # Export TorchScript Policy at end of training for use in C++ controllers etc. (Set to CPU version)
     # ============================================================
     if EXPORT_POLICY and episode == EPISODE_COUNT:
-        # policy.eval()
-        # example = torch.randn(1, OBS_DIM).to(device)
-        # scripted = torch.jit.trace(policy, example)
-        # scripted.save(f"saved_policies/policy_scripted_{episode}.pt")
-
         policy.eval()
         policy = policy.cpu()
         scripted = torch.jit.script(policy)

@@ -66,7 +66,7 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
         world.team1_neighbors[i][0]
     else {
         // No target in range → mild time penalty
-        return -2.0;
+        return -0.1;
     };
 
     let mut no_neighbor = false;
@@ -91,31 +91,52 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     // ----------------------------
     // Predictive closing reward (future interception)
     // ----------------------------
-    let raw_closing = -rel_pos.dot(&rel_vel) / dist; // positive if approaching, predicts future
-                                                     // Rational scaling to keep under 1.0 & weaken near intercept
-    let closing_reward = 0.3 * raw_closing / (1.0 + raw_closing.abs()) * (dist / (dist + 1.0));
+    // let raw_closing = -rel_pos.dot(&rel_vel) / dist; // positive if approaching, predicts future
+    //                                                  // Rational scaling to keep under 1.0 & weaken near intercept
+    // let closing_reward = 0.3 * raw_closing / (1.0 + raw_closing.abs()) * (dist / (dist + 1.0));
+    
+    // ----------------------------
+    // Closing reward
+    // ----------------------------
+    let rel_closing_speed = -rel_vel.dot(&dir_to_target);
+    // let closing_reward = 0.3 * rel_closing_speed / (1.0 + rel_closing_speed.abs()) * (dist / (dist + 1.0));
+    // let closing_reward = 0.3 * rel_closing_speed.max(0.0) / (1.0 + rel_closing_speed.abs());
+
+    let closing_reward = 0.3 * rel_closing_speed.max(0.0) / (1.0 + rel_closing_speed.abs());
+    
+    // ----------------------------
+    // Miss-Distance Prediction, intercept_reward
+    // ----------------------------
+    // let closing_speed = vel.dot(&dir_to_target);
+    // let intercept_reward = if closing_speed > 0.0 {
+    //     let t = dist / (closing_speed + 0.01);
+    //     let predicted_offset = rel_pos + rel_vel * t;
+    //     let miss_distance = predicted_offset.norm();
+    //     0.4 / (1.0 + miss_distance)
+    // } else {
+    //     0.0
+    // };
+
+    let closing_speed = -rel_vel.dot(&dir_to_target);
+    let intercept_reward = if closing_speed > 0.0 {
+        let t = dist / closing_speed.max(0.2);  // 0.2 Forces t to be physically reasonable
+
+        let predicted_offset = rel_pos + rel_vel * t;
+        let miss_distance = predicted_offset.norm();
+
+        0.4 / (1.0 + miss_distance)
+    } else {
+        0.0
+    };
 
     // ----------------------------
-    // Penalize velocity perpendicular to target direction
+    // Penalize lateral velocity
     // ----------------------------
     let forward_speed = vel.dot(&dir_to_target);
     let speed_sq = vel.dot(&vel);
     let lateral_speed_sq = speed_sq - forward_speed * forward_speed;
     let lateral_speed = lateral_speed_sq.max(0.0).sqrt();
-    let lateral_penalty = -0.15 * lateral_speed;
-
-    // ----------------------------
-    // Miss-Distance Prediction, intercept_reward
-    // ----------------------------
-    let closing_speed = vel.dot(&dir_to_target);
-    let intercept_reward = if closing_speed > 0.0 {
-        let t = dist / (closing_speed + 0.1);
-        let predicted_offset = rel_pos + rel_vel * t;
-        let miss_distance = predicted_offset.norm();
-        0.4 / (1.0 + miss_distance)
-    } else {
-        0.0
-    };
+    let lateral_penalty = -0.1 * lateral_speed;
 
     // ----------------------------
     // Keep away from friendlies, friendly_prox_penalty
@@ -123,7 +144,7 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
     let mut friendly_prox_penalty = 0.0;
     if !no_neighbor {
         let d = friendly_rel_pos.norm();
-        friendly_prox_penalty = -0.05 / (0.2 + d * d);
+        friendly_prox_penalty = -0.1 / (0.2 + d * d);
     }
 
     // ----------------------------
@@ -134,7 +155,7 @@ fn calc_reward_for_hitting_dynamic_target(world: &World, i: usize) -> f32 {
         + intercept_reward
         + lateral_penalty
         + friendly_prox_penalty;
-    // println!("Episode {}. shaping, closing, intercept, lateral, friendly_prox_penalty, tot: {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} ", world.episode, shaping_reward, closing_reward, intercept_reward, lateral_penalty, friendly_prox_penalty, reward);
+    println!("Episode {}. shaping, closing, intercept, lateral, friendly_prox_penalty, tot: {:.3} {:.3} {:.3} {:.3} {:.3} {:.3} ", world.episode, shaping_reward, closing_reward, intercept_reward, lateral_penalty, friendly_prox_penalty, reward);
 
     return reward;
 }

@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-
+import os
 # *******************************************************
 # Binary schema for log metadata (written once at file start)
 # *******************************************************
@@ -95,9 +95,10 @@ class SwarmEventLog:
 def read_log_metadata(f) -> LogMetadata:
     data = f.read(METADATA_SIZE)
     if len(data) != METADATA_SIZE:
-        raise ValueError(
-            f"Incomplete metadata: expected {METADATA_SIZE} bytes, got {len(data)}"
-        )
+        print("No Data!")
+        # raise ValueError(
+        #     f"Incomplete metadata: expected {METADATA_SIZE} bytes, got {len(data)}"
+        # )
 
     unpacked = struct.unpack(METADATA_FMT, data)
 
@@ -223,6 +224,7 @@ def read_swarm_event_log(path: str) -> SwarmEventLog:
     drone_b_list = []
     drone_b_positions = []
     target_ids = []
+
     with open(path, "rb") as f:
         metadata = read_log_metadata(f)
         while True:

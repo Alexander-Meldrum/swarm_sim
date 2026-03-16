@@ -68,6 +68,7 @@ impl SwarmProtoService for SimServer {
             num_drones_team_1,
             max_steps,
             world.episode,
+            seed,
         );
 
         if config.logging.enabled {
@@ -88,7 +89,7 @@ impl SwarmProtoService for SimServer {
         }
 
         // Init team 0 & 1 positions
-        world.init_drones(Some(seed), config.clone());
+        world.init_drones(config.clone());
 
         // Build spatial index
         rebuild_grid(world);

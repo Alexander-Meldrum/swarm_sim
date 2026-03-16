@@ -2,6 +2,9 @@
 set -euo pipefail
 
 # ---------------- Configuration ----------------
+# Flip controllers, allowed values ["python", "cpp"]
+controller="python"
+
 SIM_DIR="sim_server"
 SIM_BIN="$SIM_DIR/target/release/sim_server"
 
@@ -11,9 +14,6 @@ CTRL_BIN="$CTRL_BUILD/swarm"
 
 HOST="::1"
 PORT="50051"
-
-# Flip controllers, allowed values ["python", "cpp"]
-controller="cpp"
 
 # ---------------- Build swarm controller ----------------
 if [ "$controller" = "cpp" ]; then
@@ -26,7 +26,7 @@ if [ "$controller" = "cpp" ]; then
     # Ensure grpc_cpp_plugin exists
     GRPC_PLUGIN="$(command -v grpc_cpp_plugin)"
     if [[ -z "$GRPC_PLUGIN" ]]; then
-        echo "grpc_cpp_plugin not found in PATH"
+        echo "[shell] grpc_cpp_plugin not found in PATH"
         exit 1
     fi
 
@@ -38,10 +38,10 @@ if [ "$controller" = "cpp" ]; then
     --grpc_out="$OUT_DIR" \
     --plugin=protoc-gen-grpc="$GRPC_PLUGIN" \
     "$PROTO_SRC/swarm.proto"
-    echo "Protobuf files generated in $OUT_DIR"
+    echo "[shell] Protobuf files generated in $OUT_DIR"
 
     # --- 2. Build C++ with cmake ---
-    echo "Building C++ Swarm Controller..."
+    echo "[shell] Building C++ Swarm Controller..."
     rm -rf "$CTRL_BUILD"
     mkdir -p "$CTRL_BUILD"
 
@@ -54,7 +54,7 @@ elif [ "$controller" = "python" ]; then
     # --- 1. Activate Python Venv ---
     source .venv/bin/activate
     # --- 2. Generate Python gRPC bindings ---
-    echo "Generating Python gRPC bindings..."
+    echo "[shell] Generating Python gRPC bindings..."
     PY_CTRL_DIR="swarms/swarm_py"
     PROTO_DIR="proto"
     cd "$PY_CTRL_DIR"
@@ -66,18 +66,18 @@ elif [ "$controller" = "python" ]; then
     "../../$PROTO_DIR/swarm.proto"
     cd - >/dev/null
 else
-    echo "Unknown controller"
+    echo "[shell] Unknown controller"
 fi
 
 
 # ---------------- Build Rust simulator ----------------
-echo "Building Rust Simulator (release)..."
+echo "[shell] Building Rust Simulator (release)..."
 cd "$SIM_DIR"
 cargo build --release
 cd - >/dev/null
 
 # ---------------- Start simulator ----------------
-echo "Starting Simulator..."
+echo "[shell] Starting Simulator..."
 "$SIM_BIN" --config sim_server/configs/sim.yaml --bind "[${HOST}]:${PORT}" &
 SIM_PID=$!
 
@@ -86,10 +86,10 @@ trap "echo 'Stopping simulator'; kill $SIM_PID 2>/dev/null || true" EXIT
 
 # ---------------- Wait for gRPC ----------------
 ready=false
-echo "Waiting for simulator to be ready..."
+echo "[shell] Waiting for simulator to be ready..."
 for i in {1..10}; do
     if nc -z "$HOST" "$PORT"; then
-        echo "Simulator is ready"
+        echo "[shell] Simulator is ready"
         ready=true
         break
     fi
@@ -97,23 +97,23 @@ for i in {1..10}; do
 done
 
 if [ "$ready" != true ]; then
-    echo "Simulator failed to start"
+    echo "[shell] Simulator failed to start"
     exit 1
 fi
 
 
 # ---------------- Run swarm controller ----------------
 if [ "$controller" = "cpp" ]; then
-    echo "Running Cpp Swarm Controller ..."
+    echo "[shell] Running Cpp Swarm Controller ..."
     # "$CTRL_BIN"
     stdbuf -oL "$CTRL_BIN"
-    echo "Swarm Controller Finished"
+    echo "[shell] Swarm Controller Finished"
 
 elif [ "$controller" = "python" ]; then
-    echo "Running Python swarm controller..."
+    echo "[shell] Running Python swarm controller..."
     cd swarms/swarm_py
     python train.py
     cd - >/dev/null
 else
-    echo "Could not run unknown controller"
+    echo "[shell] Could not run unknown controller"
 fi

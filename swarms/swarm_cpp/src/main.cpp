@@ -30,14 +30,14 @@ int main() {
 
     swarm::SwarmController controller(std::move(stub));
 
-    uint64_t seed = 0;
-    uint32_t num_drones_team_0 = 15;
+    uint64_t seed = 6;
+    uint32_t num_drones_team_0 = 10;
     uint32_t num_drones_team_1 = 20;
     uint64_t max_steps = 1000;
 
     controller.reset(seed, num_drones_team_0, num_drones_team_1, max_steps);
 
-    controller.loadPolicy("swarms/swarm_cpp/policies/policy_scripted_50.pt");
+    controller.loadPolicy("swarms/swarm_cpp/policies/policy_scripted_9000_cpu.pt");
 
     while (true) {
 

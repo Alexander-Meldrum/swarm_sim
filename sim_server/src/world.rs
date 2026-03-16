@@ -103,6 +103,7 @@ pub struct World {
     pub team0_neighbors: Vec<[Option<(Vec3, Vec3)>; K_NEIGHBORS]>,
     pub team1_neighbors: Vec<[Option<(Vec3, Vec3)>; K_NEIGHBORS]>,
     pub episode: u64,
+    pub seed: u64,
     pub state_log: Option<BufWriter<File>>,
     pub event_log: Option<BufWriter<File>>,
 
@@ -167,6 +168,7 @@ impl World {
         num_drones_team_1: usize,
         max_steps: u64,
         episode: u64,
+        seed: u64,
     ) -> Self {
         //, state_log:Option<BufWriter<File>>, event_log:Option<BufWriter<File>>
         let num_drones = num_drones_team_0 + num_drones_team_1;
@@ -225,6 +227,7 @@ impl World {
             team0_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             team1_neighbors: vec![[None; K_NEIGHBORS]; num_drones],
             episode: episode,
+            seed: seed,
             state_log: None, // Initiated after creation of world
             event_log: None,
             // Pre-allocate per-drone state (SoA layout)
@@ -261,6 +264,7 @@ impl World {
             team0_neighbors: vec![[None; K_NEIGHBORS]; 0],
             team1_neighbors: vec![[None; K_NEIGHBORS]; 0],
             episode: 0,
+            seed: 0,
             state_log: None,
             event_log: None,
             position: Vec::new(),
@@ -291,21 +295,21 @@ impl World {
     }
 
     /// Init drone states
-    pub fn init_drones(&mut self, seed: Option<u64>, config: Arc<SimConfig>) {
-        let mut rng = SmallRng::seed_from_u64(seed.expect("No Seed Provided"));
+    pub fn init_drones(&mut self, config: Arc<SimConfig>) {
+        let mut rng: SmallRng = SmallRng::seed_from_u64(self.seed);
         if config.arena.randomize_init_pos {
             println!(
                 "[simulator] Randomizing init positions with seed: {}",
-                seed.expect("No Seed Provided")
+                self.seed
             );
 
             // Set init positions for team 0 & 1
             for i in 0..self.num_drones {
                 let pos = loop {
                     let candidate = Vec3 {
-                        x: rng.random_range(self.arena_min.x..self.arena_max.x),
-                        y: rng.random_range(self.arena_min.y..self.arena_max.y),
-                        z: rng.random_range(self.arena_min.z..self.arena_max.z),
+                        x: rng.random_range(config.arena.min_start_area[0]..config.arena.max_start_area[0]),
+                        y: rng.random_range(config.arena.min_start_area[1]..config.arena.max_start_area[1]),
+                        z: rng.random_range(config.arena.min_start_area[2]..config.arena.max_start_area[2]),
                     };
 
                     // Make sure we don't put drones too close to eachother at init

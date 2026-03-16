@@ -36,9 +36,11 @@ pub fn step(world: &mut World, actions: &[Vec3], config: Arc<SimConfig>) {
                     }
 
                     // Use three different “irrational” multipliers for x, y, z velocity, different each episode
-                    let x = (world.episode as f32 * 1.3247).cos();
-                    let y = (world.episode as f32 * 2.4563).cos();
-                    let z = (world.episode as f32 * 3.5671).cos();
+                    let x = -(world.seed as f32 * 1.3247).cos().abs(); // Force vector away from +x
+                    let y = (world.seed as f32 * 2.4563).cos() * 0.2;
+                    let z = (world.seed as f32 * 3.5671).cos() * 0.2;
+
+                    
 
                     // Normalize to make it a unit vector
                     let mag = (x * x + y * y + z * z).sqrt();

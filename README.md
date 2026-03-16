@@ -2,7 +2,7 @@
 
 **Deterministic swarm simulation framework for developing, testing, and deploying swarm control algorithms.**
 
-This project provides a high-performance, deterministic physics simulator (Rust) paired with gRPC-based controllers (Python, C++).
+This project provides a high-performance, deterministic physics simulator (Rust) paired with gRPC-based controllers (Python-PyTorch, C++).
 Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
@@ -11,6 +11,10 @@ Enabling reproducible experiments for reinforcement learning, control research, 
 
 Above: PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
 Learned policy: Collision-aware decentralized intercept logic using only local observations.
+Below: The learned policy deployed in a C++ controller using LibTorch.
+<p align="left">
+  <img src="results/python_rl_controller/swarm_intercept_ppo_rl/3000_episode_training.gif" width="800" />
+</p>
 
 ---
 
@@ -31,10 +35,10 @@ Learned policy: Collision-aware decentralized intercept logic using only local o
 - **Simulator Server (Rust)**  
   High-performance deterministic physics engine and event logger.
 
-- **Swarm Controller (Python, RL-focused)**  
-  A PyTorch deep learning training controller (PPO: Proximal Policy Optimization).
+- **Swarm Controller (Python, PyTorch - Reinforcement Learning)**  
+  A deep learning training controller (PPO: Proximal Policy Optimization).
 
-- **Deployment Controller Example (C++)**  
+- **Swarm Controller (C++, LibTorch - Deployment Example)**  
   Production-style inference client demonstrating how trained policies can be deployed without Python dependencies.
 
 - **gRPC / Protobuf Interface**  
@@ -61,18 +65,15 @@ This component is the authoritative simulation source used by all controllers.
 
 ---
 
-## Swarm Controller (Python, Deep Learning Reinforcement Learning)
+## Swarm Controller (Python, PyTorch - Deep Learning Reinforcement Learning)
 
-This component is intended for:
-- Training swarm controllers using reinforcement learning
+- Training swarm controller using reinforcement learning
 - Controller implements deep learning using PPO algorithm (Proximal Policy Optimization)
 - Step-synchronized (lockstep) interaction with the simulator over gRPC
 
 ### PPO Implementation Overview
-This project implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
-It is intentionally designed as a **scaffold for experimentation**, not a full-featured RL framework.
-<br>PPO: a reinforcement learning algorithm that improves a policy using gradient updates while preventing overly large changes that could destabilize learning. 
-It does this by clipping the policy update so the new policy stays close to the old one, balancing learning speed and stability.
+Implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
+<br>PPO: A reinforcement learning algorithm that updates a policy with gradients while clipping changes to keep the new policy close to the old one, balancing learning speed and stability.
 
 - **Actor–critic architecture** with separate policy and value networks.
 - **Multi-drone friendly**:
@@ -98,7 +99,7 @@ It does this by clipping the policy update so the new policy stays close to the 
 
 ---
 
-## Deployment Controller Example (C++)
+## Swarm Controller (C++, LibTorch - Deployment Controller Example)
 
 An example of a **production-style inference client** that:
 
@@ -136,13 +137,14 @@ This design ensures training and deployment use **identical interfaces**, reduci
 
 ### Quick Run
 
-To build and run rust server + python RL controller:
+To build and run rust server + either python RL or c++ controller:
 
 ```bash
 ./run_sim.sh
 ```
 
 This will update protobuf bindings for both simulator and the controller. 
+Edit 'controller' in run_sim.sh to select controller. 
 
 ---
 
@@ -191,12 +193,14 @@ make
 ```
 
 **Dependencies**
+libtorch needs to be installed and configured from cmake.
+The libtorch version has to match the PyTorch version used in python controller when exporting policy. 
+Protoc version on local has to match libtorch's protoc version
 ```bash
 sudo apt install protobuf-compiler libgrpc++-dev
 sudo apt install protobuf-compiler-grpc
 ```
-
-Protoc version on local has to match libtorch's protoc version
+PyTorch/LibTorch version used in this project: 2.10.0
 
 #### Updating Protobuf Bindings
 
@@ -244,9 +248,8 @@ python tools/bin_to_csv.py logs/00001
 ---
 
 ## Roadmap
-- Update C++ controller to use saved weights
-- Cleanup: Result folder git ignore?, remove all webm &  Readme dependencies
-- Readme update
+- Cleanup: Result folder git ignore?, remove all webm
+- Readme update How TO run & dependencies
 
 ---
 
