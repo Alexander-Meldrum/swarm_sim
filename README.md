@@ -6,14 +6,14 @@ This project provides a high-performance, deterministic physics simulator (Rust)
 Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
-  <img src="results/python_rl_controller/swarm_intercept_ppo_rl/3000_episode_training.gif" width="800" />
+  <img src="docs/screenshots/python_rl_controller/swarm_intercept_ppo_rl/10000_episode_training_compressed.gif" width="800" />
 </p>
 
-Above: PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
-Learned policy: Collision-aware decentralized intercept logic using only local observations.
-Below: The learned policy deployed in a C++ controller using LibTorch.
+**Above**: PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
+Learned policy: Collision-aware decentralized intercept logic using only local observations. <br>
+**Below**: The learned policy deployed in a C++ controller using LibTorch.
 <p align="left">
-  <img src="results/python_rl_controller/swarm_intercept_ppo_rl/3000_episode_training.gif" width="800" />
+  <img src="docs/screenshots/cpp_rl_deployment/animation_10_vs_10.gif" width="400" />
 </p>
 
 ---
@@ -74,6 +74,10 @@ This component is the authoritative simulation source used by all controllers.
 ### PPO Implementation Overview
 Implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
 <br>PPO: A reinforcement learning algorithm that updates a policy with gradients while clipping changes to keep the new policy close to the old one, balancing learning speed and stability.
+
+<p align="left">
+  <img src="docs/screenshots/python_rl_controller/swarm_intercept_ppo_rl/combined_fast_compressed_xtrem.gif" width="400" />
+</p>
 
 - **Actor–critic architecture** with separate policy and value networks.
 - **Multi-drone friendly**:

@@ -380,6 +380,9 @@ plt.show()
 # --------------------------------------------------
 if SAVE_AS_GIF:
     from matplotlib.animation import FuncAnimation, PillowWriter
+    import os
+
+    os.makedirs("results", exist_ok=True)
 
     print(f"SAVE_AS_GIF: True, Saving animation as: results/animation_{metadata.episode}.gif.")
     ani.save(

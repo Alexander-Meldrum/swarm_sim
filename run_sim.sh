@@ -3,7 +3,7 @@ set -euo pipefail
 
 # ---------------- Configuration ----------------
 # Flip controllers, allowed values ["python", "cpp"]
-controller="python"
+controller="cpp"
 
 SIM_DIR="sim_server"
 SIM_BIN="$SIM_DIR/target/release/sim_server"

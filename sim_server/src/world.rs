@@ -127,6 +127,7 @@ pub struct World {
 
     // Spatial Grid
     pub arena_min: Vec3,
+    #[allow(dead_code)]
     pub arena_max: Vec3,
     pub cell_size: f32,
     pub grid_dim: (usize, usize, usize),
