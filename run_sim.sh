@@ -105,7 +105,6 @@ fi
 # ---------------- Run swarm controller ----------------
 if [ "$controller" = "cpp" ]; then
     echo "[shell] Running Cpp Swarm Controller ..."
-    # "$CTRL_BIN"
     stdbuf -oL "$CTRL_BIN"
     echo "[shell] Swarm Controller Finished"
 

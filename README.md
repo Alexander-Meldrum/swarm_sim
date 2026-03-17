@@ -72,8 +72,7 @@ This component is the authoritative simulation source used by all controllers.
 - Step-synchronized (lockstep) interaction with the simulator over gRPC
 
 ### PPO Implementation Overview
-Implements a **minimal, transparent PPO-style reinforcement learning loop** for swarm control.  
-<br>PPO: A reinforcement learning algorithm that updates a policy with gradients while clipping changes to keep the new policy close to the old one, balancing learning speed and stability.
+Implements a minimal, transparent PPO-style reinforcement learning loop for swarm control. <br> PPO: A reinforcement learning algorithm that updates a policy with gradients while clipping changes to keep the new policy close to the old one, balancing learning speed and stability.
 
 <p align="left">
   <img src="docs/screenshots/python_rl_controller/swarm_intercept_ppo_rl/combined_fast_compressed_xtrem.gif" width="400" />
@@ -152,70 +151,104 @@ Edit 'controller' in run_sim.sh to select controller.
 
 ---
 
-## Manual Build & Run
+## How to Build and Run Components
 
-### Simulation Server (Rust)
+This guide explains how to build and run each component of the system separately.  
 
-**Dependencies**
-```bash
-sudo apt install protobuf-compiler
-```
+- Rust simulator (gRPC server)
+- C++ swarm controller (gRPC client)
+- Python swarm controller (gRPC client)
+- Shared protobuf definitions
 
-**Build & Run**
+---
+
+## Rust Simulator
+
+### Dependencies
+
+- Rust (latest stable)
+- Cargo
+- Protobuf compiler (`protoc`)
+
+### Build
+
 ```bash
 cd sim_server
 cargo build --release
 cd - >/dev/null
+```
+
+### Run
+
+```bash
 sim_server/target/release/sim_server --config sim_server/configs/sim.yaml
 ```
 
 ---
 
-### Swarm Controller (Python)
+## Python Controller
 
-Generate Python gRPC bindings:
+### Dependencies
+
+- Python 3.8+
+- virtualenv
+- grpcio
+- grpcio-tools
+- PyTorch (This project used CPU version)
+
+### Generate gRPC Code
 
 ```bash
-python -m grpc_tools.protoc \
-  -I ../../proto \
-  --python_out=. \
-  --grpc_python_out=. \
-  ../../proto/swarm.proto
+cd swarms/swarm_py
+python -m grpc_tools.protoc   -I ../../proto   --python_out=.   --grpc_python_out=.   ../../proto/swarm.proto
+```
+
+### Run
+
+```bash
+python train.py
 ```
 
 ---
 
-### Swarm Controller Example (C++)
+## C++ Controller
+
+### Dependencies
+
+- CMake (>= 3.10)
+- g++
+- Protobuf
+- gRPC
+- grpc_cpp_plugin (must be in PATH)
+- Libtorch (Same version as PyTorch version used in Python Controller)
+
+### Generate gRPC Code
+
+```bash
+PROTO_SRC="proto"
+OUT_DIR="swarms/swarm_cpp/build/proto"
+mkdir -p "$OUT_DIR"
+protoc   -I"$PROTO_SRC"   --cpp_out="$OUT_DIR"   --grpc_out="$OUT_DIR"   --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin)   "$PROTO_SRC/swarm.proto"
+```
+
+### Build
 
 ```bash
 cd swarms/swarm_cpp
-mkdir build && cd build
-mkdir proto
+rm -rf build
+mkdir build
+cd build
 cmake ..
-make
-./swarm
+cmake --build . -- -j$(nproc)
+cd ../../..
 ```
 
-**Dependencies**
-libtorch needs to be installed and configured from cmake.
-The libtorch version has to match the PyTorch version used in python controller when exporting policy. 
-Protoc version on local has to match libtorch's protoc version
-```bash
-sudo apt install protobuf-compiler libgrpc++-dev
-sudo apt install protobuf-compiler-grpc
-```
-PyTorch/LibTorch version used in this project: 2.10.0
-
-#### Updating Protobuf Bindings
+### Run
 
 ```bash
-protoc \
-  --proto_path=proto \
-  --cpp_out=swarms/swarm_cpp/build/proto \
-  --grpc_out=swarms/swarm_cpp/build/proto \
-  --plugin=protoc-gen-grpc=$(which grpc_cpp_plugin) \
-  proto/swarm.proto
+./swarms/swarm_cpp/build/swarm
 ```
+
 
 ---
 
@@ -251,15 +284,10 @@ python tools/bin_to_csv.py logs/00001
 
 ---
 
-## Roadmap
-- Cleanup: Result folder git ignore?, remove all webm
-- Readme update How TO run & dependencies
-
----
-
 ## Possible Future Work
 
 - Simulator: Move over to shared memory instead of gRPC communication
+- Simulator: Add timeouts to catch faulty controllers breaking mid step
 - Python PPO: Add GAE to PPO algorithm
 - Python PPO: Enable loading of previosly saved policies
 
