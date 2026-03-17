@@ -6,7 +6,7 @@ This project provides a high-performance, deterministic physics simulator (Rust)
 Enabling reproducible experiments for reinforcement learning, control research, and deployment-oriented swarm systems.
 
 <p align="left">
-  <img src="docs/screenshots/python_rl_controller/swarm_intercept_ppo_rl/10000_episode_training_compressed.gif" width="800" />
+  <img src="docs/screenshots/python_rl_controller/swarm_intercept_ppo_rl/10000_episode_training_v2_compressed.gif" width="800" />
 </p>
 
 **Above**: PyTorch-based PPO reinforcement learning controlling a multi-drone swarm in the Rust simulator. <br>
